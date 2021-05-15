@@ -15,7 +15,7 @@
         android:layout_weight="1"
         android:contentDescription="@string/Avatar"
         android:onClick="Click2"
-        tools:src="@drawable/ic_baseline_no_photography_24" />
+        android:src="@drawable/login_image" />
 
     <TextView
         android:id="@+id/textView3"

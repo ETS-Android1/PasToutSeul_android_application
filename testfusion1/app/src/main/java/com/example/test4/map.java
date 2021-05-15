@@ -43,6 +43,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
     Spinner spinner;
     ListView listView;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -95,7 +96,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
                         double lat = location.getLatitude();
                         double lon = location.getLongitude();
                         LatLng here = new LatLng(lat, lon);
-                        mMap.addMarker(new MarkerOptions().position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
+                        //mMap.addMarker(new MarkerOptions().position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here,15));
 
                     }
@@ -112,8 +113,16 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
             public boolean onMarkerClick(Marker marker) {
                 String markertitle = marker.getTitle();
                 AlertDialog.Builder popup = new AlertDialog.Builder(activity);
+
                 popup.setTitle(markertitle);
+
                 popup.setMessage("les coordonnées sont " + marker.getPosition());
+                popup.setNeutralButton("trajectoire", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
                 popup.setNegativeButton("Enlever le marker", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -130,10 +139,10 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position != 0){
                     mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                         @Override
-                        public void onMapClick(LatLng latLng) {
+                        public void onMapClick(LatLng latLng) {if (position != 0) {
+
                             AlertDialog.Builder areYouSure = new AlertDialog.Builder(activity);
                             areYouSure.setTitle("vérification");
                             areYouSure.setMessage("Etes-vous sûr de vouloir mettre un marker ici ? ");
@@ -158,9 +167,9 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
                             });
                             areYouSure.show();
 
-                        }
+                        }}
                     });
-            }}
+            }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -172,6 +181,39 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
     }
     public void Click(View v) {
         Intent i = new Intent(this, menu.class);
+        startActivity(i);
+
+    }
+
+    public void locatezoom(View v){
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+
+                mflc.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+
+                        double lat = location.getLatitude();
+                        double lon = location.getLongitude();
+                        LatLng here = new LatLng(lat, lon);
+                        //mMap.addMarker(new MarkerOptions().position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here,15));
+
+                    }
+                });
+
+            } else {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+            }
+
+        }
+
+    }
+
+    public void chat(View v) {
+        Intent i = new Intent(this, chat.class);
         startActivity(i);
 
     }

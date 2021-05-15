@@ -24,6 +24,7 @@
             android:id="@+id/amis"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="chat"
             android:text="@string/amis"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -52,6 +53,18 @@
             android:textColor="#222"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageButton
+            android:id="@+id/locatezoom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="62dp"
+            android:contentDescription="@string/locate_and_zoom"
+            android:onClick="locatezoom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@color/transparent"
+            android:src="@drawable/map" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

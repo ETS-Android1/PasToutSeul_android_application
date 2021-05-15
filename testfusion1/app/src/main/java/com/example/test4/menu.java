@@ -29,7 +29,6 @@ public class menu extends AppCompatActivity {
     }
 
 
-
     public void Click2(View v) {
 
         tv_idch =  findViewById(R.id.idchange);
