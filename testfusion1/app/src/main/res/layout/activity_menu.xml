@@ -6,7 +6,9 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".menu">
+    tools:context=".menu"
+    android:background="@drawable/orange_jaune">>
+
 
     <ImageView
         android:id="@+id/imageView3"
@@ -23,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
-        android:textColor="#444"
+        android:textColor="#111"
         android:text="@string/prénom"
         android:textStyle="bold"
         android:textSize="25sp"
@@ -36,7 +38,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="@string/identifiant"
-        android:textColor="#777"
+        android:textColor="#333"
         android:onClick="Click2"/>
 
     <LinearLayout
@@ -52,7 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="#444"
+            android:textColor="#111"
             android:textStyle="bold"
             android:textSize="20sp"
             android:text="10" />
@@ -71,7 +73,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="#444"
+            android:textColor="#111"
             android:textStyle="bold"
             android:textSize="20sp"
             android:text="10"
@@ -88,8 +90,8 @@
     </LinearLayout>
 
     <TextView
-        android:layout_marginTop="60dp"
-        android:textColor="#555"
+        android:layout_marginTop="40dp"
+        android:textColor="#333"
         android:gravity="center"
         android:id="@+id/textView9"
         android:textStyle="italic"
@@ -101,7 +103,7 @@
 
     <TextView
         android:id="@+id/textView10"
-        android:textColor="#555"
+        android:textColor="#333"
         android:layout_marginTop="25dp"
         android:gravity="center"
         android:textStyle="italic"
@@ -113,7 +115,7 @@
 
     <TextView
         android:id="@+id/textView11"
-        android:textColor="#555"
+        android:textColor="#333"
         android:gravity="center"
         android:textStyle="italic"
         android:layout_marginTop="25dp"
@@ -125,7 +127,7 @@
 
     <TextView
         android:id="@+id/textView12"
-        android:textColor="#555"
+        android:textColor="#333"
         android:gravity="center"
         android:textStyle="italic"
         android:layout_marginTop="25dp"

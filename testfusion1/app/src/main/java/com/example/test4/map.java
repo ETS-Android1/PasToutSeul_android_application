@@ -96,7 +96,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
                         double lat = location.getLatitude();
                         double lon = location.getLongitude();
                         LatLng here = new LatLng(lat, lon);
-                        //mMap.addMarker(new MarkerOptions().position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
+                        mMap.addMarker(new MarkerOptions().position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here,15));
 
                     }
@@ -135,7 +135,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         });
 
         spinner = (Spinner) findViewById(R.id.spinner4);
-
+        spinner.setBackgroundResource(R.color.bleu_ciel);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -198,7 +198,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
                         double lat = location.getLatitude();
                         double lon = location.getLongitude();
                         LatLng here = new LatLng(lat, lon);
-                        //mMap.addMarker(new MarkerOptions().position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
+                        mMap.addMarker(new MarkerOptions().position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here,15));
 
                     }

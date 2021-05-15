@@ -4,14 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".chat">
+    tools:context=".chat"
+    android:background="@drawable/orange_jaune">
 
     <EditText
         android:id="@+id/editText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-
+        android:textColorHint="@android:color/white"
         android:layout_marginBottom="16dp"
         android:background="@drawable/message_style1"
         android:hint="Taper votre message"
