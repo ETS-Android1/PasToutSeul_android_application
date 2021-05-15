@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout1"
+        android:layout_width="423dp"
+        android:layout_height="750dp"
+        android:background="@drawable/orange_jaune"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.45">
+
+
+        <EditText
+            android:id="@+id/editTextMailLogin"
+            android:layout_width="285dp"
+            android:layout_height="45dp"
+            android:background="@color/beige"
+            android:ems="10"
+            android:hint="  Adresse e-mail"
+            android:inputType="textEmailAddress"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.225" />
+
+        <EditText
+            android:id="@+id/editTextPasswordLogin"
+            android:layout_width="219dp"
+            android:layout_height="50dp"
+            android:background="@color/beige"
+            android:ems="10"
+            android:hint="  Mot de passe"
+            android:inputType="textPassword"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imgBtnShowHide"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/editTextMailLogin"
+            app:layout_constraintTop_toBottomOf="@+id/editTextMailLogin"
+            app:layout_constraintVertical_bias="0.05"
+            app:passwordToggleEnabled="true" />
+
+        <ImageButton
+            android:id="@+id/imgBtnShowHide"
+            android:layout_width="60dp"
+            android:layout_height="53dp"
+            android:background="@drawable/cache"
+            android:onClick="show_hide"
+            app:layout_constraintBottom_toBottomOf="@+id/editTextPasswordLogin"
+            app:layout_constraintEnd_toEndOf="@+id/editTextMailLogin"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/editTextPasswordLogin"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="240dp"
+            android:layout_height="44dp"
+            android:layout_marginTop="20dp"
+            android:onClick="connexion"
+            android:text="Connexion"
+            android:textStyle="bold"
+            app:backgroundTint="@color/orange"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextPasswordLogin"
+            app:layout_constraintVertical_bias="0.023" />
+
+        <Button
+            android:id="@+id/btnForgotPassword"
+            android:layout_width="276dp"
+            android:layout_height="52dp"
+            android:background="@color/transparent"
+            android:onClick="forgotPwd"
+            android:text="Mot de passe oublié ?"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnNoAccount"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <Button
+            android:id="@+id/btnNoAccount"
+            android:layout_width="181dp"
+            android:layout_height="58dp"
+            android:background="@color/transparent"
+            android:onClick="createAccountActivity"
+            android:text="Pas de compte ?"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0955"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnLogin"
+            app:layout_constraintVertical_bias="0.181" />
+
+        <Button
+            android:id="@+id/btnGuest"
+            android:layout_width="wrap_content"
+            android:layout_height="39dp"
+            android:text="Mode Invité"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:backgroundTint="@color/beige"
+            android:onClick="guestmode"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnLogin"
+            app:layout_constraintVertical_bias="0.010" />
+
+        <TextView
+            android:id="@+id/txtErrMailLogin"
+            android:layout_width="291dp"
+            android:layout_height="15dp"
+            android:textColor="@color/rouge_fonce"
+            android:textSize="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/editTextPasswordLogin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.611"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextMailLogin" />
+
+        <TextView
+            android:id="@+id/txtErrPwdLogin"
+            android:layout_width="286dp"
+            android:layout_height="14dp"
+            android:textColor="@color/rouge_fonce"
+            android:textSize="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/btnLogin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.583"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextPasswordLogin" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

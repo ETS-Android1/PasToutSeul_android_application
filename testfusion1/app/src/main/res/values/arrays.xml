@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="spinnerItems">
+        <item>ne rien mettre</item>
+        <item>sdf</item>
+        <item>association</item>
+        <item>centre daide</item>
+        <item>douche publique</item>
+    </string-array>
+</resources>

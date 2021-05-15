@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">test4</string>
+    <string name="identifiant">identifiant</string>
+    <string name="mot_de_passe">mot de passe</string>
+    <string name="s_inscrire">s\'inscrire</string>
+    <string name="mode_visiteur">mode visiteur</string>
+    <string name="connecter">Connecter</string>
+    <string name="adresse_e_mail">adresse e-mail</string>
+    <string name="cr_er_un_compte">Créer un compte</string>
+    <string name="parametre">paramètres</string>
+    <string name="amis">amis</string>
+    <string name="salut_bg">salut bg</string>
+    <string name="title_activity_map">Map</string>
+    <string name="prénom">prénom</string>
+    <string name="Avatar">Avatar</string>
+    <string name="appli">nom de l\'appli</string>
+</resources>
