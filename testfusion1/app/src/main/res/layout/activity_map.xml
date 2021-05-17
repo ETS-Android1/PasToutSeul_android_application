@@ -53,13 +53,13 @@
             android:id="@+id/locatezoom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="62dp"
+            android:layout_marginTop="64dp"
             android:contentDescription="@string/locate_and_zoom"
             android:onClick="locatezoom"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:background="@color/transparent"
-            android:src="@drawable/map" />
+            android:src="@drawable/ic_location" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
