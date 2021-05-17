@@ -22,4 +22,5 @@
     <color name="vert">#0CD500</color>
     <color name="vert_clair">#9DFF97</color>
     <color name="vert_foncé">#077100</color>
+    <color name="gris">#666666</color>
 </resources>

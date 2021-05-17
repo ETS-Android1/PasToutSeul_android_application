@@ -15,10 +15,12 @@
         android:layout_height="match_parent"
         tools:context=".map" />
 
+    <include layout="@layout/toolbar"/>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <include layout="@layout/toolbar"/>
+
 
         <Button
             android:id="@+id/amis"
@@ -40,15 +42,6 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="62dp"/>
 
-        <Spinner
-            android:id="@+id/spinner4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:entries="@array/spinnerItems"
-            android:spinnerMode="dropdown"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
         <ImageButton
             android:id="@+id/locatezoom"
             android:layout_width="wrap_content"
@@ -60,6 +53,16 @@
             app:layout_constraintTop_toTopOf="parent"
             android:background="@color/transparent"
             android:src="@drawable/ic_location" />
+
+        <ImageButton
+            android:id="@+id/btnmapclick"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@drawable/mapclickno"
+            android:onClick="mapclick"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

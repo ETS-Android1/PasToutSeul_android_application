@@ -13,9 +13,8 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.Spinner;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -34,14 +33,17 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.HashMap;
+
 public class map extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private map activity;
     private ActivityMapBinding binding;
     private FusedLocationProviderClient mflc;
-    Spinner spinner;
-    ListView listView;
+    HashMap hashMapMarker = new HashMap<String, Marker>();
+    boolean mclick;
+    ImageButton btnmclick;
 
 
     @Override
@@ -61,6 +63,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         mapFragment.getMapAsync(this);
 
         this.activity = this;
+        this.mclick = false;
+        this.btnmclick = findViewById(R.id.btnmapclick);
         //listView = findViewById(R.id.sp)
 
     }
@@ -96,89 +100,84 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
                         double lat = location.getLatitude();
                         double lon = location.getLongitude();
                         LatLng here = new LatLng(lat, lon);
-                        mMap.addMarker(new MarkerOptions().position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here,15));
+                        Marker marker = mMap.addMarker(new MarkerOptions().snippet("userLocation").position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
+                        hashMapMarker.put("userLocation", marker);
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 15));
 
                     }
                 });
 
             } else {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
 
         }
 
+
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                String markertitle = marker.getTitle();
-                AlertDialog.Builder popup = new AlertDialog.Builder(activity);
+                if (marker.getSnippet().equals("sdf")) {
+                    String markertitle = marker.getTitle();
+                    AlertDialog.Builder popup = new AlertDialog.Builder(activity);
 
-                popup.setTitle(markertitle);
+                    popup.setTitle(markertitle);
 
-                popup.setMessage("les coordonnées sont " + marker.getPosition());
-                popup.setNeutralButton("trajectoire", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    popup.setMessage("les coordonnées sont " + marker.getPosition());
+                    popup.setNeutralButton("envoyer un message", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
 
-                    }
-                });
-                popup.setNegativeButton("Enlever le marker", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        marker.remove();
-                    }
-                });
-                popup.show();
+                        }
+                    });
+                    popup.setNegativeButton("Enlever le marker", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            marker.remove();
+                        }
+                    });
+                    popup.show();
+                }
                 return false;
             }
         });
 
-        spinner = (Spinner) findViewById(R.id.spinner4);
-        spinner.setBackgroundResource(R.color.bleu_ciel);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+
+            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(LatLng latLng) {if(mclick){
+
+                    AlertDialog.Builder areYouSure = new AlertDialog.Builder(activity);
+                    areYouSure.setTitle("vérification");
+                    View customMarkerLayout = getLayoutInflater().inflate(R.layout.marker_layout, null);
+                    areYouSure.setView(customMarkerLayout);
+                    areYouSure.setMessage("Etes-vous sûr de vouloir mettre un marker ici ? ");
+                    //areYouSure.setIcon()
+                    areYouSure.setPositiveButton("oui", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onMapClick(LatLng latLng) {if (position != 0) {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // si sdf est choisi
+                            mMap.addMarker(new MarkerOptions().snippet("sdf").position(latLng).title("sdf").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
+                            mapclick2();
 
-                            AlertDialog.Builder areYouSure = new AlertDialog.Builder(activity);
-                            areYouSure.setTitle("vérification");
-                            areYouSure.setMessage("Etes-vous sûr de vouloir mettre un marker ici ? ");
-
-                            //areYouSure.setIcon()
-                            areYouSure.setPositiveButton("oui", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (position == 1) {   // si sdf est choisi
-                                        mMap.addMarker(new MarkerOptions().position(latLng).title((String) spinner.getSelectedItem()).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
-                                    }
-                                    else{
-                                        mMap.addMarker(new MarkerOptions().position(latLng).title((String) spinner.getSelectedItem()).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__4_)));
-                                    }
-                                }
-                            });
-                            areYouSure.setNegativeButton("non", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                            areYouSure.show();
-
-                        }}
+                        }
                     });
-            }
+                    areYouSure.setNegativeButton("non", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+                        }
+                    });
+                    areYouSure.show();
 
+                }}
             }
-        });
+            );
+
 
 
     }
+
     public void Click(View v) {
         Intent i = new Intent(this, menu.class);
         startActivity(i);
@@ -195,10 +194,14 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
                     @Override
                     public void onSuccess(Location location) {
 
+                        Marker marker = (Marker) hashMapMarker.get("userLocation");
+                        marker.remove();
+                        hashMapMarker.remove("userlocation");
                         double lat = location.getLatitude();
                         double lon = location.getLongitude();
                         LatLng here = new LatLng(lat, lon);
-                        mMap.addMarker(new MarkerOptions().position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
+                        Marker marker1 = mMap.addMarker(new MarkerOptions().snippet("userLocation").position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
+                        hashMapMarker.put("userLocation",marker1);
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here,15));
 
                     }
@@ -211,6 +214,29 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         }
 
     }
+
+    public void mapclick(View v)
+    {
+
+        if(mclick)
+        {
+            btnmclick.setBackgroundResource(R.drawable.mapclickno);
+            mclick = false;
+        }
+        else
+        {
+            btnmclick.setBackgroundResource(R.drawable.ic_help__3_);
+            mclick = true;
+            Toast.makeText(getApplicationContext(), "Veuillez placer un marqueur",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public  void mapclick2(){
+        btnmclick.setBackgroundResource(R.drawable.mapclickno);
+        mclick = false;
+    }
+
+
 
     public void chat(View v) {
         Intent i = new Intent(this, chat.class);
