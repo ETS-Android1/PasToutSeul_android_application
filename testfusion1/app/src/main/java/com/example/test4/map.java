@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -134,10 +135,10 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
                 if (marker.getSnippet().equals("sdf")) {
                     String markertitle = marker.getTitle();
                     AlertDialog.Builder popup = new AlertDialog.Builder(activity);
-
                     popup.setTitle(markertitle);
-                    View customMarkerLayout = getLayoutInflater().inflate(R.layout.marker_layout, null);
-                    popup.setView(customMarkerLayout);
+                    LayoutInflater inflater = activity.getLayoutInflater();
+                    View view = inflater.inflate(R.layout.marker_layout, null);
+                    popup.setView(view);
                     popup.setMessage("les coordonnées sont " + marker.getPosition());
                     popup.setPositiveButton("envoyer un message", new DialogInterface.OnClickListener() {
                         @Override
@@ -158,36 +159,36 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         });
 
 
-            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                @Override
-                public void onMapClick(LatLng latLng) {if(mclick){
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {if(mclick){
 
-                    AlertDialog.Builder areYouSure = new AlertDialog.Builder(activity);
-                    areYouSure.setTitle("vérification");
-                    View customAddMarkerLayout = getLayoutInflater().inflate(R.layout.addmarker_layout, null);
-                    areYouSure.setView(customAddMarkerLayout);
-                    areYouSure.setMessage("veuillez entrer des informations sur la personne");
-                    //areYouSure.setIcon()
-                    areYouSure.setPositiveButton("oui", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // si sdf est choisi
-                            mMap.addMarker(new MarkerOptions().snippet("sdf").position(latLng).title("sdf").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
-                            mapclick2();
+                AlertDialog.Builder areYouSure = new AlertDialog.Builder(activity);
+                areYouSure.setTitle("vérification");
+                View customAddMarkerLayout = getLayoutInflater().inflate(R.layout.addmarker_layout, null);
+                areYouSure.setView(customAddMarkerLayout);
+                areYouSure.setMessage("veuillez entrer des informations sur la personne");
+                //areYouSure.setIcon()
+                areYouSure.setPositiveButton("oui", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // si sdf est choisi
+                        mMap.addMarker(new MarkerOptions().snippet("sdf").position(latLng).title("sdf").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
+                        mapclick2();
 
-                        }
-                    });
-                    areYouSure.setNegativeButton("non", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                areYouSure.setNegativeButton("non", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
-                        }
-                    });
-                    areYouSure.show();
+                    }
+                });
+                areYouSure.show();
 
-                }}
-            }
-            );
+            }}
+        }
+        );
 
 
 
