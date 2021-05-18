@@ -193,6 +193,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
 
     }
 
+
     public void Click(View v) {
         Intent i = new Intent(this, menu.class);
         startActivity(i);
