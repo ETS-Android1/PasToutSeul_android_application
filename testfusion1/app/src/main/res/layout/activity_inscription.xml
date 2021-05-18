@@ -59,6 +59,7 @@
             android:layout_height="wrap_content"
             android:onClick="createAccount"
             android:text="Créer un compte"
+            android:textStyle="bold"
             app:backgroundTint="@color/orange"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

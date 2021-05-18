@@ -17,8 +17,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Test4">
-        <activity android:name=".Compte"></activity>
-        <activity android:name=".chat" />
+        <activity android:name=".Compte"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            ></activity>
+        <activity android:name=".chat"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -33,10 +39,22 @@
 
         <activity
             android:name=".map"
-            android:label="@string/title_activity_map" />
-        <activity android:name=".menu" />
-        <activity android:name=".inscription" />
-        <activity android:name=".MainActivity">
+            android:label="@string/title_activity_map"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".menu"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".inscription"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".MainActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
