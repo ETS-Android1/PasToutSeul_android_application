@@ -60,7 +60,7 @@
             android:layout_height="60dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:background="@drawable/mapclickno"
+            android:background="@drawable/helpadd"
             android:onClick="mapclick"
             />
 

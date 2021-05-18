@@ -15,4 +15,6 @@
     <string name="Avatar">Avatar</string>
     <string name="appli">nom de l\'appli</string>
     <string name="locate_and_zoom">locate and zoom</string>
+    <string name="nom">nom</string>
+    <string name="actuel">actuel :</string>
 </resources>

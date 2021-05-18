@@ -13,7 +13,9 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
@@ -44,6 +46,12 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
     HashMap hashMapMarker = new HashMap<String, Marker>();
     boolean mclick;
     ImageButton btnmclick;
+    EditText prenom;
+    EditText Nom;
+    EditText Comm;
+    TextView Disprenom;
+    TextView Dispnom;
+    TextView Dispcomm;
 
 
     @Override
@@ -65,6 +73,12 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         this.activity = this;
         this.mclick = false;
         this.btnmclick = findViewById(R.id.btnmapclick);
+        this.prenom = findViewById(R.id.editText2);
+        this.Nom = findViewById(R.id.editText3);
+        this.Comm = findViewById(R.id.editTextTextPersonName);
+        this.Disprenom = findViewById(R.id.textView2);
+        this.Dispnom = findViewById(R.id.textView13);
+        this.Dispcomm = findViewById(R.id.textView14);
         //listView = findViewById(R.id.sp)
 
     }
@@ -122,9 +136,10 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
                     AlertDialog.Builder popup = new AlertDialog.Builder(activity);
 
                     popup.setTitle(markertitle);
-
+                    View customMarkerLayout = getLayoutInflater().inflate(R.layout.marker_layout, null);
+                    popup.setView(customMarkerLayout);
                     popup.setMessage("les coordonnées sont " + marker.getPosition());
-                    popup.setNeutralButton("envoyer un message", new DialogInterface.OnClickListener() {
+                    popup.setPositiveButton("envoyer un message", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
@@ -149,9 +164,9 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
 
                     AlertDialog.Builder areYouSure = new AlertDialog.Builder(activity);
                     areYouSure.setTitle("vérification");
-                    View customMarkerLayout = getLayoutInflater().inflate(R.layout.marker_layout, null);
-                    areYouSure.setView(customMarkerLayout);
-                    areYouSure.setMessage("Etes-vous sûr de vouloir mettre un marker ici ? ");
+                    View customAddMarkerLayout = getLayoutInflater().inflate(R.layout.addmarker_layout, null);
+                    areYouSure.setView(customAddMarkerLayout);
+                    areYouSure.setMessage("veuillez entrer des informations sur la personne");
                     //areYouSure.setIcon()
                     areYouSure.setPositiveButton("oui", new DialogInterface.OnClickListener() {
                         @Override
@@ -220,19 +235,19 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
 
         if(mclick)
         {
-            btnmclick.setBackgroundResource(R.drawable.mapclickno);
+            btnmclick.setBackgroundResource(R.drawable.helpadd);
             mclick = false;
         }
         else
         {
-            btnmclick.setBackgroundResource(R.drawable.ic_help__3_);
+            btnmclick.setBackgroundResource(R.drawable.mapclickno);
             mclick = true;
             Toast.makeText(getApplicationContext(), "Veuillez placer un marqueur",Toast.LENGTH_SHORT).show();
         }
     }
 
     public  void mapclick2(){
-        btnmclick.setBackgroundResource(R.drawable.mapclickno);
+        btnmclick.setBackgroundResource(R.drawable.helpadd);
         mclick = false;
     }
 

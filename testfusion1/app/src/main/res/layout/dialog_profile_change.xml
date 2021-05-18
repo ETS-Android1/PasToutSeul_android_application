@@ -4,29 +4,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    tools:context=".profileCh">
+    android:background="@color/orange">
 
 
-    <EditText
+    <TextView
         android:id="@+id/idchange"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="@string/identifiant" />
+        android:hint="@string/actuel"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Actuel"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="#333"/>
 
     <EditText
         android:id="@+id/namechange"
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="@string/prénom" />
+        android:hint="nouveau"
+        android:inputType="textPassword" />
 
     <Button
         android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="confirmer le changement ?"
-        android:onClick="Click3"/>
+        android:text="confirmer le changement ?" />
 </LinearLayout>
