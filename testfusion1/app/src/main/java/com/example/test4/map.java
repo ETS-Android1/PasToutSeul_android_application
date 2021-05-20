@@ -241,7 +241,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         startActivity(i);
 
     }
-
+    
     public void locatezoom(View v){
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

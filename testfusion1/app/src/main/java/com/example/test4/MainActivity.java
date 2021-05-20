@@ -4,6 +4,11 @@ package com.example.test4;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.regex.*;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -79,7 +84,27 @@ public class MainActivity extends AppCompatActivity {
             default :
                 errMail.setText("");
                 errPwd.setText("");
-                Toast.makeText(getApplicationContext(), "Pas d'erreur(s)\nMail = "+getMail()+"\n Mot de passe = "+getPwd(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Pas d'erreur(s)\nMail = "+getMail()+"\n Mot de passe = "+getPwd(), Toast.LENGTH_SHORT).show();
+                try {
+                    Class.forName("com.mysql.jdbc.Driver");
+                    Connection con = DriverManager.getConnection("jdbc:mysql://db-instance-p14.c7awotg7nzqz.eu-west-3.rds.amazonaws.com/sans_abris_test", "user", "9rAL84539CxkSFjz");
+                    String email = String.valueOf(mail.getText());
+                    String password = String.valueOf(pwd.getText());
+
+                    Statement stm = con.createStatement();
+                    String sql = "select * from sans_abris_test where email='"+email+"' and password='"+password+"'";
+                    ResultSet rs = stm.executeQuery(sql);
+                    if (rs.next()){
+                        Toast.makeText(getApplicationContext(),"binks",Toast.LENGTH_SHORT).show();
+                    }
+                    else{Toast.makeText(getApplicationContext(),"sa a pas marché",Toast.LENGTH_SHORT).show();}
+
+                }
+
+                catch (Exception e){
+                    System.out.println(e.getMessage());
+                    Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
     }
