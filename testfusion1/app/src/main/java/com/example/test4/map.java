@@ -9,9 +9,12 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -24,6 +27,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.example.test4.databinding.ActivityMapBinding;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -36,7 +40,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
 public class map extends FragmentActivity implements OnMapReadyCallback {
 
@@ -53,12 +61,15 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
     TextView Disprenom;
     TextView Dispnom;
     TextView Dispcomm;
-
+    Geocoder geocoder;
+    List<Address> addresses;
+    double lat;
+    double lng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        mflc = LocationServices.getFusedLocationProviderClient(this);
+
 
 
         super.onCreate(savedInstanceState);
@@ -80,6 +91,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         this.Disprenom = findViewById(R.id.textView2);
         this.Dispnom = findViewById(R.id.textView13);
         this.Dispcomm = findViewById(R.id.textView14);
+        this.mflc = LocationServices.getFusedLocationProviderClient(this);
+
         //listView = findViewById(R.id.sp)
 
     }
@@ -107,20 +120,31 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
-
-                mflc.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                mflc.getLocationAvailability().addOnSuccessListener(new OnSuccessListener<LocationAvailability>() {
                     @Override
-                    public void onSuccess(Location location) {
+                    public void onSuccess(LocationAvailability locationAvailability) {
+                        if (locationAvailability.isLocationAvailable()){
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                                        == PackageManager.PERMISSION_GRANTED) {
+                            mflc.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                                @Override
+                                public void onSuccess(Location location) {
 
-                        double lat = location.getLatitude();
-                        double lon = location.getLongitude();
-                        LatLng here = new LatLng(lat, lon);
-                        Marker marker = mMap.addMarker(new MarkerOptions().snippet("userLocation").position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
-                        hashMapMarker.put("userLocation", marker);
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 15));
+                                    double lat = location.getLatitude();
+                                    double lon = location.getLongitude();
+                                    LatLng here = new LatLng(lat, lon);
+                                    Marker marker = mMap.addMarker(new MarkerOptions().snippet("userLocation").position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
+                                    hashMapMarker.put("userLocation", marker);
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 15));
 
+                                }
+                            });}}
+
+                        } else{Toast.makeText(getApplicationContext(),"veuillez mettre votre geolocalisation",Toast.LENGTH_SHORT).show();}
                     }
                 });
+
 
             } else {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
@@ -163,6 +187,9 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
             @Override
             public void onMapClick(LatLng latLng) {if(mclick){
 
+                lat = latLng.latitude;
+                lng = latLng.longitude;
+
                 AlertDialog.Builder areYouSure = new AlertDialog.Builder(activity);
                 areYouSure.setTitle("vérification");
                 View customAddMarkerLayout = getLayoutInflater().inflate(R.layout.addmarker_layout, null);
@@ -175,6 +202,20 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
                         // si sdf est choisi
                         mMap.addMarker(new MarkerOptions().snippet("sdf").position(latLng).title("sdf").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
                         mapclick2();
+                        geocoder = new Geocoder(activity, Locale.getDefault());
+                        try {
+                            addresses = geocoder.getFromLocation(lat,lng,1);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if (addresses.size() > 0)
+                        {
+
+                            //addresses.get(0).getLocality()   avoir le nom de la ville
+                            //addresses.get(0).getPostalCode() avoir le code postale
+                            //Log.d("location", addresses.get(0).getPostalCode());
+                        }
+                        else { }
 
                     }
                 });
@@ -206,26 +247,34 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
-
-                mflc.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                mflc.getLocationAvailability().addOnSuccessListener(new OnSuccessListener<LocationAvailability>() {
                     @Override
-                    public void onSuccess(Location location) {
+                    public void onSuccess(LocationAvailability locationAvailability) {
+                        if (locationAvailability.isLocationAvailable()){
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                                        == PackageManager.PERMISSION_GRANTED) {
+                                    mflc.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                                        @Override
+                                        public void onSuccess(Location location) {
 
-                        Marker marker = (Marker) hashMapMarker.get("userLocation");
-                        marker.remove();
-                        hashMapMarker.remove("userlocation");
-                        double lat = location.getLatitude();
-                        double lon = location.getLongitude();
-                        LatLng here = new LatLng(lat, lon);
-                        Marker marker1 = mMap.addMarker(new MarkerOptions().snippet("userLocation").position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
-                        hashMapMarker.put("userLocation",marker1);
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here,15));
+                                            double lat = location.getLatitude();
+                                            double lon = location.getLongitude();
+                                            LatLng here = new LatLng(lat, lon);
+                                            Marker marker = mMap.addMarker(new MarkerOptions().snippet("userLocation").position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
+                                            hashMapMarker.put("userLocation", marker);
+                                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 15));
 
+                                        }
+                                    });}}
+
+                        } else{Toast.makeText(getApplicationContext(),"veuillez mettre votre geolocalisation",Toast.LENGTH_SHORT).show();}
                     }
                 });
 
+
             } else {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
 
         }

@@ -118,5 +118,54 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editTextPasswordRegister2" />
 
+        <EditText
+            android:id="@+id/editTextNom"
+            android:layout_width="283dp"
+            android:layout_height="43dp"
+            android:background="@color/beige"
+            android:ems="10"
+            android:hint="  nom"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/editTextPasswordRegister"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView16"
+            android:layout_width="269dp"
+            android:layout_height="12dp"
+            android:textColor="@color/rouge_fonce"
+            android:textSize="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/editTextMailRegister"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextNom" />
+
+        <EditText
+            android:id="@+id/editTextTextPrenom"
+            android:layout_width="283dp"
+            android:layout_height="43dp"
+            android:background="@color/beige"
+            android:ems="10"
+            android:hint="  prénom"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/editTextNom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView17"
+            android:layout_width="269dp"
+            android:layout_height="12dp"
+            android:textColor="@color/rouge_fonce"
+            android:textSize="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/editTextNom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextTextPrenom" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

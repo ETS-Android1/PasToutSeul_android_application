@@ -19,9 +19,12 @@ public class inscription extends AppCompatActivity {
     EditText mail;
     EditText pwd;
     EditText pwd2;
+    EditText Prenom;
+    EditText Nom;
     TextView errMail;
     TextView errPwd1;
     TextView errPwd2;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -45,7 +48,28 @@ public class inscription extends AppCompatActivity {
         this.errMail = findViewById(R.id.txtErrMailRegister);
         this.errPwd1 = findViewById(R.id.txtErrPwd1);
         this.errPwd2 = findViewById(R.id.txtErrPwd2);
+        this.Prenom = findViewById(R.id.editTextTextPrenom);
+        this.Nom = findViewById(R.id.editTextNom);
     }
+
+    /*
+     * Fonction : Récupère le nom
+     * Return Type : String
+     */
+    public String getNom()
+    {
+        return Nom.getText().toString();
+    }
+
+
+
+    /*
+     * Fonction : Récupère le prénom
+     * Return Type : String
+     */
+    public String getPrenom() { return Prenom.getText().toString(); }
+
+
 
     /*
      * Fonction : Récupère le mail
@@ -56,6 +80,8 @@ public class inscription extends AppCompatActivity {
         return mail.getText().toString();
     }
 
+
+
     /*
      * Fonction : Récupère le mot de passe
      * Return Type : String
@@ -65,6 +91,8 @@ public class inscription extends AppCompatActivity {
         return pwd.getText().toString();
     }
 
+
+
     /*
      * Fonction : Récupère le mot de passe à répéter
      * Return Type : String
@@ -73,6 +101,8 @@ public class inscription extends AppCompatActivity {
     {
         return pwd2.getText().toString();
     }
+
+
 
     public int checkErrorMail()
     {
