@@ -87,7 +87,8 @@ public class MainActivity extends AppCompatActivity {
                 //Toast.makeText(getApplicationContext(), "Pas d'erreur(s)\nMail = "+getMail()+"\n Mot de passe = "+getPwd(), Toast.LENGTH_SHORT).show();
                 try {
                     Class.forName("com.mysql.jdbc.Driver");
-                    Connection con = DriverManager.getConnection("jdbc:mysql://db-instance-p14.c7awotg7nzqz.eu-west-3.rds.amazonaws.com/sans_abris_test", "user", "9rAL84539CxkSFjz");
+                    String jdbcUrl = "jdbc:mysql://" + "db-p14-euw1.c0ose8qkskve.eu-west-1.rds.amazonaws.com" + ":" + "3306" + "/" + "edbd" + "?user=" + "admin" + "&password=" + "Qo6HRlidbi3LHjxBGw6B";
+                    Connection con = DriverManager.getConnection(jdbcUrl);
                     String email = String.valueOf(mail.getText());
                     String password = String.valueOf(pwd.getText());
 
