@@ -3,14 +3,14 @@ package com.example.test4;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import com.android.volley.*;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
-import java.net.*;
-import java.io.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.regex.*;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -86,42 +86,76 @@ public class MainActivity extends AppCompatActivity {
             default :
                 errMail.setText("");
                 errPwd.setText("");
-                //Toast.makeText(getApplicationContext(), "Pas d'erreur(s)\nMail = "+getMail()+"\n Mot de passe = "+getPwd(), Toast.LENGTH_SHORT).show();
-
-                // Pour faire une requête on doit créer un thread car sinon notre appli de base se bloque
-                //Méthode pour faire une requête et récupérer le message d'une requête
-                Thread thread = new Thread(){
-                    public void run(){
+                Thread thread = new Thread()
+                {
+                    public void run()
+                    {
                         try {
-                            final HttpURLConnection conn = (HttpURLConnection) new URL("https://db-ezpfla.000webhostapp.com/test.php").openConnection();
-                            conn.connect();
-                            System.out.println(readIt(conn.getInputStream()));
+                            postLogin(getMail(), getPwd(), new VolleyCallBack() {
+                                @Override
+                                public void onSuccess(String res)
+                                {
+                                    if(res.equals("1"))
+                                    {
+                                        errMail.setText("Le compte n'existe pas");
+                                    }
+                                    else if(res.equals("2"))
+                                    {
+                                        errPwd.setText("Mot de passe incorrect");
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(MainActivity.this,"Bienvenue, "+res, Toast.LENGTH_LONG).show();
+                                        Intent intent = new Intent(MainActivity.this, map.class);
+                                        startActivity(intent);
+
+                                    }
+                                }
+                            });
                         }
-                        catch (Exception e){
+                        catch (Exception e)
+                        {
                             e.printStackTrace();
                             System.out.println(e.getMessage());
-                            Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
                         }
                     }
                 };
-                thread.start();
 
+                thread.start();
                 break;
         }
+
+
     }
 
-    //Fonction importer à partir de ce site : https://zestedesavoir.com/tutoriels/pdf/1140/communication-entre-android-et-php-mysql.pdf
-    // Page 14/15
-    private String readIt(InputStream is) throws IOException {
-         BufferedReader r = new BufferedReader(new InputStreamReader(is));
-         StringBuilder response = new StringBuilder();
-         String line;
-            while ((line = r.readLine()) != null) {
-             response.append(line).append('\n');
-             }
-         return response.toString();
-         }
+    public void postLogin(String mail, String password,final VolleyCallBack callback)
+    {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String URL = "https://db-ezpfla.000webhostapp.com/login.php";
 
+        StringRequest postRequest = new StringRequest(Request.Method.POST, URL, response -> {
+            Log.i("Réponse", response);
+            callback.onSuccess(response.trim()); // trim() pour enlever les espaces car la réponse contient des espaces.
+        }, error -> Log.e("Réponse", error.toString()))
+        {
+            @Override
+            protected  Map<String,String> getParams()
+            {
+                Map<String,String> logs = new HashMap<String,String>();
+                //Ajout des arguments
+                logs.put("mail",mail);
+                logs.put("password",password);
+
+                return logs;
+            }
+        };
+
+        queue.add(postRequest);
+    }
+
+    public interface VolleyCallBack{
+        void onSuccess(String res);
+    }
     /*
      * Fonction : Verifie si il y a des erreurs dans la saisie
      * Return : Un entier qui correspond à une erreur.
