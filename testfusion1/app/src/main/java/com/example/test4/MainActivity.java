@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import java.net.*;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -85,30 +87,40 @@ public class MainActivity extends AppCompatActivity {
                 errMail.setText("");
                 errPwd.setText("");
                 //Toast.makeText(getApplicationContext(), "Pas d'erreur(s)\nMail = "+getMail()+"\n Mot de passe = "+getPwd(), Toast.LENGTH_SHORT).show();
-                try {
-                    Class.forName("com.mysql.jdbc.Driver");
-                    String jdbcUrl = "jdbc:mysql://" + "db-p14-euw1.c0ose8qkskve.eu-west-1.rds.amazonaws.com" + ":" + "3306" + "/" + "edbd" + "?user=" + "admin" + "&password=" + "Qo6HRlidbi3LHjxBGw6B";
-                    Connection con = DriverManager.getConnection(jdbcUrl);
-                    String email = String.valueOf(mail.getText());
-                    String password = String.valueOf(pwd.getText());
 
-                    Statement stm = con.createStatement();
-                    String sql = "select * from sans_abris_test where email='"+email+"' and password='"+password+"'";
-                    ResultSet rs = stm.executeQuery(sql);
-                    if (rs.next()){
-                        Toast.makeText(getApplicationContext(),"binks",Toast.LENGTH_SHORT).show();
+                // Pour faire une requête on doit créer un thread car sinon notre appli de base se bloque
+                //Méthode pour faire une requête et récupérer le message d'une requête
+                Thread thread = new Thread(){
+                    public void run(){
+                        try {
+                            final HttpURLConnection conn = (HttpURLConnection) new URL("https://db-ezpfla.000webhostapp.com/test.php").openConnection();
+                            conn.connect();
+                            System.out.println(readIt(conn.getInputStream()));
+                        }
+                        catch (Exception e){
+                            e.printStackTrace();
+                            System.out.println(e.getMessage());
+                            Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
+                        }
                     }
-                    else{Toast.makeText(getApplicationContext(),"sa a pas marché",Toast.LENGTH_SHORT).show();}
+                };
+                thread.start();
 
-                }
-
-                catch (Exception e){
-                    System.out.println(e.getMessage());
-                    Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
-                }
                 break;
         }
     }
+
+    //Fonction importer à partir de ce site : https://zestedesavoir.com/tutoriels/pdf/1140/communication-entre-android-et-php-mysql.pdf
+    // Page 14/15
+    private String readIt(InputStream is) throws IOException {
+         BufferedReader r = new BufferedReader(new InputStreamReader(is));
+         StringBuilder response = new StringBuilder();
+         String line;
+            while ((line = r.readLine()) != null) {
+             response.append(line).append('\n');
+             }
+         return response.toString();
+         }
 
     /*
      * Fonction : Verifie si il y a des erreurs dans la saisie
