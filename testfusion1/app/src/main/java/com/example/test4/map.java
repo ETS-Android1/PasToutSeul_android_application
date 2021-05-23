@@ -44,6 +44,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -118,6 +119,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.getUiSettings().setRotateGesturesEnabled(false);
+        mMap.setMinZoomPreference(14);
         mMap.setMapType(3);
         //mMap.setCompasEnabled(true);
         // Add a marker in Sydney and move the camera
@@ -144,12 +146,15 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
                                     LatLng here = new LatLng(lat, lon);
                                     Marker marker = mMap.addMarker(new MarkerOptions().snippet("userLocation").position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
                                     hashMapMarker.put("userLocation", marker);
-                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 15));
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 17));
 
                                 }
                             });}}
 
-                        } else{Toast.makeText(getApplicationContext(),"veuillez mettre votre geolocalisation",Toast.LENGTH_SHORT).show();}
+                        } else{Toast.makeText(getApplicationContext(),"veuillez mettre votre geolocalisation",Toast.LENGTH_SHORT).show();
+                        LatLng loc = new LatLng(48.82317818259686,2.5644479786118968);
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
+                        }
                     }
                 });
 
@@ -163,6 +168,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         EmmausMarker();
         CHRSMarker();
         toiletteMarker();
+        doucheMarker();
 
         pgrb.setVisibility(View.INVISIBLE);
 
@@ -284,7 +290,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
                                             LatLng here = new LatLng(lat, lon);
                                             Marker marker = mMap.addMarker(new MarkerOptions().snippet("userLocation").position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
                                             hashMapMarker.put("userLocation", marker);
-                                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 15));
+                                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 17));
 
                                         }
                                     });}}
@@ -355,7 +361,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
 
     public void EmmausMarker() {
 
-
         try {
             AssetManager am = getAssets();
             InputStream is = am.open("emmaus.xls");
@@ -384,7 +389,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
     }
 
     public void CHRSMarker() {
-
 
         try {
             AssetManager am = getAssets();
@@ -417,7 +421,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
 
     public void toiletteMarker() {
 
-
         try {
             AssetManager am = getAssets();
             InputStream is = am.open("toilette.xls");
@@ -437,6 +440,36 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
 
 
                 mMap.addMarker(new MarkerOptions().snippet(horraire).position(loc).title(type).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_toilettes)));
+            }
+
+        } catch (Exception e) {
+            Log.d("binks", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
+    public void doucheMarker() {
+
+        try {
+            AssetManager am = getAssets();
+            InputStream is = am.open("douche.xls");
+            Workbook wb = Workbook.getWorkbook(is);
+            Sheet s = wb.getSheet(0);
+            int row = s.getRows();
+
+
+            for (int i = 1; i < row; i++) {
+
+                String nom = s.getCell(0, i).getContents();
+                String[] latlong = s.getCell(2, i).getContents().split(",");
+                double latitude = Double.parseDouble(latlong[0]);
+                double longitude = Double.parseDouble(latlong[1]);
+                LatLng loc = new LatLng(latitude, longitude);
+                String Site = s.getCell(4, i).getContents();
+
+
+                mMap.addMarker(new MarkerOptions().snippet(Site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_douche)));
             }
 
         } catch (Exception e) {
