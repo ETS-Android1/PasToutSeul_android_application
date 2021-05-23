@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,7 @@ public class inscription extends AppCompatActivity {
     TextView errPrenom;
     TextView errNom;
     TextView errUsername;
+    ProgressBar prgb;
 
 
     @Override
@@ -67,6 +69,7 @@ public class inscription extends AppCompatActivity {
         this.errNom = findViewById(R.id.txtErrNom);
         this.errPrenom = findViewById(R.id.txtErrPrenom);
         this.errUsername = findViewById(R.id.txtErrUsername);
+        this.prgb = findViewById(R.id.prgb1);
 
     }
 
@@ -215,6 +218,8 @@ public class inscription extends AppCompatActivity {
 
         if (!checkErrorPrenom()  && !checkErrorNom() && !checkErrorUsername() && !checkErrorMail() && !checkErrorPassword() )
         {
+            prgb.setVisibility(view.VISIBLE);
+            prgb.bringToFront();
             Thread thread = new Thread()
             {
                 public void run()
@@ -226,10 +231,12 @@ public class inscription extends AppCompatActivity {
                                 if(res.equals("user_error"))
                                 {
                                     errUsername.setText("Le nom d'utilisateur est déja pris");
+                                    prgb.setVisibility(view.GONE);
                                 }
                                 else if(res.equals("mail_error"))
                                 {
                                     errMail.setText("Ce mail est déja associé à un compte");
+                                    prgb.setVisibility(view.GONE);
                                 }
                                 else
                                 {
@@ -245,6 +252,7 @@ public class inscription extends AppCompatActivity {
                     {
                         e.printStackTrace();
                         System.out.println(e.getMessage());
+                        prgb.setVisibility(view.GONE);
                     }
                 }
             };

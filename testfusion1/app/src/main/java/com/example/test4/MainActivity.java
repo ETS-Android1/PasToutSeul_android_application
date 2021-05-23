@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.regex.*;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.text.method.PasswordTransformationMethod;
@@ -22,11 +23,13 @@ import android.content.Intent;
 public class MainActivity extends AppCompatActivity {
 
     boolean hide;
+    static boolean cmode;
     EditText pwd;
     EditText mail;
     TextView errMail;
     TextView errPwd;
     ImageButton btnShowHide;
+    ProgressBar pgrb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -47,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
         this.errMail = findViewById(R.id.txtErrMailLogin);
         this.errPwd = findViewById(R.id.txtErrPwdLogin);
         this.hide = true;
+        this.pgrb = findViewById(R.id.prgb);
+        this.cmode = true;
     }
 
     /*
@@ -67,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         return pwd.getText().toString();
     }
 
+
     public void connexion(View view)
     {
         int err = checkError();
@@ -84,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
                 errPwd.setText("Veuillez saisir un mot de passe");
                 break;
             default :
+
+                pgrb.setVisibility(view.VISIBLE);
                 errMail.setText("");
                 errPwd.setText("");
                 Thread thread = new Thread()
@@ -98,15 +106,18 @@ public class MainActivity extends AppCompatActivity {
                                     if(res.equals("1"))
                                     {
                                         errMail.setText("Le compte n'existe pas");
+                                        pgrb.setVisibility(view.GONE);
                                     }
                                     else if(res.equals("2"))
                                     {
                                         errPwd.setText("Mot de passe incorrect");
+                                        pgrb.setVisibility(view.GONE);
                                     }
                                     else
                                     {
                                         Toast.makeText(MainActivity.this,"Bienvenue, "+res, Toast.LENGTH_LONG).show();
                                         Intent intent = new Intent(MainActivity.this, map.class);
+                                        cmode = true;
                                         startActivity(intent);
 
                                     }
@@ -117,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
                         {
                             e.printStackTrace();
                             System.out.println(e.getMessage());
+                            pgrb.setVisibility(view.GONE);
                         }
                     }
                 };
@@ -236,6 +248,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void guestmode(View view)
     {
+        cmode = false;
         Intent intent = new Intent(this,map.class);
         startActivity(intent);
     }

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -19,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,11 +42,15 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+
+import jxl.Cell;
+import jxl.Sheet;
+import jxl.Workbook;
 
 public class map extends FragmentActivity implements OnMapReadyCallback {
 
@@ -65,6 +71,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
     List<Address> addresses;
     double lat;
     double lng;
+    ProgressBar pgrb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +99,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         this.Dispnom = findViewById(R.id.textView13);
         this.Dispcomm = findViewById(R.id.textView14);
         this.mflc = LocationServices.getFusedLocationProviderClient(this);
+        this.pgrb = findViewById(R.id.prgb2);
 
         //listView = findViewById(R.id.sp)
 
@@ -152,6 +160,11 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
 
         }
 
+        EmmausMarker();
+        CHRSMarker();
+        toiletteMarker();
+
+        pgrb.setVisibility(View.INVISIBLE);
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -178,6 +191,14 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
                     });
                     popup.show();
                 }
+
+                if(marker.getSnippet().equals("emmaus")){
+                    AlertDialog.Builder popup = new AlertDialog.Builder(activity);
+                    LayoutInflater inflater = activity.getLayoutInflater();
+                    View view = inflater.inflate(R.layout.activity_emmaus_marker, null);
+                    popup.setView(view);
+                }
+
                 return false;
             }
         });
@@ -331,5 +352,126 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         // after generating our bitmap we are returning our bitmap.
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
+
+    public void EmmausMarker() {
+
+
+        try {
+            AssetManager am = getAssets();
+            InputStream is = am.open("emmaus.xls");
+            Workbook wb = Workbook.getWorkbook(is);
+            Sheet s = wb.getSheet(0);
+            int row = s.getRows();
+
+
+            for (int i=1; i<row;i++){
+                Cell c = s.getCell(2,i);
+                String[] latlong = c.getContents().split(",");
+                double latitude = Double.parseDouble(latlong[0]);
+                double longitude = Double.parseDouble(latlong[1]);
+                LatLng loc = new LatLng(latitude, longitude);
+                String nom = s.getCell(0,i).getContents();
+                String tel = s.getCell(4,i).getContents().replace("33","0");
+
+                mMap.addMarker(new MarkerOptions().snippet(tel).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_emmaus)));
+            }
+
+        } catch (Exception e) {
+            Log.d("binks", e.getMessage());
+            e.printStackTrace();
+        }
+
+    }
+
+    public void CHRSMarker() {
+
+
+        try {
+            AssetManager am = getAssets();
+            InputStream is = am.open("CHRS.xls");
+            Workbook wb = Workbook.getWorkbook(is);
+            Sheet s = wb.getSheet(0);
+            int row = s.getRows();
+
+
+            for (int i=1; i<row;i++){
+                Cell c = s.getCell(2,i);
+                String[] latlong = c.getContents().split(",");
+                double latitude = Double.parseDouble(latlong[0]);
+                double longitude = Double.parseDouble(latlong[1]);
+                LatLng loc = new LatLng(latitude, longitude);
+                String nom = s.getCell(0,i).getContents();
+                String tel = s.getCell(4,i).getContents().replace("33","0");
+
+                mMap.addMarker(new MarkerOptions().snippet(tel).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_refuge)));
+            }
+
+        } catch (Exception e) {
+            Log.d("binks", e.getMessage());
+            e.printStackTrace();
+        }
+
+
+
+    }
+
+    public void toiletteMarker() {
+
+
+        try {
+            AssetManager am = getAssets();
+            InputStream is = am.open("toilette.xls");
+            Workbook wb = Workbook.getWorkbook(is);
+            Sheet s = wb.getSheet(0);
+            int row = s.getRows();
+
+
+            for (int i = 1; i < row; i++) {
+
+                String type = s.getCell(0, i).getContents();
+                String[] latlong = s.getCell(9, i).getContents().split(",");
+                double latitude = Double.parseDouble(latlong[0]);
+                double longitude = Double.parseDouble(latlong[1]);
+                LatLng loc = new LatLng(latitude, longitude);
+                String horraire = s.getCell(4, i).getContents();
+
+
+                mMap.addMarker(new MarkerOptions().snippet(horraire).position(loc).title(type).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_toilettes)));
+            }
+
+        } catch (Exception e) {
+            Log.d("binks", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
+    public LatLng getLocationFromAddress(Context context,String strAddress) {
+
+        Geocoder coder = new Geocoder(context);
+        List<Address> address;
+        LatLng p1 = null;
+
+        try {
+            // May throw an IOException
+            address = coder.getFromLocationName(strAddress, 5);
+            if (address == null) {
+                return null;
+            }
+
+            Address location = address.get(0);
+            p1 = new LatLng(location.getLatitude(), location.getLongitude() );
+
+        } catch (IOException ex) {
+
+            ex.printStackTrace();
+        }
+
+        return p1;
+    }
+
+
+
+
 
 }
