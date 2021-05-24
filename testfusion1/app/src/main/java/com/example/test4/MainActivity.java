@@ -7,7 +7,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.MotionEvent;
 import android.view.View;
 import com.android.volley.*;
@@ -82,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     public void mapActivity(View view, String user)
     {
         Intent intent = new Intent(MainActivity.this, map.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK  |Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("EXTRA_SESSION_ID", user);
         startActivity(intent);
     }
@@ -123,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void connexion(View view)
     {
+
         // Vérification des erreurs
         if(!checkError())
         {
@@ -155,9 +158,9 @@ public class MainActivity extends AppCompatActivity {
                             }
                             else // Aucunes erreurs
                             {
-                                Toast.makeText(MainActivity.this,"Bienvenue, "+res, Toast.LENGTH_LONG).show();
-                                pgrb.setVisibility(view.GONE);
                                 mapActivity(view,res);
+                                pgrb.setVisibility(view.GONE);
+                                Toast.makeText(MainActivity.this,"Bienvenue, "+res, Toast.LENGTH_LONG).show();
                                 cmode = true;
 
 
@@ -237,13 +240,7 @@ public class MainActivity extends AppCompatActivity {
         pwd.setBackgroundResource(R.drawable.backwithborder_noerror);
         pwd.setHintTextColor(this.getResources().getColor(R.color.rouge_clair));
 
-        //Détection du bon format d'un mail : https://www.javatpoint.com/java-email-validation
-        //Pattern d'un mail "@ ... "
-        String regex = "^(.+)@(.+)$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(email);
-
-        if(!matcher.matches())
+        if(!isValidEmail(email))
         {
             hasError = true;
             errMail.setText("Veuillez saisir un email valide");
@@ -263,6 +260,25 @@ public class MainActivity extends AppCompatActivity {
         return hasError;
     }
 
+    //https://stackoverflow.com/questions/36040154/email-validation-on-edittext-android
+    private static boolean isValidEmail(String email)
+    {
+        return !TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    private boolean isValidUsername(String username)
+    {
+        char [] banArray = {'!','"','#','$','%','&','\'', '(',')','*','+',',','-','.','/',':',';','<','=','>','?','@','[','\\',']','^','_','`','{','|','}','~'};
+
+        for(int i = 0; i < banArray.length; i++)
+        {
+            if(username.contains(Character.toString(banArray[i])))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public void forgotPwd(View view)
     {
