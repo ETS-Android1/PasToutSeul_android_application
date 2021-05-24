@@ -46,29 +46,8 @@ public class MainActivity extends AppCompatActivity {
         initAttribute();
 
         //Ajout d'action à effectuer lorsqu'on clique sur les EditText
-        pwd.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(MotionEvent.ACTION_UP == event.getAction()) {
-                    pwd.setTextColor(getResources().getColor(R.color.black));
-                    pwd.setHintTextColor(getResources().getColor(R.color.gris));
-                }
-
-                return false; // return is important...
-            }
-        });
-
-        mail.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(MotionEvent.ACTION_UP == event.getAction()) {
-                    mail.setTextColor(getResources().getColor(R.color.black));
-                    mail.setHintTextColor(getResources().getColor(R.color.gris));
-                }
-
-                return false; // return is important...
-            }
-        });
+        createTouchListenerEditText(pwd);
+        createTouchListenerEditText(mail);
 
         findViewById(R.id.layoutActivityMain).setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -82,6 +61,31 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /*
+     * Procédure : Création des touch listener pour les editText (Détails visuels pour les editText après une erreur)
+     * */
+    public void createTouchListenerEditText(EditText editText)
+    {
+        editText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(MotionEvent.ACTION_UP == event.getAction()) {
+                    editText.setTextColor(getResources().getColor(R.color.black));
+                    editText.setHintTextColor(getResources().getColor(R.color.gris));
+                }
+
+                return false;
+            }
+        });
+    }
+
+    public void mapActivity(View view, String user)
+    {
+        Intent intent = new Intent(MainActivity.this, map.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("EXTRA_SESSION_ID", user);
+        startActivity(intent);
+    }
     /*
      * Méthode : Initialisation des attributs
      */
@@ -119,45 +123,48 @@ public class MainActivity extends AppCompatActivity {
 
     public void connexion(View view)
     {
+        // Vérification des erreurs
         if(!checkError())
         {
             hideKeyboard(view);
 
-            //Afficher la barre de progression
+            // Afficher la barre de progression
             pgrb.setVisibility(view.VISIBLE);
 
             // Création d'un thread afin d'effectuer une requête vers le serveur web sans bloquer l'application.
             Thread thread = new Thread()
             {
-                @SuppressLint("SetTextI18n")
+                @SuppressLint("SetTextI18n") // Ignore le warning
                 public void run()
                 {
                     try
                     {
+                        // Requête de type POST ( - rapide que la requête GET / + sécure que la requête GET)
                         postLogin(getMail(), getPwd(), res -> {
-                            if(res.equals("1"))
+                            if(res.equals("1")) // Erreur(s) concernant le compte de l'utilisateur
                             {
                                 errMail.setText("Ce compte n'existe pas");
                                 mail.setBackgroundResource(R.drawable.backwithborder_noerror);
                                 pgrb.setVisibility(view.GONE);
                             }
-                            else if(res.equals("2"))
+                            else if(res.equals("2")) // Erreur(s) concernant le mot de passe
                             {
                                 errPwd.setText("Mot de passe incorrect");
                                 pwd.setBackgroundResource(R.drawable.backwithborder_error);
                                 pgrb.setVisibility(view.GONE);
                             }
-                            else
+                            else // Aucunes erreurs
                             {
                                 Toast.makeText(MainActivity.this,"Bienvenue, "+res, Toast.LENGTH_LONG).show();
-                                Intent intent = new Intent(MainActivity.this, map.class);
+                                pgrb.setVisibility(view.GONE);
+                                mapActivity(view,res);
                                 cmode = true;
-                                startActivity(intent);
+
 
                             }
                         });
                     }
-                    catch (Exception e)
+                    catch (Exception e) // Si erreur(s) de la requête
                     {
                         e.printStackTrace();
                         System.out.println(e.getMessage());
@@ -171,13 +178,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /*
+    * Procédure : Envoi d'une requête de type POST pour se connecter
+    * */
     public void postLogin(String mail, String password,final VolleyCallBack callback)
     {
         RequestQueue queue = Volley.newRequestQueue(this);
+
+        // URL du serveur web
         String URL = "https://db-ezpfla.000webhostapp.com/login.php";
 
         StringRequest postRequest = new StringRequest(Request.Method.POST, URL, response -> {
             Log.i("Réponse", response);
+            // Appel d'une fonction à éxecuter si succès de la requête
             callback.onSuccess(response.trim()); // trim() pour enlever les espaces car la réponse contient des espaces.
         }, error -> Log.e("Réponse", error.toString()))
         {
@@ -193,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        //Lance la requête
         queue.add(postRequest);
     }
 
@@ -255,9 +269,11 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), "Mot de passe oublié ?",Toast.LENGTH_SHORT).show();
     }
 
+    /*
+    * Procédure : Affiche/Cache le mot de passe
+    */
     public void show_hide(View view)
     {
-
         if(hide)
         {
             btnShowHide.setBackgroundResource(R.drawable.affiche);
@@ -280,6 +296,7 @@ public class MainActivity extends AppCompatActivity {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
+
     public void createAccountActivity(View view)
     {
         Intent intent = new Intent(this,inscription.class);
@@ -292,6 +309,4 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this,map.class);
         startActivity(intent);
     }
-
-
 }
