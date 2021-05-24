@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/orange_jaune"
+    android:theme="@style/Theme.Test4"
     tools:context=".MainActivity">
 
 
@@ -16,7 +17,7 @@
             android:layout_height="45dp"
             android:background="@drawable/backwithborder_noerror"
             android:ems="10"
-            android:hint="  Adresse e-mail"
+            android:hint="  E-mail"
             android:textColorHint="@color/gris"
             android:inputType="textEmailAddress"
             android:textStyle="bold"

@@ -2,133 +2,34 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutActivityInscription"
+    android:clickable="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/orange_jaune">
+    android:background="@drawable/orange_jaune"
+    android:theme="@style/Theme.Test4">
 
 
     <EditText
         android:id="@+id/editTextMailRegister"
         android:layout_width="283dp"
         android:layout_height="43dp"
-        android:background="@color/beige"
+        android:background="@drawable/backwithborder_noerror"
         android:ems="10"
         android:hint="  Adresse e-mail"
         android:inputType="textEmailAddress"
         android:textStyle="bold"
+        android:textColorHint="@color/gris"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.507"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.413" />
-
-    <EditText
-        android:id="@+id/editTextUsernameRegister"
-        android:layout_width="283dp"
-        android:layout_height="43dp"
-        android:background="@color/beige"
-        android:ems="10"
-        android:hint="  Nom d'utilisateur "
-        android:inputType="textEmailAddress"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/editTextMailRegister"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNom"
-        app:layout_constraintVertical_bias="0.541" />
-
-    <EditText
-        android:id="@+id/editTextPasswordRegister"
-        android:layout_width="283dp"
-        android:layout_height="43dp"
-        android:background="@color/beige"
-        android:ems="10"
-        android:hint="  Mot de passe"
-        android:inputType="textPassword"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.512"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextMailRegister"
-        app:layout_constraintVertical_bias="0.044" />
-
-    <EditText
-            android:id="@+id/editTextPasswordRegister2"
-            android:layout_width="283dp"
-            android:layout_height="43dp"
-            android:background="@color/beige"
-            android:ems="10"
-            android:hint="  Répétez le mot de passe"
-            android:inputType="textPassword"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.515"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextPasswordRegister"
-            app:layout_constraintVertical_bias="0.044" />
-
-        <Button
-            android:id="@+id/btnCreateAccount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="createAccount"
-            android:text="Créer un compte"
-            android:textStyle="bold"
-            app:backgroundTint="@color/orange"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextPasswordRegister2"
-            app:layout_constraintVertical_bias="0.155" />
-
-        <Button
-            android:id="@+id/btnGotAccount"
-            android:layout_width="189dp"
-            android:layout_height="39dp"
-            android:background="@color/transparent"
-            android:onClick="loginActivity"
-            android:text="Déja un compte ?"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.506"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnCreateAccount"
-            app:layout_constraintVertical_bias="0.084" />
-
-
-        <TextView
-            android:id="@+id/txtErrMailRegister"
-            android:layout_width="269dp"
-            android:layout_height="12dp"
-            android:textColor="@color/rouge_fonce"
-            android:textSize="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/editTextPasswordRegister"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextMailRegister" />
-
-        <TextView
-            android:id="@+id/txtErrPwd1"
-            android:layout_width="269dp"
-            android:layout_height="12dp"
-            android:textColor="@color/rouge_fonce"
-            android:textSize="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/editTextPasswordRegister2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextPasswordRegister" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextUsernameRegister"
+        app:layout_constraintVertical_bias="0.05" />
 
     <TextView
         android:id="@+id/txtErrPwd2"
-        android:layout_width="269dp"
-        android:layout_height="12dp"
+        android:layout_width="274dp"
+        android:layout_height="17dp"
         android:textColor="@color/rouge_fonce"
         android:textSize="10dp"
         app:layout_constraintBottom_toTopOf="@+id/btnCreateAccount"
@@ -139,76 +40,136 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <EditText
-        android:id="@+id/editTextNom"
+        android:id="@+id/editTextPasswordRegister"
         android:layout_width="283dp"
         android:layout_height="43dp"
-        android:background="@color/beige"
+        android:background="@drawable/backwithborder_noerror"
         android:ems="10"
-        android:hint="  Nom"
+        android:hint="  Mot de passe"
+        android:inputType="textPassword"
         android:textStyle="bold"
+        android:textColorHint="@color/gris"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPrenom"
-        app:layout_constraintVertical_bias="0.033" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextMailRegister"
+        app:layout_constraintVertical_bias="0.05" />
 
     <TextView
-            android:id="@+id/txtErrNom"
-            android:layout_width="269dp"
-            android:layout_height="12dp"
-            android:textColor="@color/rouge_fonce"
-            android:textSize="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/editTextUsernameRegister"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextNom" />
+        android:id="@+id/txtErrPwd1"
+        android:layout_width="274dp"
+        android:layout_height="17dp"
+        android:textColor="@color/rouge_fonce"
+        android:textSize="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/editTextPasswordRegister2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.528"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextPasswordRegister"
+        app:layout_constraintVertical_bias="0.5" />
 
-        <TextView
-            android:id="@+id/txtErrUsername"
-            android:layout_width="269dp"
-            android:layout_height="12dp"
-            android:textColor="@color/rouge_fonce"
-            android:textSize="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/editTextMailRegister"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextUsernameRegister" />
+    <TextView
+        android:id="@+id/txtErrMailRegister"
+        android:layout_width="274dp"
+        android:layout_height="17dp"
+        android:textColor="@color/rouge_fonce"
+        android:textSize="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/editTextPasswordRegister"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.528"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextMailRegister"
+        app:layout_constraintVertical_bias="0.5" />
 
     <EditText
-        android:id="@+id/editTextTextPrenom"
+        android:id="@+id/editTextPasswordRegister2"
         android:layout_width="283dp"
         android:layout_height="43dp"
-        android:background="@color/beige"
+        android:background="@drawable/backwithborder_noerror"
         android:ems="10"
-        android:hint="  Prénom"
+        android:hint="  Répétez le mot de passe"
+        android:inputType="textPassword"
         android:textStyle="bold"
+        android:textColorHint="@color/gris"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextPasswordRegister"
+        app:layout_constraintVertical_bias="0.05" />
+
+    <EditText
+        android:id="@+id/editTextUsernameRegister"
+        android:layout_width="283dp"
+        android:layout_height="43dp"
+        android:background="@drawable/backwithborder_noerror"
+        android:ems="10"
+        android:hint="  Nom d'utilisateur "
+        android:inputType="textEmailAddress"
+        android:textStyle="bold"
+        android:textColorHint="@color/gris"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.165" />
+        app:layout_constraintVertical_bias="0.225" />
+
+    <Button
+        android:id="@+id/btnCreateAccount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:onClick="createAccount"
+        android:text="Créer un compte"
+        android:textStyle="bold"
+        app:backgroundTint="@color/orange"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextPasswordRegister2"
+        app:layout_constraintVertical_bias="0.077" />
+
+    <Button
+        android:id="@+id/btnGotAccount"
+        android:layout_width="189dp"
+        android:layout_height="39dp"
+        android:background="@color/transparent"
+        android:onClick="loginActivity"
+        android:text="Déja un compte ?"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnCreateAccount"
+        app:layout_constraintVertical_bias="0.084" />
+
 
     <TextView
-            android:id="@+id/txtErrPrenom"
-            android:layout_width="269dp"
-            android:layout_height="12dp"
-            android:textColor="@color/rouge_fonce"
-            android:textSize="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/editTextNom"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.528"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextTextPrenom" />
+        android:id="@+id/txtErrUsername"
+        android:layout_width="274dp"
+        android:layout_height="17dp"
+        android:textColor="@color/rouge_fonce"
+        android:textSize="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/editTextMailRegister"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.528"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextUsernameRegister"
+        app:layout_constraintVertical_bias="0.5" />
 
     <ProgressBar
-        android:id="@+id/prgb1"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:visibility="gone"
+        android:id="@+id/pgrbInscription"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="103dp"
+        android:layout_height="95dp"
+        android:indeterminateDrawable="@drawable/progress"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.369" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
