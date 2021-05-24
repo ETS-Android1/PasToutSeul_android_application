@@ -169,6 +169,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         CHRSMarker();
         toiletteMarker();
         doucheMarker();
+        restoMarker();
 
         pgrb.setVisibility(View.INVISIBLE);
 
@@ -470,6 +471,35 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
 
 
                 mMap.addMarker(new MarkerOptions().snippet(Site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_douche)));
+            }
+
+        } catch (Exception e) {
+            Log.d("binks", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
+    public void restoMarker() {
+
+        try {
+            AssetManager am = getAssets();
+            InputStream is = am.open("restoducoeur.xls");
+            Workbook wb = Workbook.getWorkbook(is);
+            Sheet s = wb.getSheet(0);
+            int row = s.getRows();
+
+
+            for (int i=1; i<row;i++){
+                Cell c = s.getCell(2,i);
+                String[] latlong = c.getContents().split(",");
+                double latitude = Double.parseDouble(latlong[0]);
+                double longitude = Double.parseDouble(latlong[1]);
+                LatLng loc = new LatLng(latitude, longitude);
+                String nom = s.getCell(0,i).getContents();
+                String tel = s.getCell(4,i).getContents().replace("33","0");
+
+                mMap.addMarker(new MarkerOptions().snippet(tel).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_restos_du_coeur_logo)));
             }
 
         } catch (Exception e) {
