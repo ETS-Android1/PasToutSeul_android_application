@@ -5,7 +5,9 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -19,12 +21,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.w3c.dom.Text;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class inscription extends AppCompatActivity {
 
@@ -65,7 +64,7 @@ public class inscription extends AppCompatActivity {
     /*
     * Procédure : Création des touch listener pour les editText (Détails visuels pour les editText après une erreur)
     * */
-    public void createTouchListenerEditText(EditText editText)
+    private void createTouchListenerEditText(EditText editText)
     {
         editText.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -87,7 +86,7 @@ public class inscription extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void initAttributes()
+    private void initAttributes()
     {
         this.mail = findViewById(R.id.editTextMailRegister);
         this.pwd = findViewById(R.id.editTextPasswordRegister);
@@ -105,7 +104,7 @@ public class inscription extends AppCompatActivity {
      * Fonction : Récupère le mail
      * Return Type : String
      */
-    public String getMail()
+    private String getMail()
     {
         return mail.getText().toString();
     }
@@ -114,7 +113,7 @@ public class inscription extends AppCompatActivity {
      * Fonction : Récupère le mot de passe
      * Return Type : String
      */
-    public String getPwd()
+    private String getPwd()
     {
         return pwd.getText().toString();
     }
@@ -123,27 +122,21 @@ public class inscription extends AppCompatActivity {
      * Fonction : Récupère le mot de passe à répéter
      * Return Type : String
      */
-    public String getPwd2(){return pwd2.getText().toString();}
+    private String getPwd2(){return pwd2.getText().toString();}
 
 
     /*
      * Fonction : Récupère le mot de passe à répéter
      * Return Type : String
      */
-    public String getUsername(){return Username.getText().toString();}
+    private String getUsername(){return Username.getText().toString();}
 
 
-    public boolean checkErrorMail()
+    private boolean checkErrorMail()
     {
         String email = getMail();
 
-        //Détection du bon format d'un mail : https://www.javatpoint.com/java-email-validation
-        //Pattern d'un mail "@ ... "
-        String regex = "^(.+)@(.+)$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(email);
-
-        if(!matcher.matches())
+        if(!isValidEmail(email))
         {
             errMail.setText("Veuillez saisir un email valide");
             affichageErrorMail();
@@ -159,11 +152,55 @@ public class inscription extends AppCompatActivity {
 
     }
 
-    public boolean checkErrorPassword()
+    //https://stackoverflow.com/questions/36040154/email-validation-on-edittext-android
+    private static boolean isValidEmail(String email) {
+        return !TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+    /*
+    * Fonction : Vérifie si le nom d'utilisateur est valide
+    * Return : false si non valide
+    *          true sinon
+    * */
+    private boolean isValidUsername(String username)
+    {
+        char [] banArray = {'!','"','#','$','%','&','\'', '(',')','*','+',',','-','.','/',':',';','<','=','>','?','@','[','\\',']','^','_','`','{','|','}','~'};
+
+        for(int i = 0; i < banArray.length; i++)
+        {
+            if(username.contains(Character.toString(banArray[i])))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /*
+     * Fonction : Vérifie si le nom d'utilisateur est valide
+     * Return : false si non valide
+     *          true sinon
+     * */
+    private boolean isValidPassword(String mdp)
+    {
+        char [] banArray = {'!','"','#','$','%','&','\'', '(',')','*','+',',','-','.','/',':',';','<','=','>','?','@','[','\\',']','^','_','`','{','|','}','~'};
+
+        for(int i = 0; i < banArray.length; i++)
+        {
+            if(mdp.contains(Character.toString(banArray[i])))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean checkErrorPassword()
     {
         String password1 = getPwd();
         String password2 = getPwd2();
 
+        int len = password1.length();
         if(password1.equals(""))
         {
             errPwd1.setText("Veuillez saisir un mot de passe valide");
@@ -173,6 +210,26 @@ public class inscription extends AppCompatActivity {
             resetAffichageErrorPass2();
             return true;
         }
+
+        if(len < 8 || len > 16)
+        {
+            errPwd1.setText("Votre mot de passe doit contenir entre 8 et 16 caractères");
+            affichageErrorPass1();
+
+            errPwd2.setText("");
+            resetAffichageErrorPass2();
+        }
+
+        if(!isValidPassword(password1))
+        {
+            errPwd1.setText("Le mot de passe ne doit pas contenir ces caractères :  !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~");
+            affichageErrorPass1();
+
+            errPwd2.setText("");
+            resetAffichageErrorPass2();
+            return true;
+        }
+
         if(!password2.equals(password1))
         {
             errPwd1.setText("");
@@ -192,13 +249,21 @@ public class inscription extends AppCompatActivity {
         return false;
     }
 
-    public boolean checkErrorUsername()
+    private boolean checkErrorUsername()
     {
         String nom_user = getUsername();
 
         if(nom_user.equals(""))
         {
             errUsername.setText("Veuillez saisir un nom d'utilisateur valide");
+            affichageErrorUsername();
+            return true;
+        }
+
+        if(!isValidUsername(nom_user))
+        {
+            System.out.println("aezae");
+            errUsername.setText("Le nom d'utilisateur ne doit pas contenir ces caractères : !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~");
             affichageErrorUsername();
             return true;
         }
@@ -260,7 +325,7 @@ public class inscription extends AppCompatActivity {
 
     }
 
-    public void postCreateAccount(String username, String mail, String password,final MainActivity.VolleyCallBack callback)
+    private void postCreateAccount(String username, String mail, String password,final MainActivity.VolleyCallBack callback)
     {
         RequestQueue queue = Volley.newRequestQueue(this);
         String URL = "https://db-ezpfla.000webhostapp.com/createAccount.php";
@@ -286,63 +351,63 @@ public class inscription extends AppCompatActivity {
         queue.add(postRequest);
     }
 
-    public void affichageErrorMail()
+    private void affichageErrorMail()
     {
         mail.setBackgroundResource(R.drawable.backwithborder_error);
         mail.setTextColor(this.getResources().getColor(R.color.rouge_clair));
         mail.setHintTextColor(this.getResources().getColor(R.color.rouge_clair));
     }
 
-    public void affichageErrorUsername()
+    private void affichageErrorUsername()
     {
         Username.setBackgroundResource(R.drawable.backwithborder_error);
         Username.setTextColor(this.getResources().getColor(R.color.rouge_clair));
         Username.setHintTextColor(this.getResources().getColor(R.color.rouge_clair));
     }
 
-    public void affichageErrorPass1()
+    private void affichageErrorPass1()
     {
         pwd2.setBackgroundResource(R.drawable.backwithborder_error);
         pwd2.setTextColor(this.getResources().getColor(R.color.rouge_clair));
         pwd2.setHintTextColor(this.getResources().getColor(R.color.rouge_clair));
     }
 
-    public void affichageErrorPass2()
+    private void affichageErrorPass2()
     {
         pwd.setBackgroundResource(R.drawable.backwithborder_error);
         pwd.setTextColor(this.getResources().getColor(R.color.rouge_clair));
         pwd.setHintTextColor(this.getResources().getColor(R.color.rouge_clair));
     }
 
-    public void resetAffichageErrorMail()
+    private void resetAffichageErrorMail()
     {
         mail.setBackgroundResource(R.drawable.backwithborder_noerror);
         mail.setTextColor(this.getResources().getColor(R.color.black));
         mail.setHintTextColor(this.getResources().getColor(R.color.gris));
     }
 
-    public void resetAffichageErrorUsername()
+    private void resetAffichageErrorUsername()
     {
         Username.setBackgroundResource(R.drawable.backwithborder_noerror);
         Username.setTextColor(this.getResources().getColor(R.color.black));
         Username.setHintTextColor(this.getResources().getColor(R.color.gris));
     }
 
-    public void resetAffichageErrorPass1()
+    private void resetAffichageErrorPass1()
     {
         pwd2.setBackgroundResource(R.drawable.backwithborder_noerror);
         pwd2.setTextColor(this.getResources().getColor(R.color.black));
         pwd2.setHintTextColor(this.getResources().getColor(R.color.gris));
     }
 
-    public void resetAffichageErrorPass2()
+    private void resetAffichageErrorPass2()
     {
         pwd.setBackgroundResource(R.drawable.backwithborder_noerror);
         pwd.setTextColor(this.getResources().getColor(R.color.black));
         pwd.setHintTextColor(this.getResources().getColor(R.color.gris));
     }
 
-    public void hideKeyboard(View view)
+    private void hideKeyboard(View view)
     {
         // Cacher le clavier
         if (this.getCurrentFocus() != null) {
