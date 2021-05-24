@@ -24,17 +24,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextUsernameRegister"
-        app:layout_constraintVertical_bias="0.05" />
+        app:layout_constraintVertical_bias="0.07" />
 
     <TextView
         android:id="@+id/txtErrPwd2"
-        android:layout_width="274dp"
-        android:layout_height="17dp"
+        android:layout_width="336dp"
+        android:layout_height="25dp"
         android:textColor="@color/rouge_fonce"
         android:textSize="10dp"
         app:layout_constraintBottom_toTopOf="@+id/btnCreateAccount"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.528"
+        app:layout_constraintHorizontal_bias="0.973"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextPasswordRegister2"
         app:layout_constraintVertical_bias="0.0" />
@@ -53,33 +53,33 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextMailRegister"
-        app:layout_constraintVertical_bias="0.05" />
+        app:layout_constraintVertical_bias="0.07" />
 
     <TextView
         android:id="@+id/txtErrPwd1"
-        android:layout_width="274dp"
-        android:layout_height="17dp"
+        android:layout_width="336dp"
+        android:layout_height="25dp"
         android:textColor="@color/rouge_fonce"
         android:textSize="10dp"
         app:layout_constraintBottom_toTopOf="@+id/editTextPasswordRegister2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.528"
+        app:layout_constraintHorizontal_bias="0.973"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextPasswordRegister"
-        app:layout_constraintVertical_bias="0.5" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/txtErrMailRegister"
-        android:layout_width="274dp"
-        android:layout_height="17dp"
+        android:layout_width="336dp"
+        android:layout_height="25dp"
         android:textColor="@color/rouge_fonce"
         android:textSize="10dp"
         app:layout_constraintBottom_toTopOf="@+id/editTextPasswordRegister"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.528"
+        app:layout_constraintHorizontal_bias="0.973"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextMailRegister"
-        app:layout_constraintVertical_bias="0.5" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/editTextPasswordRegister2"
@@ -95,7 +95,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextPasswordRegister"
-        app:layout_constraintVertical_bias="0.05" />
+        app:layout_constraintVertical_bias="0.07" />
 
     <EditText
         android:id="@+id/editTextUsernameRegister"
@@ -148,16 +148,16 @@
 
     <TextView
         android:id="@+id/txtErrUsername"
-        android:layout_width="274dp"
-        android:layout_height="17dp"
+        android:layout_width="336dp"
+        android:layout_height="25dp"
         android:textColor="@color/rouge_fonce"
         android:textSize="10dp"
         app:layout_constraintBottom_toTopOf="@+id/editTextMailRegister"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.528"
+        app:layout_constraintHorizontal_bias="0.973"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextUsernameRegister"
-        app:layout_constraintVertical_bias="0.5" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <ProgressBar
         android:id="@+id/pgrbInscription"
