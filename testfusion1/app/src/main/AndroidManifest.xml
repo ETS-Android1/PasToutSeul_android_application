@@ -21,11 +21,13 @@
         <activity
             android:name=".Compte"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Test4"/>
         <activity
             android:name=".chat"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Test4"/>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -42,17 +44,21 @@
             android:name=".map"
             android:configChanges="orientation"
             android:label="@string/title_activity_map"
+            android:theme="@style/Theme.Test4"
             android:screenOrientation="portrait" />
         <activity
             android:name=".menu"
+            android:theme="@style/Theme.Test4"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".inscription"
+            android:theme="@style/Theme.Test4"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
+            android:theme="@style/Theme.Test4"
             android:configChanges="orientation"
             android:screenOrientation="portrait">
             <intent-filter>
