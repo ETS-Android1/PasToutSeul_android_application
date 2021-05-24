@@ -2,8 +2,13 @@ package com.example.test4;
 
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import com.android.volley.*;
 import com.android.volley.toolbox.StringRequest;
@@ -12,6 +17,8 @@ import com.android.volley.toolbox.Volley;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.regex.*;
+
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -37,6 +44,42 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initAttribute();
+
+        //Ajout d'action à effectuer lorsqu'on clique sur les EditText
+        pwd.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(MotionEvent.ACTION_UP == event.getAction()) {
+                    pwd.setTextColor(getResources().getColor(R.color.black));
+                    pwd.setHintTextColor(getResources().getColor(R.color.gris));
+                }
+
+                return false; // return is important...
+            }
+        });
+
+        mail.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(MotionEvent.ACTION_UP == event.getAction()) {
+                    mail.setTextColor(getResources().getColor(R.color.black));
+                    mail.setHintTextColor(getResources().getColor(R.color.gris));
+                }
+
+                return false; // return is important...
+            }
+        });
+
+        findViewById(R.id.layoutActivityMain).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(MotionEvent.ACTION_UP == event.getAction()) {
+                    hideKeyboard(v);
+                }
+
+                return false; // return is important...
+            }
+        });
     }
 
     /*
@@ -50,7 +93,8 @@ public class MainActivity extends AppCompatActivity {
         this.errMail = findViewById(R.id.txtErrMailLogin);
         this.errPwd = findViewById(R.id.txtErrPwdLogin);
         this.hide = true;
-        this.pgrb = findViewById(R.id.prgb);
+        this.pgrb = findViewById(R.id.prgbLogin);
+        this.pgrb.setVisibility(View.INVISIBLE);
         this.cmode = true;
     }
 
@@ -75,69 +119,56 @@ public class MainActivity extends AppCompatActivity {
 
     public void connexion(View view)
     {
-        int err = checkError();
-        switch (err){
-            case 1 :
-                errMail.setText("Veuillez saisir un email valide");
-                errPwd.setText("");
-                break;
-            case 2 :
-                errPwd.setText("Veuillez saisir un mot de passe valide");
-                errMail.setText("");
-                break;
-            case 3 :
-                errMail.setText("Veuillez saisir un email valide");
-                errPwd.setText("Veuillez saisir un mot de passe");
-                break;
-            default :
+        if(!checkError())
+        {
+            hideKeyboard(view);
 
-                pgrb.setVisibility(view.VISIBLE);
-                errMail.setText("");
-                errPwd.setText("");
-                Thread thread = new Thread()
+            //Afficher la barre de progression
+            pgrb.setVisibility(view.VISIBLE);
+
+            // Création d'un thread afin d'effectuer une requête vers le serveur web sans bloquer l'application.
+            Thread thread = new Thread()
+            {
+                @SuppressLint("SetTextI18n")
+                public void run()
                 {
-                    public void run()
+                    try
                     {
-                        try {
-                            postLogin(getMail(), getPwd(), new VolleyCallBack() {
-                                @Override
-                                public void onSuccess(String res)
-                                {
-                                    if(res.equals("1"))
-                                    {
-                                        errMail.setText("Le compte n'existe pas");
-                                        pgrb.setVisibility(view.GONE);
-                                    }
-                                    else if(res.equals("2"))
-                                    {
-                                        errPwd.setText("Mot de passe incorrect");
-                                        pgrb.setVisibility(view.GONE);
-                                    }
-                                    else
-                                    {
-                                        Toast.makeText(MainActivity.this,"Bienvenue, "+res, Toast.LENGTH_LONG).show();
-                                        Intent intent = new Intent(MainActivity.this, map.class);
-                                        cmode = true;
-                                        startActivity(intent);
+                        postLogin(getMail(), getPwd(), res -> {
+                            if(res.equals("1"))
+                            {
+                                errMail.setText("Ce compte n'existe pas");
+                                mail.setBackgroundResource(R.drawable.backwithborder_noerror);
+                                pgrb.setVisibility(view.GONE);
+                            }
+                            else if(res.equals("2"))
+                            {
+                                errPwd.setText("Mot de passe incorrect");
+                                pwd.setBackgroundResource(R.drawable.backwithborder_error);
+                                pgrb.setVisibility(view.GONE);
+                            }
+                            else
+                            {
+                                Toast.makeText(MainActivity.this,"Bienvenue, "+res, Toast.LENGTH_LONG).show();
+                                Intent intent = new Intent(MainActivity.this, map.class);
+                                cmode = true;
+                                startActivity(intent);
 
-                                    }
-                                }
-                            });
-                        }
-                        catch (Exception e)
-                        {
-                            e.printStackTrace();
-                            System.out.println(e.getMessage());
-                            pgrb.setVisibility(view.GONE);
-                        }
+                            }
+                        });
                     }
-                };
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                        System.out.println(e.getMessage());
+                        pgrb.setVisibility(view.GONE);
+                    }
+                }
+            };
 
-                thread.start();
-                break;
+            //Lancement du thread
+            thread.start();
         }
-
-
     }
 
     public void postLogin(String mail, String password,final VolleyCallBack callback)
@@ -153,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected  Map<String,String> getParams()
             {
-                Map<String,String> logs = new HashMap<String,String>();
+                Map<String,String> logs = new HashMap<>();
                 //Ajout des arguments
                 logs.put("mail",mail);
                 logs.put("password",password);
@@ -168,23 +199,29 @@ public class MainActivity extends AppCompatActivity {
     public interface VolleyCallBack{
         void onSuccess(String res);
     }
+
     /*
      * Fonction : Verifie si il y a des erreurs dans la saisie
-     * Return : Un entier qui correspond à une erreur.
-     *          0 : Pas d'erreur
-     *          1 : Le format de l'email est incorrect seulement
-     *          2 : L'utilisateur n'a pas saisie de mot de passe seulement
-     *          3 : Erreur 1 et 2
+     * Return : false si aucune erreur
+     *          true sinon
      */
-    public int checkError()
+    @SuppressLint("SetTextI18n")
+    public boolean checkError()
     {
+        Boolean hasError = false;
+
         String email = getMail();
         String password = getPwd();
 
-        Boolean isMail = true;
-        Boolean isPass = true;
+        //Reinitialisation de l'affichage
+        errPwd.setText("");
+        errMail.setText("");
 
-        int res = 0;
+        mail.setBackgroundResource(R.drawable.backwithborder_noerror);
+        mail.setHintTextColor(this.getResources().getColor(R.color.rouge_clair));
+
+        pwd.setBackgroundResource(R.drawable.backwithborder_noerror);
+        pwd.setHintTextColor(this.getResources().getColor(R.color.rouge_clair));
 
         //Détection du bon format d'un mail : https://www.javatpoint.com/java-email-validation
         //Pattern d'un mail "@ ... "
@@ -194,27 +231,22 @@ public class MainActivity extends AppCompatActivity {
 
         if(!matcher.matches())
         {
-            isMail = false;
+            hasError = true;
+            errMail.setText("Veuillez saisir un email valide");
+            mail.setBackgroundResource(R.drawable.backwithborder_error);
+            mail.setTextColor(this.getResources().getColor(R.color.rouge_clair));
+            mail.setHintTextColor(this.getResources().getColor(R.color.rouge_clair));
         }
         if(password.equals(""))
         {
-            isPass = false;
+            hasError = true;
+            errPwd.setText("Veuillez saisir un mot de passe");
+            pwd.setBackgroundResource(R.drawable.backwithborder_error);
+            pwd.setTextColor(this.getResources().getColor(R.color.rouge_clair));
+            pwd.setHintTextColor(this.getResources().getColor(R.color.rouge_clair));
         }
 
-        if(!isMail && isPass)
-        {
-            res = 1;
-        }
-        if(isMail && !isPass)
-        {
-            res = 2;
-        }
-        if(!isMail && !isPass)
-        {
-            res = 3;
-        }
-
-        return res;
+        return hasError;
     }
 
 
@@ -240,13 +272,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void hideKeyboard(View view)
+    {
+        // Cacher le clavier
+        if (this.getCurrentFocus() != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(getApplicationContext().INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
     public void createAccountActivity(View view)
     {
         Intent intent = new Intent(this,inscription.class);
         startActivity(intent);
     }
 
-    public void guestmode(View view)
+    public void guestMode(View view)
     {
         cmode = false;
         Intent intent = new Intent(this,map.class);
