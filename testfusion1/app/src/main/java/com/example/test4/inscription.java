@@ -6,7 +6,9 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -29,17 +31,12 @@ public class inscription extends AppCompatActivity {
     EditText mail;
     EditText pwd;
     EditText pwd2;
-    EditText Prenom;
-    EditText Nom;
     EditText Username;
     TextView errMail;
     TextView errPwd1;
     TextView errPwd2;
-    TextView errPrenom;
-    TextView errNom;
     TextView errUsername;
-    ProgressBar prgb;
-
+    ProgressBar pgrb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -47,11 +44,46 @@ public class inscription extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inscription);
         initAttributes();
+
+        findViewById(R.id.layoutActivityInscription).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(MotionEvent.ACTION_UP == event.getAction()) {
+                    hideKeyboard(v);
+                }
+
+                return false; // return is important...
+            }
+        });
+
+        createTouchListenerEditText(Username);
+        createTouchListenerEditText(mail);
+        createTouchListenerEditText(pwd);
+        createTouchListenerEditText(pwd2);
+    }
+
+    /*
+    * Procédure : Création des touch listener pour les editText (Détails visuels pour les editText après une erreur)
+    * */
+    public void createTouchListenerEditText(EditText editText)
+    {
+        editText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(MotionEvent.ACTION_UP == event.getAction()) {
+                    editText.setTextColor(getResources().getColor(R.color.black));
+                    editText.setHintTextColor(getResources().getColor(R.color.gris));
+                }
+
+                return false;
+            }
+        });
     }
 
     public void loginActivity(View view)
     {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(inscription.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
@@ -60,37 +92,14 @@ public class inscription extends AppCompatActivity {
         this.mail = findViewById(R.id.editTextMailRegister);
         this.pwd = findViewById(R.id.editTextPasswordRegister);
         this.pwd2 = findViewById(R.id.editTextPasswordRegister2);
-        this.Prenom = findViewById(R.id.editTextTextPrenom);
-        this.Nom = findViewById(R.id.editTextNom);
         this.Username = findViewById(R.id.editTextUsernameRegister);
         this.errMail = findViewById(R.id.txtErrMailRegister);
         this.errPwd1 = findViewById(R.id.txtErrPwd1);
         this.errPwd2 = findViewById(R.id.txtErrPwd2);
-        this.errNom = findViewById(R.id.txtErrNom);
-        this.errPrenom = findViewById(R.id.txtErrPrenom);
         this.errUsername = findViewById(R.id.txtErrUsername);
-        this.prgb = findViewById(R.id.prgb1);
-
+        this.pgrb = findViewById(R.id.pgrbInscription);
+        pgrb.setVisibility(View.INVISIBLE);
     }
-
-    /*
-     * Fonction : Récupère le nom
-     * Return Type : String
-     */
-    public String getNom()
-    {
-        return Nom.getText().toString();
-    }
-
-
-
-    /*
-     * Fonction : Récupère le prénom
-     * Return Type : String
-     */
-    public String getPrenom() { return Prenom.getText().toString(); }
-
-
 
     /*
      * Fonction : Récupère le mail
@@ -101,8 +110,6 @@ public class inscription extends AppCompatActivity {
         return mail.getText().toString();
     }
 
-
-
     /*
      * Fonction : Récupère le mot de passe
      * Return Type : String
@@ -111,8 +118,6 @@ public class inscription extends AppCompatActivity {
     {
         return pwd.getText().toString();
     }
-
-
 
     /*
      * Fonction : Récupère le mot de passe à répéter
@@ -141,11 +146,14 @@ public class inscription extends AppCompatActivity {
         if(!matcher.matches())
         {
             errMail.setText("Veuillez saisir un email valide");
+            affichageErrorMail();
             return true;
         }
         else
         {
             errMail.setText("");
+            resetAffichageErrorMail();
+
             return false;
         }
 
@@ -159,44 +167,28 @@ public class inscription extends AppCompatActivity {
         if(password1.equals(""))
         {
             errPwd1.setText("Veuillez saisir un mot de passe valide");
+            affichageErrorPass1();
+
             errPwd2.setText("");
+            resetAffichageErrorPass2();
             return true;
         }
         if(!password2.equals(password1))
         {
             errPwd1.setText("");
+            resetAffichageErrorPass1();
+
             errPwd2.setText("Mots de passe non identiques");
+            affichageErrorPass2();
             return true;
         }
-        errPwd2.setText("");
+
         errPwd1.setText("");
-        return false;
-    }
+        resetAffichageErrorPass1();
 
-    public boolean checkErrorNom()
-    {
-        String nom = getNom();
+        errPwd2.setText("");
+        resetAffichageErrorPass2();
 
-        if(nom.equals(""))
-        {
-            errNom.setText("Veuillez saisir un nom valide");
-            return true;
-        }
-        errNom.setText("");
-        return false;
-    }
-
-
-    public boolean checkErrorPrenom()
-    {
-        String prenom = getPrenom();
-
-        if(prenom.equals(""))
-        {
-            errPrenom.setText("Veuillez saisir un prénom valide");
-            return true;
-        }
-        errPrenom.setText("");
         return false;
     }
 
@@ -207,42 +199,49 @@ public class inscription extends AppCompatActivity {
         if(nom_user.equals(""))
         {
             errUsername.setText("Veuillez saisir un nom d'utilisateur valide");
+            affichageErrorUsername();
             return true;
         }
+
         errUsername.setText("");
+        resetAffichageErrorUsername();
+
         return false;
     }
+
     public void createAccount(View view)
     {
-
-
-        if (!checkErrorPrenom()  && !checkErrorNom() && !checkErrorUsername() && !checkErrorMail() && !checkErrorPassword() )
+        if (!checkErrorUsername() && !checkErrorMail() && !checkErrorPassword()) // Vérification des erreurs possibles
         {
-            prgb.setVisibility(view.VISIBLE);
-            prgb.bringToFront();
+            pgrb.setVisibility(view.VISIBLE);
+            pgrb.bringToFront();
+            hideKeyboard(view);
             Thread thread = new Thread()
             {
                 public void run()
                 {
                     try{
-                        postCreateAccount(getNom(), getPrenom(), getUsername(), getMail(), getPwd(), new MainActivity.VolleyCallBack() {
+                        postCreateAccount(getUsername(), getMail(), getPwd(), new MainActivity.VolleyCallBack() {
                             @Override
                             public void onSuccess(String res) {
                                 if(res.equals("user_error"))
                                 {
-                                    errUsername.setText("Le nom d'utilisateur est déja pris");
-                                    prgb.setVisibility(view.GONE);
+                                    errUsername.setText("Ce nom d'utilisateur est déja pris");
+                                    affichageErrorUsername();
+                                    pgrb.setVisibility(view.GONE);
                                 }
                                 else if(res.equals("mail_error"))
                                 {
                                     errMail.setText("Ce mail est déja associé à un compte");
-                                    prgb.setVisibility(view.GONE);
+                                    affichageErrorMail();
+                                    pgrb.setVisibility(view.GONE);
                                 }
                                 else
                                 {
                                     Toast.makeText(inscription.this,"Création de compte réussi ! ", Toast.LENGTH_LONG).show();
-                                    Intent intent = new Intent(inscription.this, MainActivity.class);
-                                    startActivity(intent);
+                                    pgrb.setVisibility(view.GONE);
+                                    loginActivity(view);
+
                                 }
 
                             }
@@ -252,7 +251,7 @@ public class inscription extends AppCompatActivity {
                     {
                         e.printStackTrace();
                         System.out.println(e.getMessage());
-                        prgb.setVisibility(view.GONE);
+                        pgrb.setVisibility(view.GONE);
                     }
                 }
             };
@@ -261,8 +260,7 @@ public class inscription extends AppCompatActivity {
 
     }
 
-
-    public void postCreateAccount(String nom, String prenom, String username, String mail, String password,final MainActivity.VolleyCallBack callback)
+    public void postCreateAccount(String username, String mail, String password,final MainActivity.VolleyCallBack callback)
     {
         RequestQueue queue = Volley.newRequestQueue(this);
         String URL = "https://db-ezpfla.000webhostapp.com/createAccount.php";
@@ -277,8 +275,6 @@ public class inscription extends AppCompatActivity {
             {
                 Map<String,String> logs = new HashMap<String,String>();
 
-                logs.put("name",nom);
-                logs.put("first_name",prenom);
                 logs.put("username",username);
                 logs.put("mail",mail);
                 logs.put("password",password);
@@ -288,5 +284,70 @@ public class inscription extends AppCompatActivity {
         };
 
         queue.add(postRequest);
+    }
+
+    public void affichageErrorMail()
+    {
+        mail.setBackgroundResource(R.drawable.backwithborder_error);
+        mail.setTextColor(this.getResources().getColor(R.color.rouge_clair));
+        mail.setHintTextColor(this.getResources().getColor(R.color.rouge_clair));
+    }
+
+    public void affichageErrorUsername()
+    {
+        Username.setBackgroundResource(R.drawable.backwithborder_error);
+        Username.setTextColor(this.getResources().getColor(R.color.rouge_clair));
+        Username.setHintTextColor(this.getResources().getColor(R.color.rouge_clair));
+    }
+
+    public void affichageErrorPass1()
+    {
+        pwd2.setBackgroundResource(R.drawable.backwithborder_error);
+        pwd2.setTextColor(this.getResources().getColor(R.color.rouge_clair));
+        pwd2.setHintTextColor(this.getResources().getColor(R.color.rouge_clair));
+    }
+
+    public void affichageErrorPass2()
+    {
+        pwd.setBackgroundResource(R.drawable.backwithborder_error);
+        pwd.setTextColor(this.getResources().getColor(R.color.rouge_clair));
+        pwd.setHintTextColor(this.getResources().getColor(R.color.rouge_clair));
+    }
+
+    public void resetAffichageErrorMail()
+    {
+        mail.setBackgroundResource(R.drawable.backwithborder_noerror);
+        mail.setTextColor(this.getResources().getColor(R.color.black));
+        mail.setHintTextColor(this.getResources().getColor(R.color.gris));
+    }
+
+    public void resetAffichageErrorUsername()
+    {
+        Username.setBackgroundResource(R.drawable.backwithborder_noerror);
+        Username.setTextColor(this.getResources().getColor(R.color.black));
+        Username.setHintTextColor(this.getResources().getColor(R.color.gris));
+    }
+
+    public void resetAffichageErrorPass1()
+    {
+        pwd2.setBackgroundResource(R.drawable.backwithborder_noerror);
+        pwd2.setTextColor(this.getResources().getColor(R.color.black));
+        pwd2.setHintTextColor(this.getResources().getColor(R.color.gris));
+    }
+
+    public void resetAffichageErrorPass2()
+    {
+        pwd.setBackgroundResource(R.drawable.backwithborder_noerror);
+        pwd.setTextColor(this.getResources().getColor(R.color.black));
+        pwd.setHintTextColor(this.getResources().getColor(R.color.gris));
+    }
+
+    public void hideKeyboard(View view)
+    {
+        // Cacher le clavier
+        if (this.getCurrentFocus() != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(getApplicationContext().INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }
