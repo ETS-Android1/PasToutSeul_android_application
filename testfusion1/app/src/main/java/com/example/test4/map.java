@@ -27,6 +27,11 @@ import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.test4.databinding.ActivityMapBinding;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationAvailability;
@@ -44,10 +49,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import jxl.Cell;
 import jxl.Sheet;
@@ -73,6 +80,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
     double lat;
     double lng;
     ProgressBar pgrb;
+    String username;
+    long id_user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +111,12 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         this.mflc = LocationServices.getFusedLocationProviderClient(this);
         this.pgrb = findViewById(R.id.prgb2);
 
+        // Récupération des infos envoyées par MainActivity.java
+        this.username = getIntent().getStringExtra("USER_NAME");
+        String id = getIntent().getStringExtra("USER_ID");
+        this.id_user = Long.valueOf(id).longValue();
+        System.out.println(id_user);
+        System.out.println(username);
         //listView = findViewById(R.id.sp)
 
     }
@@ -218,6 +233,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
                 lat = latLng.latitude;
                 lng = latLng.longitude;
 
+
+
                 AlertDialog.Builder areYouSure = new AlertDialog.Builder(activity);
                 areYouSure.setTitle("vérification");
                 View customAddMarkerLayout = getLayoutInflater().inflate(R.layout.addmarker_layout, null);
@@ -232,7 +249,11 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
                         mapclick2();
                         geocoder = new Geocoder(activity, Locale.getDefault());
                         try {
+                            // Récupère l'adresse
                             addresses = geocoder.getFromLocation(lat,lng,1);
+                            // Ajout du pin dans la bdd
+                            addPin(lat,lng,id_user);
+                            System.out.println("Je suis la");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -533,7 +554,28 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         return p1;
     }
 
+    /*
+    * Procédure : Ajouter un pin dans notre base de données avec une requête de type GET
+    */
+    public void addPin(double latitude, double longitude, long id_user)
+    {
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String date_bis = dateFormat.format(date);
 
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        // URL du serveur web
+        String URL = "https://db-ezpfla.000webhostapp.com/addPin.php?id="+id_user+"&long="+longitude+"&lat="+latitude+"&date="+date_bis;
+
+        StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
+            Log.i("Réponse", response);
+            // Appel d'une fonction à éxecuter si succès de la requête
+        }, error -> Log.e("Réponse", error.toString()));
+
+        //Lance la requête
+        queue.add(postRequest);
+    }
 
 
 

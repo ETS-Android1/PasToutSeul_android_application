@@ -218,6 +218,7 @@ public class inscription extends AppCompatActivity {
 
             errPwd2.setText("");
             resetAffichageErrorPass2();
+            return true;
         }
 
         if(!isValidPassword(password1))

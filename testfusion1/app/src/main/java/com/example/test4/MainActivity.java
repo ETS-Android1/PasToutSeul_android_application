@@ -16,6 +16,9 @@ import com.android.volley.*;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.regex.*;
@@ -81,11 +84,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void mapActivity(View view, String user)
+    public void mapActivity(View view, String user_info)
     {
         Intent intent = new Intent(MainActivity.this, map.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK  |Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("EXTRA_SESSION_ID", user);
+        String []USER_INFO = user_info.split("|");
+        intent.putExtra("USER_NAME", USER_INFO[0]);
+        intent.putExtra("USER_ID", USER_INFO[1]);
         startActivity(intent);
     }
     /*
@@ -162,8 +167,6 @@ public class MainActivity extends AppCompatActivity {
                                 pgrb.setVisibility(view.GONE);
                                 Toast.makeText(MainActivity.this,"Bienvenue, "+res, Toast.LENGTH_LONG).show();
                                 cmode = true;
-
-
                             }
                         });
                     }
@@ -208,6 +211,9 @@ public class MainActivity extends AppCompatActivity {
                 return logs;
             }
         };
+
+        //Gérer les timeout
+        postRequest.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         //Lance la requête
         queue.add(postRequest);
@@ -323,6 +329,10 @@ public class MainActivity extends AppCompatActivity {
     {
         cmode = false;
         Intent intent = new Intent(this,map.class);
+        intent.putExtra("USER_NAME", "INVITE");
+        intent.putExtra("USER_ID", "1");
         startActivity(intent);
     }
+
+
 }
