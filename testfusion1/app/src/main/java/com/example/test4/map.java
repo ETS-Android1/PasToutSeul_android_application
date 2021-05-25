@@ -80,8 +80,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
     double lat;
     double lng;
     ProgressBar pgrb;
-    String username;
-    long id_user;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,13 +110,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         this.mflc = LocationServices.getFusedLocationProviderClient(this);
         this.pgrb = findViewById(R.id.prgb2);
 
-        // Récupération des infos envoyées par MainActivity.java
-        this.username = getIntent().getStringExtra("USER_NAME");
-        String id = getIntent().getStringExtra("USER_ID");
-        this.id_user = Long.valueOf(id).longValue();
-        System.out.println(id_user);
-        System.out.println(username);
-        //listView = findViewById(R.id.sp)
+        Toast.makeText(this,"Bienvenue, "+getUsername(), Toast.LENGTH_LONG).show();
+
 
     }
 
@@ -252,7 +246,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
                             // Récupère l'adresse
                             addresses = geocoder.getFromLocation(lat,lng,1);
                             // Ajout du pin dans la bdd
-                            addPin(lat,lng,id_user);
+                            addPin(lat,lng,getUserID());
                             System.out.println("Je suis la");
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -577,6 +571,17 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         queue.add(postRequest);
     }
 
+    // Récupère le nom d'utilisateur que MainActivity a envoyé vers map
+    public String getUsername()
+    {
+        return getIntent().getStringExtra("USER_NAME");
+    }
 
+    // Récupère l'id de l'utilisateur que MainActivity a envoyé vers map
+    public long getUserID()
+    {
+        String id = getIntent().getStringExtra("USER_ID");
+        return Long.valueOf(id).longValue();
+    }
 
 }

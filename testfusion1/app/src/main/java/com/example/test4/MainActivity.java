@@ -86,9 +86,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void mapActivity(View view, String user_info)
     {
-        Intent intent = new Intent(MainActivity.this, map.class);
+        Intent intent = new Intent(this, map.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK  |Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        String []USER_INFO = user_info.split("|");
+        String []USER_INFO = user_info.split("-");
+        System.out.println(USER_INFO[0]);
+        System.out.println(USER_INFO[1]);
         intent.putExtra("USER_NAME", USER_INFO[0]);
         intent.putExtra("USER_ID", USER_INFO[1]);
         startActivity(intent);
@@ -165,7 +167,6 @@ public class MainActivity extends AppCompatActivity {
                             {
                                 mapActivity(view,res);
                                 pgrb.setVisibility(view.GONE);
-                                Toast.makeText(MainActivity.this,"Bienvenue, "+res, Toast.LENGTH_LONG).show();
                                 cmode = true;
                             }
                         });
