@@ -1,6 +1,7 @@
 package com.example.test4;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -39,12 +40,14 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.IOException;
@@ -130,6 +133,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         mMap.getUiSettings().setRotateGesturesEnabled(false);
         mMap.setMinZoomPreference(14);
         mMap.setMapType(3);
+
         //mMap.setCompasEnabled(true);
         // Add a marker in Sydney and move the camera
         //LatLng sydney = new LatLng(-34, 151);
@@ -156,7 +160,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
                                     Marker marker = mMap.addMarker(new MarkerOptions().snippet("userLocation").position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
                                     hashMapMarker.put("userLocation", marker);
                                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 17));
-
+                                    screenLatLng();
+                                    setSDFMarkers();
                                 }
                             });}}
 
@@ -173,6 +178,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
             }
 
         }
+
 
         EmmausMarker();
         CHRSMarker();
@@ -584,4 +590,71 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         return Long.valueOf(id).longValue();
     }
 
+    public void screenLatLng()
+    {
+        Double lat = mMap.getCameraPosition().target.latitude;
+        Double lng = mMap.getCameraPosition().target.longitude;
+        System.out.println("Latitude : "+lat);
+        System.out.println("Longitude : "+lng);
+    }
+
+    public void setSDFMarkers()
+    {
+
+        requestSDFMarkers(res ->
+                {
+                    if(res.length() == 0){return;}
+                    String []line = res.split("<br>");
+
+                    int line_length = line.length;
+
+
+
+                    long []id_pin = new long[line_length];
+                    double []longitude = new double[line_length];
+                    double []latitude = new double[line_length];
+                    long []id_user = new long[line_length];
+                    String []date = new String[line_length];
+
+                    LatLng latLng;
+                    for(int i = 0; i <line_length; i++)
+                    {
+                        longitude[i] = Double.valueOf(line[i].split("'")[1]);
+                        latitude[i] = Double.valueOf(line[i].split("'")[2]);
+
+                        latLng = new LatLng(latitude[i],longitude[i]);
+                        mMap.addMarker(new MarkerOptions().snippet("sdf").position(latLng).title("sdf").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
+
+                        // A décommenter si nécessaire pour manipuler ces données
+                        /*
+                        id_pin[i] = Long.valueOf(line[i].split("'")[0]).longValue();
+                        id_user[i] = Long.valueOf(line[i].split("'")[3]).longValue();
+                        date[i] = line[i].split("'")[4];*/
+                    }
+
+                }
+                );
+    }
+
+
+    public void requestSDFMarkers(final VolleyCallBack callback)
+    {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        // URL du serveur web
+        String URL = "https://db-ezpfla.000webhostapp.com/getPin.php?latitude="+mMap.getCameraPosition().target.latitude+"&longitude="+mMap.getCameraPosition().target.longitude;
+
+        StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
+            Log.i("Réponse", response);
+            callback.onSuccess(response);
+            // Appel d'une fonction à éxecuter si succès de la requête
+        }, error -> Log.e("Réponse", error.toString()));
+
+        //Lance la requête
+        queue.add(postRequest);
+    }
+
+    public interface VolleyCallBack{
+        void onSuccess(String res);
+    }
 }
