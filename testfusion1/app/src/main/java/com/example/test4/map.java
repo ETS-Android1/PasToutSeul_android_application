@@ -18,10 +18,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +56,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -69,21 +73,31 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
     private map activity;
     private ActivityMapBinding binding;
     private FusedLocationProviderClient mflc;
+
     HashMap hashMapMarker = new HashMap<String, Marker>();
+
     boolean mclick;
+
     ImageButton btnmclick;
+
     EditText prenom;
     EditText Nom;
     EditText Comm;
+
     TextView Disprenom;
     TextView Dispnom;
     TextView Dispcomm;
+
     Geocoder geocoder;
+
     List<Address> addresses;
+
     double lat;
     double lng;
+
     ProgressBar pgrb;
 
+    RelativeLayout layoutMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +142,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
      * installed Google Play services and returned to the app.
      */
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(GoogleMap googleMap)
+    {
         mMap = googleMap;
         mMap.getUiSettings().setRotateGesturesEnabled(false);
         mMap.setMinZoomPreference(14);
@@ -140,40 +155,59 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
+            if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            {
                 mflc.getLocationAvailability().addOnSuccessListener(new OnSuccessListener<LocationAvailability>() {
                     @Override
-                    public void onSuccess(LocationAvailability locationAvailability) {
+                    public void onSuccess(LocationAvailability locationAvailability)
+                    {
                         if (locationAvailability.isLocationAvailable()){
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                            {
                                 if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                                        == PackageManager.PERMISSION_GRANTED) {
-                            mflc.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-                                @Override
-                                public void onSuccess(Location location) {
+                                        == PackageManager.PERMISSION_GRANTED)
+                                {
+                                    mflc.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>()
+                                    {
+                                        @Override
+                                        public void onSuccess(Location location)
+                                        {
+                                            // On récupère les coordonnées GPS de l'utilisateur
+                                            double lat = location.getLatitude();
+                                            double lon = location.getLongitude();
 
-                                    double lat = location.getLatitude();
-                                    double lon = location.getLongitude();
-                                    LatLng here = new LatLng(lat, lon);
-                                    Marker marker = mMap.addMarker(new MarkerOptions().snippet("userLocation").position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
-                                    hashMapMarker.put("userLocation", marker);
-                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 17));
-                                    screenLatLng();
-                                    setSDFMarkers();
+                                            // Conversion en LatLng
+                                            LatLng here = new LatLng(lat, lon);
+
+                                            //Création du marqueur de l'utilisateur
+                                            Marker marker = mMap.addMarker(new MarkerOptions().snippet("userLocation").position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
+                                            hashMapMarker.put("userLocation", marker);
+                                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 17));
+
+                                            // Affichage des pins concernant les SDF autour de l'utilisateur
+                                            setSDFMarkers();
+                                        }
+                                    });
                                 }
-                            });}}
+                            }
 
-                        } else{Toast.makeText(getApplicationContext(),"veuillez mettre votre geolocalisation",Toast.LENGTH_SHORT).show();
-                        LatLng loc = new LatLng(48.82317818259686,2.5644479786118968);
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
+                        }
+                        else
+                        {
+                            // Pas d"accès à la géolocalisation
+                            Toast.makeText(getApplicationContext(),"Veuillez mettre votre geolocalisation",Toast.LENGTH_SHORT).show();
+                            LatLng loc = new LatLng(48.82317818259686,2.5644479786118968);
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
                         }
                     }
                 });
 
 
-            } else {
+            }
+            else
+            {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
 
@@ -188,6 +222,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
 
         pgrb.setVisibility(View.INVISIBLE);
 
+        // Création d'un pin sur la map concernant le sdf
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -225,7 +260,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
             }
         });
 
-
+        // Détection d'un click sur la map
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {if(mclick){
@@ -234,37 +269,43 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
                 lng = latLng.longitude;
 
 
-
                 AlertDialog.Builder areYouSure = new AlertDialog.Builder(activity);
-                areYouSure.setTitle("vérification");
+                areYouSure.setTitle("Vérification");
                 View customAddMarkerLayout = getLayoutInflater().inflate(R.layout.addmarker_layout, null);
                 areYouSure.setView(customAddMarkerLayout);
-                areYouSure.setMessage("veuillez entrer des informations sur la personne");
+                areYouSure.setMessage("Veuillez entrer des informations sur la personne");
                 //areYouSure.setIcon()
-                areYouSure.setPositiveButton("oui", new DialogInterface.OnClickListener() {
+                areYouSure.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // si sdf est choisi
-                        mMap.addMarker(new MarkerOptions().snippet("sdf").position(latLng).title("sdf").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
+                        Date date = new Date();
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        String []string_date = dateFormat.format(date).split(" ");
+
+                        String jour = string_date[0];
+                        String heure = string_date[1];
+
+                        mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+getUsername()+" le "+yyyy_mm_ddTodd_mm_yyyy(jour)+" à "+heure).position(latLng).title("Sans abris").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
+                        addPin(lat,lng,getUserID(),jour+" "+heure);
                         mapclick2();
-                        geocoder = new Geocoder(activity, Locale.getDefault());
-                        try {
+                        //geocoder = new Geocoder(activity, Locale.getDefault());
+                        //try {
                             // Récupère l'adresse
-                            addresses = geocoder.getFromLocation(lat,lng,1);
+                         //   addresses = geocoder.getFromLocation(lat,lng,1);
                             // Ajout du pin dans la bdd
-                            addPin(lat,lng,getUserID());
-                            System.out.println("Je suis la");
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        if (addresses.size() > 0)
-                        {
+                         //   addPin(lat,lng,getUserID(),jour+" "+heure);
+                       // } catch (IOException e) {
+                       //     e.printStackTrace();
+                        //}
+                       // if (addresses.size() > 0)
+                       // {
 
                             //addresses.get(0).getLocality()   avoir le nom de la ville
                             //addresses.get(0).getPostalCode() avoir le code postale
                             //Log.d("location", addresses.get(0).getPostalCode());
-                        }
-                        else { }
+                       // }
+                       // else { }
 
                     }
                 });
@@ -280,11 +321,18 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         }
         );
 
-
-
+        // Détection du mouvement dans la Map => mise à jour de l'affichage des pins.
+        mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener()
+                                     {
+                                         @Override
+                                         public void onCameraIdle() {
+                                                setSDFMarkers();
+                                         }
+                                     }
+        );
     }
 
-
+    // Click sur le menu
     public void Click(View v) {
         Intent i = new Intent(this, menu.class);
         startActivity(i);
@@ -327,6 +375,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
             }
 
         }
+
+
 
     }
 
@@ -557,16 +607,12 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
     /*
     * Procédure : Ajouter un pin dans notre base de données avec une requête de type GET
     */
-    public void addPin(double latitude, double longitude, long id_user)
+    public void addPin(double latitude, double longitude, long id_user, String date)
     {
-        Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String date_bis = dateFormat.format(date);
-
         RequestQueue queue = Volley.newRequestQueue(this);
 
         // URL du serveur web
-        String URL = "https://db-ezpfla.000webhostapp.com/addPin.php?id="+id_user+"&long="+longitude+"&lat="+latitude+"&date="+date_bis;
+        String URL = "https://db-ezpfla.000webhostapp.com/addPin.php?id="+id_user+"&long="+longitude+"&lat="+latitude+"&date="+date;
 
         StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
             Log.i("Réponse", response);
@@ -590,46 +636,43 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         return Long.valueOf(id).longValue();
     }
 
-    public void screenLatLng()
-    {
-        Double lat = mMap.getCameraPosition().target.latitude;
-        Double lng = mMap.getCameraPosition().target.longitude;
-        System.out.println("Latitude : "+lat);
-        System.out.println("Longitude : "+lng);
-    }
-
     public void setSDFMarkers()
     {
-
         requestSDFMarkers(res ->
                 {
-                    if(res.length() == 0){return;}
-                    String []line = res.split("<br>");
+                    if(res.length() != 0){
+                        String []line = res.split("<br>");
+                        int line_length = line.length;
+                        System.out.println("ici");
+                        // Informations sur les pins
+                        //long id_pin;
+                        double longitude;
+                        double latitude;
+                        //long id_user;
+                        String date;
+                        String heure;
+                        String nom_user;
 
-                    int line_length = line.length;
+                        String string[] = new String[6];
 
+                        for(int i = 0; i < line_length; i++)
+                        {
+                            string = line[i].split(" ");
 
+                           // id_pin = Long.valueOf(line[i].split("'")[0]).longValue();
+                            longitude = Double.parseDouble(string[1]);
+                            latitude = Double.parseDouble(string[2]);
+                           // id_user = Long.valueOf(line[i].split("'")[3]).longValue();
+                            date = string[4];
+                            heure = string[5];
+                            nom_user = string[6];
 
-                    long []id_pin = new long[line_length];
-                    double []longitude = new double[line_length];
-                    double []latitude = new double[line_length];
-                    long []id_user = new long[line_length];
-                    String []date = new String[line_length];
+                            mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+nom_user+" le "+yyyy_mm_ddTodd_mm_yyyy(date)+" à "+heure).position(new LatLng(latitude,longitude)).title("Sans abris").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
 
-                    LatLng latLng;
-                    for(int i = 0; i <line_length; i++)
-                    {
-                        longitude[i] = Double.valueOf(line[i].split("'")[1]);
-                        latitude[i] = Double.valueOf(line[i].split("'")[2]);
-
-                        latLng = new LatLng(latitude[i],longitude[i]);
-                        mMap.addMarker(new MarkerOptions().snippet("sdf").position(latLng).title("sdf").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
-
-                        // A décommenter si nécessaire pour manipuler ces données
+                            // A décommenter si nécessaire pour manipuler ces données
                         /*
-                        id_pin[i] = Long.valueOf(line[i].split("'")[0]).longValue();
-                        id_user[i] = Long.valueOf(line[i].split("'")[3]).longValue();
-                        date[i] = line[i].split("'")[4];*/
+                        ;*/
+                        }
                     }
 
                 }
@@ -646,7 +689,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
 
         StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
             Log.i("Réponse", response);
-            callback.onSuccess(response);
+            callback.onSuccess(response.trim());
             // Appel d'une fonction à éxecuter si succès de la requête
         }, error -> Log.e("Réponse", error.toString()));
 
@@ -656,5 +699,12 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
 
     public interface VolleyCallBack{
         void onSuccess(String res);
+    }
+
+    public String yyyy_mm_ddTodd_mm_yyyy(String date)
+    {
+        String []string = date.split("-");
+
+        return string[2]+"/"+string[1]+"/"+string[0];
     }
 }
