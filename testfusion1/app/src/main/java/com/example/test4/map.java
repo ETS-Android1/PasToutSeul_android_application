@@ -14,6 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -70,7 +71,8 @@ import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
 
-public class map extends FragmentActivity implements OnMapReadyCallback {
+public class map extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,
+        GoogleMap.OnMyLocationClickListener {
 
     private GoogleMap mMap;
     private map activity;
@@ -144,6 +146,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap)
     {
@@ -151,6 +154,9 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         mMap.getUiSettings().setRotateGesturesEnabled(false);
         mMap.setMinZoomPreference(14);
         mMap.setMapType(3);
+        mMap.setMyLocationEnabled(true);
+        mMap.setOnMyLocationButtonClickListener(this);
+        mMap.setOnMyLocationClickListener(this);
 
         //mMap.setCompasEnabled(true);
         // Add a marker in Sydney and move the camera
@@ -185,8 +191,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
                                             LatLng here = new LatLng(latitude, longitude);
 
                                             //Création du marqueur de l'utilisateur
-                                            Marker marker = mMap.addMarker(new MarkerOptions().snippet("userLocation").position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
-                                            hashMapMarker.put("userLocation", marker);
+                                            //Marker marker = mMap.addMarker(new MarkerOptions().snippet("userLocation").position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
+                                            //hashMapMarker.put("userLocation", marker);
                                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 17));
 
                                             // Affichage des pins concernant les SDF autour de l'utilisateur
@@ -224,6 +230,29 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
         restoMarker();
 
         pgrb.setVisibility(View.INVISIBLE);
+
+
+        mMap.setOnInfoWindowLongClickListener(new GoogleMap.OnInfoWindowLongClickListener() {
+            @Override
+            public void onInfoWindowLongClick(Marker marker) {
+
+                if (marker.getSnippet().charAt(0) == '3' || marker.getSnippet().charAt(0) == '0'){
+                    String tel = "tel:"+ marker.getSnippet();
+                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                    intent.setData(Uri.parse(tel));
+                    startActivity(intent);
+                }
+
+                if (marker.getSnippet().charAt(0) == 'h'){
+                    String site = marker.getSnippet();
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(site));
+                    startActivity(intent);
+                }
+                else{}
+
+            }
+        });
 
         // Action lors d'un clic sur un marker
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -382,6 +411,9 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
 
     }
 
+
+
+
     // Click sur le menu
     public void Click(View v) {
         Intent i = new Intent(this, menu.class);
@@ -408,8 +440,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
                                             double lat = location.getLatitude();
                                             double lon = location.getLongitude();
                                             LatLng here = new LatLng(lat, lon);
-                                            Marker marker = mMap.addMarker(new MarkerOptions().snippet("userLocation").position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
-                                            hashMapMarker.put("userLocation", marker);
+                                            //Marker marker = mMap.addMarker(new MarkerOptions().snippet("userLocation").position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
+                                            //hashMapMarker.put("userLocation", marker);
                                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 17));
 
                                         }
@@ -745,6 +777,16 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
 
         //Lance la requête
         queue.add(postRequest);
+    }
+
+    @Override
+    public boolean onMyLocationButtonClick() {
+        return false;
+    }
+
+    @Override
+    public void onMyLocationClick(@NonNull Location location) {
+
     }
 
     public interface VolleyCallBack{

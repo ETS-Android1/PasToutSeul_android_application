@@ -45,7 +45,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginBottom="35dp"
-            android:background="@drawable/ic_destination"/>
+            android:background="@drawable/ic_destination"
+            android:visibility="gone"/>
 
 
         <ImageButton
