@@ -213,7 +213,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                     }
                 });
 
-
             }
             else
             {
@@ -222,7 +221,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
         }
 
-
+        //Création des marqueurs
         EmmausMarker();
         CHRSMarker();
         toiletteMarker();
@@ -300,9 +299,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
             public void onInfoWindowClick(Marker marker) {
                 if (marker.getTitle().equals("Sans abri"))
                 {
+                    // Affichage d'une fenêtre avec des informations supplémentaires
                     AlertDialog.Builder moreInfos = new AlertDialog.Builder(activity);
-
-                    AlertDialog.Builder oui_non = new AlertDialog.Builder(activity);
 
                     View customAddMarkerLayout = getLayoutInflater().inflate(R.layout.marker_layout, null);
 
@@ -310,13 +308,42 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                     moreInfos.setTitle("Plus d'informations");
                     moreInfos.setMessage(marker.getSnippet());
 
-                    oui_non.setTitle("Êtes-vous sûr ?");
-
-                    //Dans la version finale, on ajustera le nombre de signalement
-                    oui_non.setMessage("Ce pin sera supprimer au bout de 2 signalements");
                     moreInfos.setNeutralButton("Signaler une erreur", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+
+                            //Fenêtre pour confirmer son choix
+                            AlertDialog.Builder oui_non = new AlertDialog.Builder(activity);
+
+                            oui_non.setTitle("Êtes-vous sûr ?");
+                            oui_non.setMessage("Ce pin sera supprimer au bout de 2 signalements");
+
+                            // On annule le signalement.
+                            oui_non.setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    ((ViewGroup)customAddMarkerLayout.getParent()).removeView(customAddMarkerLayout);
+                                    moreInfos.show();
+                                }
+                            });
+
+                            // Si on valide, alors on envoie le signalement.
+                            oui_non.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    ((ViewGroup)customAddMarkerLayout.getParent()).removeView(customAddMarkerLayout);
+                                    LatLng latLng = marker.getPosition();
+                                    requestReport(latLng.latitude, latLng.longitude, new VolleyCallBack() {
+                                        @Override
+                                        public void onSuccess(String res) {
+                                            setSDFMarkers();
+                                        }
+                                    });
+
+                                    moreInfos.show();
+                                }
+                            });
+
                             oui_non.show();
                         }
                     });
@@ -325,23 +352,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
-                        }
-                    });
-
-                    oui_non.setNegativeButton("Non", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ((ViewGroup)customAddMarkerLayout.getParent()).removeView(customAddMarkerLayout);
-                            moreInfos.show();
-                        }
-                    });
-
-                    oui_non.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ((ViewGroup)customAddMarkerLayout.getParent()).removeView(customAddMarkerLayout);
-                            marker.getPosition();
-                            moreInfos.show();
                         }
                     });
 
@@ -356,7 +366,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
             @Override
             public void onMapClick(LatLng latLng) {if(mclick)
             {
-
+                // Coordonnées GPS
                 lat = latLng.latitude;
                 lng = latLng.longitude;
 
@@ -399,10 +409,12 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         }
         );
 
-        mMap.setOnCameraMoveStartedListener(new GoogleMap.OnCameraMoveStartedListener() {
+        mMap.setOnCameraMoveStartedListener(new GoogleMap.OnCameraMoveStartedListener()
+        {
             @Override
             public void onCameraMoveStarted(int reason) {
-                // Si on l'utilisateur ou l'application déplace l'écran de la map
+                // REASON_GESTURE : Mouvement de l'écran via l'utilisateur
+                // REASON_DEVELOPER_ANIMATION : Mouvement de l'écran via l'application
                 if (reason == REASON_GESTURE || reason == REASON_DEVELOPER_ANIMATION) {
                     setSDFMarkers();
                 }
@@ -411,18 +423,15 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
     }
 
-
-
-
     // Click sur le menu
-    public void Click(View v) {
+    public void Click(View v)
+    {
         Intent i = new Intent(this, menu.class);
         startActivity(i);
-
     }
     
-    public void locatezoom(View v){
-
+    public void locatezoom(View v)
+    {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
@@ -484,7 +493,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     }
 
 
-
     public void chat(View v) {
         Intent i = new Intent(this, chat.class);
         startActivity(i);
@@ -517,18 +525,26 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
         try {
             AssetManager am = getAssets();
-            InputStream is = am.open("emmaus.xls");
-            Workbook wb = Workbook.getWorkbook(is);
-            Sheet s = wb.getSheet(0);
-            int row = s.getRows();
 
+            InputStream is = am.open("emmaus.xls");
+
+            Workbook wb = Workbook.getWorkbook(is);
+
+            Sheet s = wb.getSheet(0);
+
+            int row = s.getRows();
 
             for (int i=1; i<row;i++){
                 Cell c = s.getCell(2,i);
+
+                // Tri des données
                 String[] latlong = c.getContents().split(",");
+
                 double latitude = Double.parseDouble(latlong[0]);
                 double longitude = Double.parseDouble(latlong[1]);
+
                 LatLng loc = new LatLng(latitude, longitude);
+
                 String nom = s.getCell(0,i).getContents();
                 String tel = s.getCell(4,i).getContents().replace("33","0");
 
@@ -542,56 +558,72 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
     }
 
+    // Ajout des marqueurs des CHRS.
     public void CHRSMarker() {
 
         try {
             AssetManager am = getAssets();
+
             InputStream is = am.open("CHRS.xls");
+
             Workbook wb = Workbook.getWorkbook(is);
+
             Sheet s = wb.getSheet(0);
+
             int row = s.getRows();
 
-
-            for (int i=1; i<row;i++){
+            for (int i=1; i<row;i++)
+            {
                 Cell c = s.getCell(2,i);
+
+                // Tri des données
                 String[] latlong = c.getContents().split(",");
+
                 double latitude = Double.parseDouble(latlong[0]);
                 double longitude = Double.parseDouble(latlong[1]);
+
                 LatLng loc = new LatLng(latitude, longitude);
+
                 String nom = s.getCell(0,i).getContents();
                 String tel = s.getCell(4,i).getContents().replace("33","0");
 
                 mMap.addMarker(new MarkerOptions().snippet(tel).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_refuge)));
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             Log.d("binks", e.getMessage());
             e.printStackTrace();
         }
-
-
-
     }
 
+    // Ajout des marqueurs des toilettes publiques.
     public void toiletteMarker() {
 
         try {
             AssetManager am = getAssets();
-            InputStream is = am.open("toilette.xls");
-            Workbook wb = Workbook.getWorkbook(is);
-            Sheet s = wb.getSheet(0);
-            int row = s.getRows();
 
+            InputStream is = am.open("toilette.xls");
+
+            Workbook wb = Workbook.getWorkbook(is);
+
+            Sheet s = wb.getSheet(0);
+
+            int row = s.getRows();
 
             for (int i = 1; i < row; i++) {
 
                 String type = s.getCell(0, i).getContents();
+
+                // Tri des données
                 String[] latlong = s.getCell(9, i).getContents().split(",");
+
                 double latitude = Double.parseDouble(latlong[0]);
                 double longitude = Double.parseDouble(latlong[1]);
-                LatLng loc = new LatLng(latitude, longitude);
-                String horraire = s.getCell(4, i).getContents();
 
+                LatLng loc = new LatLng(latitude, longitude);
+
+                String horraire = s.getCell(4, i).getContents();
 
                 mMap.addMarker(new MarkerOptions().snippet(horraire).position(loc).title(type).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_toilettes)));
             }
@@ -602,66 +634,85 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         }
     }
 
-
+    // Ajout des marqueurs des douches publiques.
     public void doucheMarker() {
 
         try {
             AssetManager am = getAssets();
+
             InputStream is = am.open("douche.xls");
+
             Workbook wb = Workbook.getWorkbook(is);
+
             Sheet s = wb.getSheet(0);
+
             int row = s.getRows();
 
 
             for (int i = 1; i < row; i++) {
 
                 String nom = s.getCell(0, i).getContents();
+
+                // Tri des données
                 String[] latlong = s.getCell(2, i).getContents().split(",");
+
                 double latitude = Double.parseDouble(latlong[0]);
                 double longitude = Double.parseDouble(latlong[1]);
-                LatLng loc = new LatLng(latitude, longitude);
-                String Site = s.getCell(4, i).getContents();
 
+                LatLng loc = new LatLng(latitude, longitude);
+
+                String Site = s.getCell(4, i).getContents();
 
                 mMap.addMarker(new MarkerOptions().snippet(Site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_douche)));
             }
 
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             Log.d("binks", e.getMessage());
             e.printStackTrace();
         }
     }
 
-
+    // Ajout des marqueur des restos du coeur.
     public void restoMarker() {
 
         try {
             AssetManager am = getAssets();
-            InputStream is = am.open("restoducoeur.xls");
-            Workbook wb = Workbook.getWorkbook(is);
-            Sheet s = wb.getSheet(0);
-            int row = s.getRows();
 
+            InputStream is = am.open("restoducoeur.xls");
+
+            Workbook wb = Workbook.getWorkbook(is);
+
+            Sheet s = wb.getSheet(0);
+
+            int row = s.getRows();
 
             for (int i=1; i<row;i++){
                 Cell c = s.getCell(2,i);
+
+                // Tri des données
                 String[] latlong = c.getContents().split(",");
+
                 double latitude = Double.parseDouble(latlong[0]);
                 double longitude = Double.parseDouble(latlong[1]);
+
                 LatLng loc = new LatLng(latitude, longitude);
+
                 String nom = s.getCell(0,i).getContents();
                 String tel = s.getCell(4,i).getContents().replace("33","0");
 
                 mMap.addMarker(new MarkerOptions().snippet(tel).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_restos_du_coeur_logo)));
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             Log.d("binks", e.getMessage());
             e.printStackTrace();
         }
     }
 
-
+    // Récupère les coordonnées GPS à partir du lieu où l'on se trouve
     public LatLng getLocationFromAddress(Context context,String strAddress) {
 
         Geocoder coder = new Geocoder(context);
@@ -669,8 +720,9 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         LatLng p1 = null;
 
         try {
-            // May throw an IOException
             address = coder.getFromLocationName(strAddress, 5);
+
+            // adresss vaut null si la géolocalisation n'est pas activé
             if (address == null) {
                 return null;
             }
@@ -686,74 +738,69 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         return p1;
     }
 
-    /*
-    * Procédure : Ajouter un pin dans notre base de données avec une requête de type GET
-    */
+    // Ajouter un pin dans notre base de données via une requête de type GET
     public void addPin(double latitude, double longitude, long id_user, String date)
     {
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        // URL du serveur web
         String URL = "https://db-ezpfla.000webhostapp.com/addPin.php?id="+id_user+"&long="+longitude+"&lat="+latitude+"&date="+date;
 
         StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
             Log.i("Réponse", response);
-            // Appel d'une fonction à éxecuter si succès de la requête
         }, error -> Log.e("Réponse", error.toString()));
 
-        //Lance la requête
+        // Ajoute la requête dans la file
         queue.add(postRequest);
     }
 
-    // Récupère le nom d'utilisateur que MainActivity a envoyé vers map
+    // Récupère le nom d'utilisateur
     public String getUsername()
     {
         return getIntent().getStringExtra("USER_NAME");
     }
 
-    // Récupère l'id de l'utilisateur que MainActivity a envoyé vers map
+    // Récupère l'id de l'utilisateur
     public long getUserID()
     {
         String id = getIntent().getStringExtra("USER_ID");
         return Long.valueOf(id).longValue();
     }
 
+    // Ajout d'un marqueur pour chaque coordonnées GPS que l'on reçoit via une requête
     public void setSDFMarkers()
     {
         requestSDFMarkers(res ->
                 {
                     if(res.length() != 0){
+
+                        // Tri les informations obtenus ligne par ligne
                         String []line = res.split("<br>");
                         int line_length = line.length;
-                        System.out.println("ici");
+
                         // Informations sur les pins
-                        //long id_pin;
                         double longitude;
                         double latitude;
-                        //long id_user;
                         String date;
                         String heure;
                         String nom_user;
 
                         String string[] = new String[6];
 
+
                         for(int i = 0; i < line_length; i++)
                         {
+                            // Tri une nouvelle fois les informations mais en détails
                             string = line[i].split(" ");
 
-                           // id_pin = Long.valueOf(line[i].split("'")[0]).longValue();
                             longitude = Double.parseDouble(string[1]);
                             latitude = Double.parseDouble(string[2]);
-                           // id_user = Long.valueOf(line[i].split("'")[3]).longValue();
                             date = string[4];
                             heure = string[5];
                             nom_user = string[6];
 
+                            // Ajout d'un pin
                             mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+nom_user+" le "+yyyy_mm_ddTodd_mm_yyyy(date)+" à "+heure+" (...)").position(new LatLng(latitude,longitude)).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
 
-                            // A décommenter si nécessaire pour manipuler ces données
-                        /*
-                        ;*/
                         }
                     }
 
@@ -761,23 +808,40 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 );
     }
 
-
+    // Déclaration et envoi d'une requête pour récupérer des données sur les marqueurs dans la BDD.
     public void requestSDFMarkers(final VolleyCallBack callback)
     {
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        // URL du serveur web
         String URL = "https://db-ezpfla.000webhostapp.com/getPin.php?latitude="+mMap.getCameraPosition().target.latitude+"&longitude="+mMap.getCameraPosition().target.longitude;
 
+        // Envoi de la requête et on redirige la réponse à sa réception
         StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
             Log.i("Réponse", response);
             callback.onSuccess(response.trim());
-            // Appel d'une fonction à éxecuter si succès de la requête
         }, error -> Log.e("Réponse", error.toString()));
 
-        //Lance la requête
+        // Ajout de la requête dans la file
         queue.add(postRequest);
     }
+
+    // Déclaration et envoi d'une requête pour récupérer des données sur les marqueurs dans la BDD.
+    public void requestReport(double latitude, double longtitude, VolleyCallBack callBack)
+    {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        String URL = "https://db-ezpfla.000webhostapp.com/reportPin.php?username="+getUsername()+"&latitude="+mMap.getCameraPosition().target.latitude+"&longitude="+mMap.getCameraPosition().target.longitude;
+
+        // Envoi de la requête et on redirige la réponse à sa réception
+        StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
+            Log.i("Réponse", response);
+            callBack.onSuccess(response);
+        }, error -> Log.e("Réponse", error.toString()));
+
+        // Ajout de la requête dans la file
+        queue.add(postRequest);
+    }
+
 
     @Override
     public boolean onMyLocationButtonClick() {
@@ -793,6 +857,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         void onSuccess(String res);
     }
 
+    // Converti une date yyyy-dd-mm en dd-mm-yyyy
     public String yyyy_mm_ddTodd_mm_yyyy(String date)
     {
         String []string = date.split("-");
