@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -28,6 +29,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -175,11 +178,11 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
                                         public void onSuccess(Location location)
                                         {
                                             // On récupère les coordonnées GPS de l'utilisateur
-                                            double lat = location.getLatitude();
-                                            double lon = location.getLongitude();
+                                            double latitude = location.getLatitude();
+                                            double longitude = location.getLongitude();
 
                                             // Conversion en LatLng
-                                            LatLng here = new LatLng(lat, lon);
+                                            LatLng here = new LatLng(latitude, longitude);
 
                                             //Création du marqueur de l'utilisateur
                                             Marker marker = mMap.addMarker(new MarkerOptions().snippet("userLocation").position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
@@ -222,16 +225,16 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
 
         pgrb.setVisibility(View.INVISIBLE);
 
-        // Création d'un pin sur la map concernant le sdf
+        // Action lors d'un clic sur un marker
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                if (marker.getSnippet().equals("sdf")) {
-                    String markertitle = marker.getTitle();
-                    AlertDialog.Builder popup = new AlertDialog.Builder(activity);
-                    popup.setTitle(markertitle);
-                    LayoutInflater inflater = activity.getLayoutInflater();
-                    View view = inflater.inflate(R.layout.marker_layout, null);
+                //if (marker.getTitle().equals("Sans abri")) {
+                    //String markertitle = marker.getTitle();
+                    //AlertDialog.Builder popup = new AlertDialog.Builder(activity);
+                    //popup.setTitle(markertitle);
+                    //LayoutInflater inflater = activity.getLayoutInflater();
+                    /*View view = inflater.inflate(R.layout.marker_layout, null);
                     popup.setView(view);
                     popup.setMessage("les coordonnées sont " + marker.getPosition());
                     popup.setPositiveButton("envoyer un message", new DialogInterface.OnClickListener() {
@@ -247,7 +250,9 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
                         }
                     });
                     popup.show();
-                }
+
+                     */
+                //}
 
                 if(marker.getSnippet().equals("emmaus")){
                     AlertDialog.Builder popup = new AlertDialog.Builder(activity);
@@ -260,10 +265,68 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
             }
         });
 
-        // Détection d'un click sur la map
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+        //Quand on clique sur la fenêtre d'un marqueur
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
-            public void onMapClick(LatLng latLng) {if(mclick){
+            public void onInfoWindowClick(Marker marker) {
+                if (marker.getTitle().equals("Sans abri"))
+                {
+                    AlertDialog.Builder moreInfos = new AlertDialog.Builder(activity);
+
+                    AlertDialog.Builder oui_non = new AlertDialog.Builder(activity);
+
+                    View customAddMarkerLayout = getLayoutInflater().inflate(R.layout.marker_layout, null);
+
+                    moreInfos.setView(customAddMarkerLayout);
+                    moreInfos.setTitle("Plus d'informations");
+                    moreInfos.setMessage(marker.getSnippet());
+
+                    oui_non.setTitle("Êtes-vous sûr ?");
+
+                    //Dans la version finale, on ajustera le nombre de signalement
+                    oui_non.setMessage("Ce pin sera supprimer au bout de 2 signalements");
+                    moreInfos.setNeutralButton("Signaler une erreur", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            oui_non.show();
+                        }
+                    });
+
+                    moreInfos.setPositiveButton("Fermer", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    oui_non.setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ((ViewGroup)customAddMarkerLayout.getParent()).removeView(customAddMarkerLayout);
+                            moreInfos.show();
+                        }
+                    });
+
+                    oui_non.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ((ViewGroup)customAddMarkerLayout.getParent()).removeView(customAddMarkerLayout);
+                            marker.getPosition();
+                            moreInfos.show();
+                        }
+                    });
+
+                    moreInfos.show();
+                }
+            }
+        });
+
+        // Détection d'un click sur la map
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener()
+        {
+            @Override
+            public void onMapClick(LatLng latLng) {if(mclick)
+            {
 
                 lat = latLng.latitude;
                 lng = latLng.longitude;
@@ -271,10 +334,12 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
 
                 AlertDialog.Builder areYouSure = new AlertDialog.Builder(activity);
                 areYouSure.setTitle("Vérification");
+
                 View customAddMarkerLayout = getLayoutInflater().inflate(R.layout.addmarker_layout, null);
+
                 areYouSure.setView(customAddMarkerLayout);
                 areYouSure.setMessage("Veuillez entrer des informations sur la personne");
-                //areYouSure.setIcon()
+
                 areYouSure.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -286,50 +351,35 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
                         String jour = string_date[0];
                         String heure = string_date[1];
 
-                        mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+getUsername()+" le "+yyyy_mm_ddTodd_mm_yyyy(jour)+" à "+heure).position(latLng).title("Sans abris").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
+                        mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+getUsername()+" le "+yyyy_mm_ddTodd_mm_yyyy(jour)+" à "+heure+" (...)").position(latLng).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
                         addPin(lat,lng,getUserID(),jour+" "+heure);
                         mapclick2();
-                        //geocoder = new Geocoder(activity, Locale.getDefault());
-                        //try {
-                            // Récupère l'adresse
-                         //   addresses = geocoder.getFromLocation(lat,lng,1);
-                            // Ajout du pin dans la bdd
-                         //   addPin(lat,lng,getUserID(),jour+" "+heure);
-                       // } catch (IOException e) {
-                       //     e.printStackTrace();
-                        //}
-                       // if (addresses.size() > 0)
-                       // {
-
-                            //addresses.get(0).getLocality()   avoir le nom de la ville
-                            //addresses.get(0).getPostalCode() avoir le code postale
-                            //Log.d("location", addresses.get(0).getPostalCode());
-                       // }
-                       // else { }
-
                     }
                 });
+
                 areYouSure.setNegativeButton("non", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
                 });
+
                 areYouSure.show();
 
             }}
         }
         );
 
-        // Détection du mouvement dans la Map => mise à jour de l'affichage des pins.
-        mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener()
-                                     {
-                                         @Override
-                                         public void onCameraIdle() {
-                                                setSDFMarkers();
-                                         }
-                                     }
-        );
+        mMap.setOnCameraMoveStartedListener(new GoogleMap.OnCameraMoveStartedListener() {
+            @Override
+            public void onCameraMoveStarted(int reason) {
+                // Si on l'utilisateur ou l'application déplace l'écran de la map
+                if (reason == REASON_GESTURE || reason == REASON_DEVELOPER_ANIMATION) {
+                    setSDFMarkers();
+                }
+            }
+        });
+
     }
 
     // Click sur le menu
@@ -667,7 +717,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback {
                             heure = string[5];
                             nom_user = string[6];
 
-                            mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+nom_user+" le "+yyyy_mm_ddTodd_mm_yyyy(date)+" à "+heure).position(new LatLng(latitude,longitude)).title("Sans abris").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
+                            mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+nom_user+" le "+yyyy_mm_ddTodd_mm_yyyy(date)+" à "+heure+" (...)").position(new LatLng(latitude,longitude)).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
 
                             // A décommenter si nécessaire pour manipuler ces données
                         /*
