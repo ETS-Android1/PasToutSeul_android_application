@@ -336,6 +336,16 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                                     requestReport(latLng.latitude, latLng.longitude, new VolleyCallBack() {
                                         @Override
                                         public void onSuccess(String res) {
+                                            if(res.equals("delete"))
+                                            {
+                                                // Actualise les marqueurs
+                                                mMap.clear();
+                                                EmmausMarker();
+                                                CHRSMarker();
+                                                toiletteMarker();
+                                                doucheMarker();
+                                                restoMarker();
+                                            }
                                             setSDFMarkers();
                                         }
                                     });
@@ -835,7 +845,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         // Envoi de la requête et on redirige la réponse à sa réception
         StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
             Log.i("Réponse", response);
-            callBack.onSuccess(response);
+            callBack.onSuccess(response.trim());
         }, error -> Log.e("Réponse", error.toString()));
 
         // Ajout de la requête dans la file
