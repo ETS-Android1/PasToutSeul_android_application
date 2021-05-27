@@ -11,7 +11,7 @@
         android:id="@+id/editText2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:hint="@string/prénom"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -36,7 +36,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="@drawable/alignement_selec"
-            android:button="@drawable/ic_happy" />
+            android:button="@drawable/ic_homme" />
 
         <RadioButton
             android:id="@+id/radioButton2"
@@ -45,7 +45,7 @@
             android:layout_marginStart="25dp"
             android:layout_marginLeft="25dp"
             android:background="@drawable/alignement_selec"
-            android:button="@drawable/ic_neutral" />
+            android:button="@drawable/ic_femme" />
 
         <RadioButton
             android:id="@+id/radioButton3"
@@ -54,32 +54,32 @@
             android:layout_marginStart="25dp"
             android:layout_marginLeft="25dp"
             android:background="@drawable/alignement_selec"
-            android:button="@drawable/ic_angry" />
+            android:button="@drawable/ic_handicape" />
 
     </RadioGroup>
 
     <EditText
         android:id="@+id/editTextTextPersonName"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="13dp"
+        android:layout_marginTop="20dp"
         android:ems="10"
         android:hint="commentaire sur la personne"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.513"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editText2" />
 
     <EditText
         android:id="@+id/editTextTextEnvie"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Envie de la personne"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.51"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
 

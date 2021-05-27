@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -78,9 +79,10 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
     EditText prenom;
     EditText Comm;
+    EditText Envie;
 
     TextView Disprenom;
-    TextView Dispnom;
+    TextView Dispenvie;
     TextView Dispcomm;
 
     Geocoder geocoder;
@@ -93,6 +95,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     ProgressBar pgrb;
 
     RelativeLayout layoutMap;
+
+    RadioGroup rg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,11 +117,13 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         this.btnmclick = findViewById(R.id.btnmapclick);
         this.prenom = findViewById(R.id.editText2);
         this.Comm = findViewById(R.id.editTextTextPersonName);
+        this.Envie = findViewById(R.id.editTextTextEnvie);
         this.Disprenom = findViewById(R.id.textView2);
-        this.Dispnom = findViewById(R.id.editTextTextEnvie);
+        this.Dispenvie = findViewById(R.id.editTextTextEnvie);
         this.Dispcomm = findViewById(R.id.textView14);
         this.mflc = LocationServices.getFusedLocationProviderClient(this);
         this.pgrb = findViewById(R.id.prgb2);
+        this.rg = findViewById(R.id.radioGroup);
 
 
         //change de place la toolbar google maps
@@ -251,7 +257,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                     intent.setData(Uri.parse(site));
                     startActivity(intent);
                 }
-                else{}
 
             }
         });
@@ -401,6 +406,13 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                         String jour = string_date[0];
                         String heure = string_date[1];
 
+                        //déclaration de l'int pr savoir si le sdf est un homme, une femme ou un handicapé
+                        int selectedId = rg.getCheckedRadioButtonId();
+                        //string du prénom, commentaire et envie du sdf
+                        //prenom.getText();
+                        //Comm.getText()
+                        //Envie.getText()
+
                         mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+getUsername()+" le "+yyyy_mm_ddTodd_mm_yyyy(jour)+" à "+heure+" (...)").position(latLng).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
                         addPin(lat,lng,getUserID(),jour+" "+heure);
                         mapclick2();
@@ -479,6 +491,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     {
         Intent i = new Intent(this, menu.class);
         startActivity(i);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
     
     public void locatezoom(View v)
@@ -547,6 +560,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     public void chat(View v) {
         Intent i = new Intent(this, chat.class);
         startActivity(i);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
 
     }
 
@@ -597,9 +611,15 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 LatLng loc = new LatLng(latitude, longitude);
 
                 String nom = s.getCell(0,i).getContents();
-                String tel = s.getCell(4,i).getContents().replace("33","0");
+                String site = s.getCell(3,i).getContents();
+                String tel = s.getCell(4,i).getContents();
 
-                mMap.addMarker(new MarkerOptions().snippet(tel).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_emmaus)));
+                if (tel == ""){
+                    mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_emmaus)));
+                }
+                else {
+                    mMap.addMarker(new MarkerOptions().snippet(tel).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_emmaus)));
+                }
             }
 
         } catch (Exception e) {
@@ -636,9 +656,14 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 LatLng loc = new LatLng(latitude, longitude);
 
                 String nom = s.getCell(0,i).getContents();
-                String tel = s.getCell(4,i).getContents().replace("33","0");
-
-                mMap.addMarker(new MarkerOptions().snippet(tel).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_refuge)));
+                String site = s.getCell(3,i).getContents();
+                String tel = s.getCell(4,i).getContents();
+                if (tel == "") {
+                    mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_refuge)));
+                }
+                else {
+                    mMap.addMarker(new MarkerOptions().snippet(tel).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_refuge)));
+                }
             }
 
         } catch (Exception e)
@@ -751,9 +776,15 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 LatLng loc = new LatLng(latitude, longitude);
 
                 String nom = s.getCell(0,i).getContents();
+                String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents().replace("33","0");
 
-                mMap.addMarker(new MarkerOptions().snippet(tel).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_restos_du_coeur_logo)));
+                if (tel == "") {
+                    mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_restos_du_coeur_logo)));
+                }
+                else {
+                    mMap.addMarker(new MarkerOptions().snippet(tel).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_restos_du_coeur_logo)));
+                }
             }
 
         } catch (Exception e)
