@@ -63,7 +63,7 @@ import jxl.Sheet;
 import jxl.Workbook;
 
 public class map extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,
-        GoogleMap.OnMyLocationClickListener {
+        GoogleMap.OnMyLocationClickListener{
 
     private GoogleMap mMap;
     private map activity;
@@ -77,7 +77,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     ImageButton btnmclick;
 
     EditText prenom;
-    EditText Nom;
     EditText Comm;
 
     TextView Disprenom;
@@ -113,13 +112,24 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         this.mclick = false;
         this.btnmclick = findViewById(R.id.btnmapclick);
         this.prenom = findViewById(R.id.editText2);
-        this.Nom = findViewById(R.id.editText3);
         this.Comm = findViewById(R.id.editTextTextPersonName);
         this.Disprenom = findViewById(R.id.textView2);
-        this.Dispnom = findViewById(R.id.textView13);
+        this.Dispnom = findViewById(R.id.editTextTextEnvie);
         this.Dispcomm = findViewById(R.id.textView14);
         this.mflc = LocationServices.getFusedLocationProviderClient(this);
         this.pgrb = findViewById(R.id.prgb2);
+
+
+        //change de place la toolbar google maps
+        View locationButton = ((View) mapFragment.getView().findViewById(Integer.parseInt("1")).
+                getParent()).findViewById(Integer.parseInt("4"));
+        // and next place it, for example, on bottom right (as Google Maps app)
+        RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
+        // position on right bottom
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+        rlp.setMargins(0, 0, 50, 100);
 
         Toast.makeText(this,"Bienvenue, "+getUsername(), Toast.LENGTH_LONG).show();
 
@@ -147,6 +157,9 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         mMap.setMyLocationEnabled(true);
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
+
+
+
 
         //mMap.setCompasEnabled(true);
         // Add a marker in Sydney and move the camera
@@ -183,7 +196,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                                             //Création du marqueur de l'utilisateur
                                             //Marker marker = mMap.addMarker(new MarkerOptions().snippet("userLocation").position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
                                             //hashMapMarker.put("userLocation", marker);
-                                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 17));
+                                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(here, 17),1000,null);
 
                                             // Affichage des pins concernant les SDF autour de l'utilisateur
                                             setSDFMarkers();
@@ -290,10 +303,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 if (marker.getTitle().equals("Sans abri"))
                 {
                     // Affichage d'une fenêtre avec des informations supplémentaires
-                    AlertDialog.Builder moreInfos = new AlertDialog.Builder(activity);
-
+                    AlertDialog.Builder moreInfos = new AlertDialog.Builder(activity,R.style.MyDialogTheme);
                     View customAddMarkerLayout = getLayoutInflater().inflate(R.layout.marker_layout, null);
-
                     moreInfos.setView(customAddMarkerLayout);
                     moreInfos.setTitle("Plus d'informations");
                     moreInfos.setMessage(marker.getSnippet());
@@ -371,7 +382,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 lng = latLng.longitude;
 
 
-                AlertDialog.Builder areYouSure = new AlertDialog.Builder(activity);
+                AlertDialog.Builder areYouSure = new AlertDialog.Builder(activity,R.style.MyDialogTheme);
                 areYouSure.setTitle("Vérification");
 
                 View customAddMarkerLayout = getLayoutInflater().inflate(R.layout.addmarker_layout, null);
@@ -436,6 +447,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
 
             }
         });
@@ -490,7 +502,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                                             LatLng here = new LatLng(lat, lon);
                                             //Marker marker = mMap.addMarker(new MarkerOptions().snippet("userLocation").position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
                                             //hashMapMarker.put("userLocation", marker);
-                                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 17));
+                                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(here, 17),1000,null);
 
                                         }
                                     });}}
@@ -906,6 +918,9 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     public void onMyLocationClick(@NonNull Location location) {
 
     }
+
+
+
 
     public interface VolleyCallBack{
         void onSuccess(String res);

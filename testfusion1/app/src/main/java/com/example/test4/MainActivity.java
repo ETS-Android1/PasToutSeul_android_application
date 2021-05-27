@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("USER_ID", USER_INFO[1]);
 
         startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
     /*
      * Méthode : Initialisation des attributs
@@ -331,6 +332,7 @@ public class MainActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     public void guestMode(View view)
@@ -343,6 +345,7 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("USER_NAME", "INVITE");
         intent.putExtra("USER_ID", "1");
         startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
 
