@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="40c111b1-a3b3-48c5-a0fd-d84c3b31804c" name="Default Changelist" comment="" />
+=======
+    <list default="true" id="f7256a57-8ca4-40fb-95ab-f314d7759dff" name="Default Changelist" comment="" />
+>>>>>>> origin/main
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,7 +17,11 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+<<<<<<< HEAD
   <component name="ProjectId" id="1t6xuYd3uHjCg2zAIYGKraFM8yR" />
+=======
+  <component name="ProjectId" id="1siCw5VtvCqn4bjyAUW3ixYgNgb" />
+>>>>>>> origin/main
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -26,18 +34,41 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
+<<<<<<< HEAD
       <changelist id="40c111b1-a3b3-48c5-a0fd-d84c3b31804c" name="Default Changelist" comment="" />
       <created>1622103564590</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1622103564590</updated>
+=======
+      <changelist id="f7256a57-8ca4-40fb-95ab-f314d7759dff" name="Default Changelist" comment="" />
+      <created>1621346258992</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1621346258992</updated>
+>>>>>>> origin/main
     </task>
     <servers />
   </component>
   <component name="WindowStateProjectService">
+<<<<<<< HEAD
     <state x="549" y="167" key="FileChooserDialogImpl" timestamp="1622103572064">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="549" y="167" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1622103572064" />
+=======
+    <state x="1060" y="455" key="FileChooserDialogImpl" timestamp="1621346375815">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="1060" y="455" key="FileChooserDialogImpl/0.0.2560.1400@0.0.2560.1400" timestamp="1621346375815" />
+    <state x="1097" y="614" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1621346290374">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="1097" y="614" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.2560.1400@0.0.2560.1400" timestamp="1621346290374" />
+    <state x="943" y="315" key="search.everywhere.popup" timestamp="1621346348886">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="943" y="315" key="search.everywhere.popup/0.0.2560.1400@0.0.2560.1400" timestamp="1621346348886" />
+>>>>>>> origin/main
   </component>
 </project>

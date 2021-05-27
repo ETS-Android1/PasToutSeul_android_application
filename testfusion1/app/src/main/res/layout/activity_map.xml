@@ -28,26 +28,25 @@
             android:id="@+id/amis"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:onClick="chat"
-            android:layout_marginBottom="35dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginBottom="32dp"
             android:background="@drawable/ic_talk"
+            android:onClick="chat"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <ImageButton
+        <ImageView
             android:id="@+id/destination"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_width="88dp"
+            android:layout_height="68dp"
+            android:layout_marginEnd="7dp"
+            android:layout_marginRight="7dp"
+            android:layout_marginBottom="26dp"
+            android:background="@drawable/ic_rounded_rectangle"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginBottom="35dp"
-            android:background="@drawable/ic_destination"
-            android:visibility="gone"/>
-
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <ImageButton
             android:id="@+id/param"
@@ -56,9 +55,9 @@
             android:layout_marginStart="20dp"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="62dp"
+            android:background="@drawable/ic_parametres"
             android:contentDescription="@string/parametre"
             android:onClick="Click"
-            android:background="@drawable/ic_parametres"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -80,11 +79,12 @@
             android:id="@+id/btnmapclick"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:layout_marginBottom="25dp"
+            android:layout_marginBottom="32dp"
             android:background="@drawable/helpadd"
             android:onClick="mapclick"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent" />
 
         <ProgressBar
@@ -109,6 +109,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.01" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="18dp"
+            android:layout_height="27dp"
+            android:layout_marginBottom="46dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/destination"
+            android:src="@drawable/ic_pin" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
