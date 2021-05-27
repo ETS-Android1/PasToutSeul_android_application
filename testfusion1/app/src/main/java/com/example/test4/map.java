@@ -202,7 +202,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                                             //Création du marqueur de l'utilisateur
                                             //Marker marker = mMap.addMarker(new MarkerOptions().snippet("userLocation").position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
                                             //hashMapMarker.put("userLocation", marker);
-                                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(here, 17),1000,null);
+                                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 17));
 
                                             // Affichage des pins concernant les SDF autour de l'utilisateur
                                             setSDFMarkers();
@@ -244,14 +244,18 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
             @Override
             public void onInfoWindowLongClick(Marker marker) {
 
-                if (marker.getSnippet().charAt(0) == '3' || marker.getSnippet().charAt(0) == '0'){
+                if (marker.getSnippet().equals("")){
+
+                }
+
+                else if (marker.getSnippet().charAt(0) == '3' || marker.getSnippet().charAt(0) == '0'){
                     String tel = "tel:"+ marker.getSnippet();
                     Intent intent = new Intent(Intent.ACTION_DIAL);
                     intent.setData(Uri.parse(tel));
                     startActivity(intent);
                 }
 
-                if (marker.getSnippet().charAt(0) == 'h'){
+                else if (marker.getSnippet().charAt(0) == 'h'){
                     String site = marker.getSnippet();
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setData(Uri.parse(site));
@@ -407,7 +411,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                         String heure = string_date[1];
 
                         //déclaration de l'int pr savoir si le sdf est un homme, une femme ou un handicapé
-                        int selectedId = rg.getCheckedRadioButtonId();
+                        //int selectedId = rg.getCheckedRadioButtonId();
                         //string du prénom, commentaire et envie du sdf
                         //prenom.getText();
                         //Comm.getText()
