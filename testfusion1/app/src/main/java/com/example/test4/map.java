@@ -19,23 +19,19 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
@@ -47,25 +43,20 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import jxl.Cell;
 import jxl.Sheet;
@@ -107,10 +98,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
-
-
         super.onCreate(savedInstanceState);
+        //overridePendingTransition(R.anim.slide_right,R.anim.slide_left);
 
         binding = ActivityMapBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -136,6 +125,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
 
     }
+
 
     /**
      * Manipulates the map once available.
@@ -431,6 +421,45 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
             }
         });
 
+    }
+
+    public void quit()
+    {
+        AlertDialog.Builder quit = new AlertDialog.Builder(activity);
+
+        quit.setTitle("Êtes-vous sûr de vouloir quitter ?");
+
+        quit.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                requestDisconnect();
+                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+
+            }
+        });
+
+        quit.setNegativeButton("Non", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        quit.show();
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        quit();
+    }
+
+    //Bouton quitter
+    public void quitBtn(View view)
+    {
+        quit();
     }
 
     // Click sur le menu
@@ -852,6 +881,21 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         queue.add(postRequest);
     }
 
+    public void requestDisconnect()
+    {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        String URL = "https://db-ezpfla.000webhostapp.com/disconnect.php?username="+getUsername();
+
+        // Envoi de la requête et on redirige la réponse à sa réception
+        StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
+            Log.i("Réponse", response);
+            System.out.println(response);
+        }, error -> Log.e("Réponse", error.toString()));
+
+        // Ajout de la requête dans la file
+        queue.add(postRequest);
+    }
 
     @Override
     public boolean onMyLocationButtonClick() {
