@@ -41,6 +41,7 @@ public class inscription extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_inscription);
         initAttributes();
 
@@ -61,6 +62,12 @@ public class inscription extends AppCompatActivity {
         createTouchListenerEditText(pwd2);
     }
 
+    @Override
+    public void onBackPressed()
+    {
+        startLoginActivity();
+    }
+
     /*
     * Procédure : Création des touch listener pour les editText (Détails visuels pour les editText après une erreur)
     * */
@@ -79,11 +86,18 @@ public class inscription extends AppCompatActivity {
         });
     }
 
-    public void loginActivity(View view)
+    public void startLoginActivity()
     {
         Intent intent = new Intent(inscription.this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
         startActivity(intent);
+    }
+
+    public void loginActivityBtn(View view)
+    {
+        startLoginActivity();
     }
 
     private void initAttributes()
@@ -306,7 +320,7 @@ public class inscription extends AppCompatActivity {
                                 {
                                     Toast.makeText(inscription.this,"Création de compte réussi ! ", Toast.LENGTH_LONG).show();
                                     pgrb.setVisibility(view.GONE);
-                                    loginActivity(view);
+                                    startLoginActivity();
 
                                 }
 

@@ -47,7 +47,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
+
         initAttribute();
 
         //Ajout d'action à effectuer lorsqu'on clique sur les EditText
@@ -87,12 +89,14 @@ public class MainActivity extends AppCompatActivity {
     public void mapActivity(View view, String user_info)
     {
         Intent intent = new Intent(this, map.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK  |Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         String []USER_INFO = user_info.split("-");
-        System.out.println(USER_INFO[0]);
-        System.out.println(USER_INFO[1]);
+
         intent.putExtra("USER_NAME", USER_INFO[0]);
         intent.putExtra("USER_ID", USER_INFO[1]);
+
         startActivity(intent);
     }
     /*
@@ -323,6 +327,9 @@ public class MainActivity extends AppCompatActivity {
     public void createAccountActivity(View view)
     {
         Intent intent = new Intent(this,inscription.class);
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
         startActivity(intent);
     }
 
@@ -330,6 +337,9 @@ public class MainActivity extends AppCompatActivity {
     {
         cmode = false;
         Intent intent = new Intent(this,map.class);
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
         intent.putExtra("USER_NAME", "INVITE");
         intent.putExtra("USER_ID", "1");
         startActivity(intent);

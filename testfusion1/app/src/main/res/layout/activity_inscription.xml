@@ -134,7 +134,7 @@
         android:layout_width="189dp"
         android:layout_height="39dp"
         android:background="@color/transparent"
-        android:onClick="loginActivity"
+        android:onClick="loginActivityBtn"
         android:text="Déja un compte ?"
         android:textColor="@color/black"
         android:textStyle="bold"
