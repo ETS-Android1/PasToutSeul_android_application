@@ -37,6 +37,13 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.applozic.mobicomkit.Applozic;
+import com.applozic.mobicomkit.api.account.register.RegistrationResponse;
+import com.applozic.mobicomkit.api.account.user.User;
+import com.applozic.mobicomkit.listners.AlLoginHandler;
+import com.applozic.mobicomkit.listners.AlLogoutHandler;
+import com.applozic.mobicomkit.uiwidgets.conversation.ConversationUIService;
+import com.applozic.mobicomkit.uiwidgets.conversation.activity.ConversationActivity;
 import com.example.test4.databinding.ActivityMapBinding;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationAvailability;
@@ -125,6 +132,15 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         this.pgrb = findViewById(R.id.prgb2);
         this.rg = findViewById(R.id.radioGroup);
 
+        // Informations nécessaire pour se connecter au chat
+        String id = String.valueOf(getUserID());
+        String username = getUsername();
+        String mail = getUserMail();
+        String password = getUserPassword();
+
+        System.out.println(id+" "+username+" "+mail+" "+password);
+        //Connexion automatique au serveur chat
+        loginChat(id,username,mail,password);
 
         //change de place la toolbar google maps
         View locationButton = ((View) mapFragment.getView().findViewById(Integer.parseInt("1")).
@@ -269,38 +285,12 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                //if (marker.getTitle().equals("Sans abri")) {
-                    //String markertitle = marker.getTitle();
-                    //AlertDialog.Builder popup = new AlertDialog.Builder(activity);
-                    //popup.setTitle(markertitle);
-                    //LayoutInflater inflater = activity.getLayoutInflater();
-                    /*View view = inflater.inflate(R.layout.marker_layout, null);
-                    popup.setView(view);
-                    popup.setMessage("les coordonnées sont " + marker.getPosition());
-                    popup.setPositiveButton("envoyer un message", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-                    popup.setNegativeButton("Enlever le marker", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            marker.remove();
-                        }
-                    });
-                    popup.show();
-
-                     */
-                //}
-
                 if(marker.getSnippet().equals("emmaus")){
                     AlertDialog.Builder popup = new AlertDialog.Builder(activity);
                     LayoutInflater inflater = activity.getLayoutInflater();
                     View view = inflater.inflate(R.layout.activity_emmaus_marker, null);
                     popup.setView(view);
                 }
-
                 return false;
             }
         });
@@ -436,6 +426,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         }
         );
 
+        // Action à réaliser lorsque le caméra a bougé
         mMap.setOnCameraMoveStartedListener(new GoogleMap.OnCameraMoveStartedListener()
         {
             @Override
@@ -462,6 +453,19 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 requestDisconnect();
                 Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                // Déconnexion du serveur chat
+                Applozic.logoutUser(map.this, new AlLogoutHandler() {
+                    @Override
+                    public void onSuccess(Context context) {
+                        System.out.println("Déconnexion réussi");
+                    }
+
+                    @Override
+                    public void onFailure(Exception exception) {
+                        System.out.println("Erreur déconnexion");
+                    }
+                });
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
 
@@ -532,11 +536,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
             } else {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
-
         }
-
-
-
     }
 
     public void mapclick(View v)
@@ -560,13 +560,45 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         mclick = false;
     }
 
-
+    // Lance la page du chat si la création de compte et/ou la connexion a reussi.
     public void chat(View v) {
-        Intent i = new Intent(this, chat.class);
-        startActivity(i);
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+
+        if(Applozic.isConnected(this)){
+            // Affiche la liste des conversations.
+            Intent intent = new Intent(this, ConversationActivity.class);
+            startActivity(intent);
+
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        }
+    }
+
+    // Se connecte au serveur et si le compte n'existe pas alors le compte est créer
+    public void loginChat(String id_user, String username, String email, String password)
+    {
+        User user = new User();
+        user.setUserId(id_user); //userId it can be any unique user identifier NOTE : +,*,? are not allowed chars in userId.
+        user.setDisplayName(username); //displayName is the name of the user which will be shown in chat messages
+        user.setEmail(email); //optional
+        user.setAuthenticationTypeId(User.AuthenticationType.APPLOZIC.getValue());  //User.AuthenticationType.APPLOZIC.getValue() for password verification from Applozic server and User.AuthenticationType.CLIENT.getValue() for access Token verification from your server set access token as password
+        user.setPassword(password); //optional, leave it blank for testing purpose, read this if you want to add additional security by verifying password from your server https://www.applozic.com/docs/configuration.html#access-token-url
+
+        Applozic.connectUser(this, user, new AlLoginHandler() {
+            @Override
+            public void onSuccess(RegistrationResponse registrationResponse, Context context) {
+                System.out.println("Ok chat");
+            }
+
+            @Override
+            public void onFailure(RegistrationResponse registrationResponse, Exception exception) {
+                System.out.println("Erreur chat");
+                exception.printStackTrace();
+            }
+        });
+
 
     }
+
+
 
     private BitmapDescriptor BitmapFromVector(Context context, int vectorResId) {
         // below line is use to generate a drawable.
@@ -852,6 +884,15 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         return Long.valueOf(id).longValue();
     }
 
+    public String getUserMail()
+    {
+        return getIntent().getStringExtra("USER_MAIL");
+    }
+
+    public String getUserPassword()
+    {
+        return getIntent().getStringExtra("USER_PASSWORD");
+    }
     // Ajout d'un marqueur pour chaque coordonnées GPS que l'on reçoit via une requête
     public void setSDFMarkers()
     {
@@ -953,9 +994,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     public void onMyLocationClick(@NonNull Location location) {
 
     }
-
-
-
 
     public interface VolleyCallBack{
         void onSuccess(String res);

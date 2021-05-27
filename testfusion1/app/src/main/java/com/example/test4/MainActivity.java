@@ -96,6 +96,8 @@ public class MainActivity extends AppCompatActivity {
 
         intent.putExtra("USER_NAME", USER_INFO[0]);
         intent.putExtra("USER_ID", USER_INFO[1]);
+        intent.putExtra("USER_MAIL", getMail());
+        intent.putExtra("USER_PASSWORD",getPwd());
 
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
