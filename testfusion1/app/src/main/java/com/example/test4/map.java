@@ -127,7 +127,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         this.Envie = findViewById(R.id.editTextTextEnvie);
         this.Disprenom = findViewById(R.id.textView2);
         this.Dispenvie = findViewById(R.id.editTextTextEnvie);
-        this.Dispcomm = findViewById(R.id.textView14);
+        this.Dispcomm = findViewById(R.id.textView15);
         this.mflc = LocationServices.getFusedLocationProviderClient(this);
         this.pgrb = findViewById(R.id.prgb2);
         this.rg = findViewById(R.id.radioGroup);
@@ -174,7 +174,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     {
         mMap = googleMap;
         mMap.getUiSettings().setRotateGesturesEnabled(false);
-        mMap.setMinZoomPreference(14);
+        mMap.setMinZoomPreference(13);
         mMap.setMapType(3);
         mMap.setMyLocationEnabled(true);
         mMap.setOnMyLocationButtonClickListener(this);
@@ -252,6 +252,12 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         toiletteMarker();
         doucheMarker();
         restoMarker();
+        banque();
+        Captif();
+        stVincentPaul();
+        secoursIslamique();
+        secoursCatholique();
+        secoursPopulaire();
 
         pgrb.setVisibility(View.INVISIBLE);
 
@@ -345,6 +351,12 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                                                 toiletteMarker();
                                                 doucheMarker();
                                                 restoMarker();
+                                                banque();
+                                                Captif();
+                                                stVincentPaul();
+                                                secoursIslamique();
+                                                secoursCatholique();
+                                                secoursPopulaire();
                                             }
                                             setSDFMarkers();
                                         }
@@ -813,7 +825,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
                 String nom = s.getCell(0,i).getContents();
                 String site = s.getCell(3,i).getContents();
-                String tel = s.getCell(4,i).getContents().replace("33","0");
+                String tel = s.getCell(4,i).getContents();
 
                 if (tel == "") {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_restos_du_coeur_logo)));
@@ -830,31 +842,279 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         }
     }
 
-    // Récupère les coordonnées GPS à partir du lieu où l'on se trouve
-    public LatLng getLocationFromAddress(Context context,String strAddress) {
 
-        Geocoder coder = new Geocoder(context);
-        List<Address> address;
-        LatLng p1 = null;
+    // Ajout des marqueur du secours populaire.
+    public void secoursPopulaire() {
 
         try {
-            address = coder.getFromLocationName(strAddress, 5);
+            AssetManager am = getAssets();
 
-            // adresss vaut null si la géolocalisation n'est pas activé
-            if (address == null) {
-                return null;
+            InputStream is = am.open("SecourPopulaire.xls");
+
+            Workbook wb = Workbook.getWorkbook(is);
+
+            Sheet s = wb.getSheet(0);
+
+            int row = s.getRows();
+
+            for (int i=1; i<row;i++){
+                Cell c = s.getCell(2,i);
+
+                // Tri des données
+                String[] latlong = c.getContents().split(",");
+
+                double latitude = Double.parseDouble(latlong[0]);
+                double longitude = Double.parseDouble(latlong[1]);
+
+                LatLng loc = new LatLng(latitude, longitude);
+
+                String nom = s.getCell(0,i).getContents();
+                String site = s.getCell(3,i).getContents();
+                String tel = s.getCell(4,i).getContents();
+
+                if (tel == "") {
+                    mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_secours_populaire_logo)));
+                }
+                else {
+                    mMap.addMarker(new MarkerOptions().snippet(tel).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_secours_populaire_logo)));
+                }
             }
 
-            Address location = address.get(0);
-            p1 = new LatLng(location.getLatitude(), location.getLongitude() );
-
-        } catch (IOException ex) {
-
-            ex.printStackTrace();
+        } catch (Exception e)
+        {
+            Log.d("binks", e.getMessage());
+            e.printStackTrace();
         }
-
-        return p1;
     }
+
+
+    // Ajout des marqueur du secours catholique.
+    public void secoursCatholique(){
+
+        try {
+            AssetManager am = getAssets();
+
+            InputStream is = am.open("SecourCatholique.xls");
+
+            Workbook wb = Workbook.getWorkbook(is);
+
+            Sheet s = wb.getSheet(0);
+
+            int row = s.getRows();
+
+            for (int i=1; i<row;i++){
+                Cell c = s.getCell(2,i);
+
+                // Tri des données
+                String[] latlong = c.getContents().split(",");
+
+                double latitude = Double.parseDouble(latlong[0]);
+                double longitude = Double.parseDouble(latlong[1]);
+
+                LatLng loc = new LatLng(latitude, longitude);
+
+                String nom = s.getCell(0,i).getContents();
+                String site = s.getCell(3,i).getContents();
+                String tel = s.getCell(4,i).getContents();
+
+                if (tel == "") {
+                    mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_catholique)));
+                }
+                else {
+                    mMap.addMarker(new MarkerOptions().snippet(tel).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_catholique)));
+                }
+            }
+
+        } catch (Exception e)
+        {
+            Log.d("binks", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // Ajout des marqueur du secours islamique.
+    public void secoursIslamique() {
+
+        try {
+            AssetManager am = getAssets();
+
+            InputStream is = am.open("SecourIslamique.xls");
+
+            Workbook wb = Workbook.getWorkbook(is);
+
+            Sheet s = wb.getSheet(0);
+
+            int row = s.getRows();
+
+            for (int i=1; i<row;i++){
+                Cell c = s.getCell(2,i);
+
+                // Tri des données
+                String[] latlong = c.getContents().split(",");
+
+                double latitude = Double.parseDouble(latlong[0]);
+                double longitude = Double.parseDouble(latlong[1]);
+
+                LatLng loc = new LatLng(latitude, longitude);
+
+                String nom = s.getCell(0,i).getContents();
+                String site = s.getCell(3,i).getContents();
+                String tel = s.getCell(4,i).getContents();
+
+                if (tel == "") {
+                    mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_islamique)));
+                }
+                else {
+                    mMap.addMarker(new MarkerOptions().snippet(tel).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_islamique)));
+                }
+            }
+
+        } catch (Exception e)
+        {
+            Log.d("binks", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
+    // Ajout des marqueur de saint viencent de paul.
+    public void stVincentPaul() {
+
+        try {
+            AssetManager am = getAssets();
+
+            InputStream is = am.open("SaintVincentDePaul.xls");
+
+            Workbook wb = Workbook.getWorkbook(is);
+
+            Sheet s = wb.getSheet(0);
+
+            int row = s.getRows();
+
+            for (int i=1; i<row;i++){
+                Cell c = s.getCell(2,i);
+
+                // Tri des données
+                String[] latlong = c.getContents().split(",");
+
+                double latitude = Double.parseDouble(latlong[0]);
+                double longitude = Double.parseDouble(latlong[1]);
+
+                LatLng loc = new LatLng(latitude, longitude);
+
+                String nom = s.getCell(0,i).getContents();
+                String site = s.getCell(3,i).getContents();
+                String tel = s.getCell(4,i).getContents();
+
+                if (tel == "") {
+                    mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_vincent)));
+                }
+                else {
+                    mMap.addMarker(new MarkerOptions().snippet(tel).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_vincent)));
+                }
+            }
+
+        } catch (Exception e)
+        {
+            Log.d("binks", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
+    // Ajout des marqueur de captif la libération.
+    public void Captif() {
+
+        try {
+            AssetManager am = getAssets();
+
+            InputStream is = am.open("CaptifLaLiberation.xls");
+
+            Workbook wb = Workbook.getWorkbook(is);
+
+            Sheet s = wb.getSheet(0);
+
+            int row = s.getRows();
+
+            for (int i=1; i<row;i++){
+                Cell c = s.getCell(2,i);
+
+                // Tri des données
+                String[] latlong = c.getContents().split(",");
+
+                double latitude = Double.parseDouble(latlong[0]);
+                double longitude = Double.parseDouble(latlong[1]);
+
+                LatLng loc = new LatLng(latitude, longitude);
+
+                String nom = s.getCell(0,i).getContents();
+                String site = s.getCell(3,i).getContents();
+                String tel = s.getCell(4,i).getContents();
+
+                if (tel == "") {
+                    mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_captif)));
+                }
+                else {
+                    mMap.addMarker(new MarkerOptions().snippet(tel).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_captif)));
+                }
+            }
+
+        } catch (Exception e)
+        {
+            Log.d("binks", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
+    // Ajout des marqueur des banques alimentaires.
+    public void banque() {
+
+        try {
+            AssetManager am = getAssets();
+
+            InputStream is = am.open("banqueAlimentaire.xls");
+
+            Workbook wb = Workbook.getWorkbook(is);
+
+            Sheet s = wb.getSheet(0);
+
+            int row = s.getRows();
+
+            for (int i=1; i<row;i++){
+                Cell c = s.getCell(2,i);
+
+                // Tri des données
+                String[] latlong = c.getContents().split(",");
+
+                double latitude = Double.parseDouble(latlong[0]);
+                double longitude = Double.parseDouble(latlong[1]);
+
+                LatLng loc = new LatLng(latitude, longitude);
+
+                String nom = s.getCell(0,i).getContents();
+                String site = s.getCell(3,i).getContents();
+                String tel = s.getCell(4,i).getContents();
+
+                if (tel == "") {
+                    mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_banquealimentaire)));
+                }
+                else {
+                    mMap.addMarker(new MarkerOptions().snippet(tel).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_banquealimentaire)));
+                }
+            }
+
+        } catch (Exception e)
+        {
+            Log.d("binks", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
 
     // Ajouter un pin dans notre base de données via une requête de type GET
     public void addPin(double latitude, double longitude, long id_user, String date)
