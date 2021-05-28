@@ -105,6 +105,10 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
     RadioGroup rg;
 
+    Utilisateur utilisateur;
+
+    Chat chat;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -119,6 +123,9 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        // Informations sur l'utilisateur
+        utilisateur = new Utilisateur(String.valueOf(getUserID()),getUsername(),getUserMail(),getUserPassword());
+
         this.activity = this;
         this.mclick = false;
         this.btnmclick = findViewById(R.id.btnmapclick);
@@ -132,15 +139,9 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         this.pgrb = findViewById(R.id.prgb2);
         this.rg = findViewById(R.id.radioGroup);
 
-        // Informations nécessaire pour se connecter au chat
-        String id = String.valueOf(getUserID());
-        String username = getUsername();
-        String mail = getUserMail();
-        String password = getUserPassword();
-
-        System.out.println(id+" "+username+" "+mail+" "+password);
         //Connexion automatique au serveur chat
-        loginChat(id,username,mail,password);
+        this.chat = new Chat(utilisateur);
+        chat.loginChat(this);
 
         //change de place la toolbar google maps
         View locationButton = ((View) mapFragment.getView().findViewById(Integer.parseInt("1")).
@@ -153,8 +154,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         rlp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
         rlp.setMargins(0, 0, 50, 100);
 
-        Toast.makeText(this,"Bienvenue, "+getUsername(), Toast.LENGTH_LONG).show();
-
+        Toast.makeText(this,"Bienvenue, "+utilisateur.username, Toast.LENGTH_LONG).show();
 
     }
 
@@ -179,15 +179,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         mMap.setMyLocationEnabled(true);
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
-
-
-
-
-        //mMap.setCompasEnabled(true);
-        // Add a marker in Sydney and move the camera
-        //LatLng sydney = new LatLng(-34, 151);
-        //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         {
@@ -246,6 +237,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
         }
 
+        pgrb.setVisibility(View.VISIBLE);
+
         //Création des marqueurs
         EmmausMarker();
         CHRSMarker();
@@ -260,7 +253,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         secoursPopulaire();
 
         pgrb.setVisibility(View.INVISIBLE);
-
 
         mMap.setOnInfoWindowLongClickListener(new GoogleMap.OnInfoWindowLongClickListener() {
             @Override
@@ -419,8 +411,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                         //Comm.getText()
                         //Envie.getText()
 
-                        mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+getUsername()+" le "+yyyy_mm_ddTodd_mm_yyyy(jour)+" à "+heure+" (...)").position(latLng).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
-                        addPin(lat,lng,getUserID(),jour+" "+heure);
+                        mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+utilisateur.username+" le "+yyyy_mm_ddTodd_mm_yyyy(jour)+" à "+heure+" (...)").position(latLng).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
+                        addPin(lat,lng,Long.parseLong(utilisateur.id_user),jour+" "+heure);
                         mapclick2();
                     }
                 });
@@ -463,21 +455,13 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 requestDisconnect();
-                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                Context context = getApplicationContext();
+                Intent intent = new Intent(context,MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
                 // Déconnexion du serveur chat
-                Applozic.logoutUser(map.this, new AlLogoutHandler() {
-                    @Override
-                    public void onSuccess(Context context) {
-                        System.out.println("Déconnexion réussi");
-                    }
+                chat.logout(context);
 
-                    @Override
-                    public void onFailure(Exception exception) {
-                        System.out.println("Erreur déconnexion");
-                    }
-                });
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
 
@@ -583,34 +567,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         }
     }
-
-    // Se connecte au serveur et si le compte n'existe pas alors le compte est créer
-    public void loginChat(String id_user, String username, String email, String password)
-    {
-        User user = new User();
-        user.setUserId(id_user); //userId it can be any unique user identifier NOTE : +,*,? are not allowed chars in userId.
-        user.setDisplayName(username); //displayName is the name of the user which will be shown in chat messages
-        user.setEmail(email); //optional
-        user.setAuthenticationTypeId(User.AuthenticationType.APPLOZIC.getValue());  //User.AuthenticationType.APPLOZIC.getValue() for password verification from Applozic server and User.AuthenticationType.CLIENT.getValue() for access Token verification from your server set access token as password
-        user.setPassword(password); //optional, leave it blank for testing purpose, read this if you want to add additional security by verifying password from your server https://www.applozic.com/docs/configuration.html#access-token-url
-
-        Applozic.connectUser(this, user, new AlLoginHandler() {
-            @Override
-            public void onSuccess(RegistrationResponse registrationResponse, Context context) {
-                System.out.println("Ok chat");
-            }
-
-            @Override
-            public void onFailure(RegistrationResponse registrationResponse, Exception exception) {
-                System.out.println("Erreur chat");
-                exception.printStackTrace();
-            }
-        });
-
-
-    }
-
-
 
     private BitmapDescriptor BitmapFromVector(Context context, int vectorResId) {
         // below line is use to generate a drawable.
