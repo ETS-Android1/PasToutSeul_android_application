@@ -59,6 +59,7 @@ dependencies {
     implementation fileTree(dir: 'D:\\code\\github\\projetE3\\testfusion1\\app\\libs', include: ['*.aar', '*.jar'], exclude: [])
     implementation fileTree(dir: 'C:\\Users\\jerem\\volley', include: ['*.aar', '*.jar'], exclude: [])
     implementation files('libs/jxl.jar')
+    implementation 'org.jetbrains:annotations:15.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

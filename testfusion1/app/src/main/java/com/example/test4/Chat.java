@@ -1,7 +1,10 @@
 package com.example.test4;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.applozic.mobicomkit.Applozic;
 import com.applozic.mobicomkit.api.account.register.RegistrationResponse;
@@ -9,7 +12,7 @@ import com.applozic.mobicomkit.api.account.user.User;
 import com.applozic.mobicomkit.listners.AlLoginHandler;
 import com.applozic.mobicomkit.listners.AlLogoutHandler;
 
-public class Chat{
+public class Chat extends AppCompatActivity {
 
     String email;
     String id_user;
@@ -24,6 +27,8 @@ public class Chat{
         this.email = utilisateur.email;
         this.password = utilisateur.password;
     }
+
+
 
     public void loginChat(Context context)//,String id_user, String username, String email, String password)
     {

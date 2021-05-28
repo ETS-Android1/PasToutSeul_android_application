@@ -139,9 +139,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         this.pgrb = findViewById(R.id.prgb2);
         this.rg = findViewById(R.id.radioGroup);
 
-        //Connexion automatique au serveur chat
-        this.chat = new Chat(utilisateur);
-        chat.loginChat(this);
+
 
         //change de place la toolbar google maps
         View locationButton = ((View) mapFragment.getView().findViewById(Integer.parseInt("1")).
@@ -459,8 +457,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 Intent intent = new Intent(context,MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-                // Déconnexion du serveur chat
-                chat.logout(context);
 
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
@@ -558,14 +554,16 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
     // Lance la page du chat si la création de compte et/ou la connexion a reussi.
     public void chat(View v) {
+        //Connexion automatique au serveur chat
+        this.chat = new Chat(utilisateur);
 
-        if(Applozic.isConnected(this)){
-            // Affiche la liste des conversations.
-            Intent intent = new Intent(this, ConversationActivity.class);
-            startActivity(intent);
+        Intent chat = new Intent(this,ChatActivity.class);
 
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-        }
+        chat.putExtra("USER_NAME", utilisateur.username);
+        chat.putExtra("USER_ID", utilisateur.id_user);
+        chat.putExtra("USER_MAIL", utilisateur.email);
+        chat.putExtra("USER_PASSWORD",utilisateur.password);
+        startActivity(chat);
     }
 
     private BitmapDescriptor BitmapFromVector(Context context, int vectorResId) {
