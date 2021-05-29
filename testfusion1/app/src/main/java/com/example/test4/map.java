@@ -136,7 +136,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         this.Dispenvie = findViewById(R.id.editTextTextEnvie);
         this.Dispcomm = findViewById(R.id.textView15);
         this.mflc = LocationServices.getFusedLocationProviderClient(this);
-        this.pgrb = findViewById(R.id.prgb2);
+        this.pgrb = findViewById(R.id.progressBarMap);
         this.rg = findViewById(R.id.radioGroup);
 
 
