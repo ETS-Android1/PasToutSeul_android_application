@@ -111,7 +111,7 @@
             android:src="@drawable/ic_pin" />
 
         <ProgressBar
-            android:id="@+id/prgb2"
+            android:id="@+id/progressBarMap"
             android:layout_width="150dp"
             android:layout_height="150dp"
             app:layout_constraintBottom_toTopOf="@+id/btnmapclick"
