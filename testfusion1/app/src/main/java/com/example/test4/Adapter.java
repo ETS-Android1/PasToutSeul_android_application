@@ -27,7 +27,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     @NonNull
     @org.jetbrains.annotations.NotNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull @org.jetbrains.annotations.NotNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(this.context);
         View view = inflater.inflate(R.layout.row_conversation, parent,false);
         return new ViewHolder(view);
@@ -35,7 +35,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull @org.jetbrains.annotations.NotNull Adapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.titre.setText(name[position]);
         holder.message.setText("Dernier message : "+mess[position]);
     }
@@ -47,11 +47,13 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         TextView titre, message;
-        public ViewHolder(@NonNull View view)
+        public ViewHolder(View view)
         {
             super(view);
             titre = itemView.findViewById(R.id.textViewTitleConversation);
             message = itemView.findViewById(R.id.textViewLastMessage);
         }
     }
+
+
 }
