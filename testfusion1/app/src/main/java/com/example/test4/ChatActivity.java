@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -25,6 +27,8 @@ public class ChatActivity extends AppCompatActivity {
     RecyclerView recyclerViewMessage;
     TextView noMessageError;
     ProgressBar chargementConv;
+    EditText nomGrp;
+    View view_popup;
 
     Utilisateur utilisateur;
 
@@ -37,12 +41,14 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
 
+        this.view_popup = getLayoutInflater().inflate(R.layout.popup_new_conv, null);
+
         this.recyclerViewMessage = findViewById(R.id.recyclerViewConversation);
         this.chargementConv = findViewById(R.id.progressBarConversation);
         this.noMessageError = findViewById(R.id.textViewNoMessage);
+        this.nomGrp = this.view_popup.findViewById(R.id.editTextNomGroupe);
 
         this.utilisateur = new Utilisateur(String.valueOf(getUserID()),getUsername(),getUserMail(),getUserPassword());
-
 
         afficheConversation();
 
@@ -50,8 +56,9 @@ public class ChatActivity extends AppCompatActivity {
 
     public void afficheConversation()
     {
-        requestConversation(res -> {
-                    this.chargementConv.setVisibility(View.VISIBLE);
+        System.out.println("aezaeazeaze");
+        this.chargementConv.setVisibility(View.VISIBLE);
+        requestAfficheConversation(res -> {
                     if(res.length() != 0)
                     {
                         String[] line = res.split("<br>");
@@ -86,7 +93,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     // Requête pour récupérer toutes les conversations de l'utilisateur
-    public void requestConversation(final map.VolleyCallBack callback)
+    public void requestAfficheConversation(final map.VolleyCallBack callback)
     {
         RequestQueue queue = Volley.newRequestQueue(this);
 
@@ -101,18 +108,62 @@ public class ChatActivity extends AppCompatActivity {
         queue.add(postRequest);
     }
 
-    public void newConversation(View view)
+    public void newConversationPopup(View view)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(this.view_popup);
 
-        View view_popup = getLayoutInflater().inflate(R.layout.popup_new_conv, null);
+        final AlertDialog popup = builder.show();
 
-        builder.setView(view_popup);
+        Button cancel = this.view_popup.findViewById(R.id.btnCancelGrp);
+        Button create = this.view_popup.findViewById(R.id.btnCreateGroup);
 
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((ViewGroup)view_popup.getParent()).removeView(view_popup);
+                popup.dismiss();
+            }
+        });
 
-        builder.show();
+        create.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((ViewGroup)view_popup.getParent()).removeView(view_popup);
+
+                String nom_groupe = nomGrp.getText().toString();
+                createConversation(v,nom_groupe);
+
+                popup.dismiss();
+            }
+        });
+
     }
 
+    public void createConversation(View view, String nom_groupe)
+    {
+        this.chargementConv.setVisibility(View.VISIBLE);
+
+        requestCreateConversation(nom_groupe, res-> {
+            System.out.println(res);
+            afficheConversation();
+        });
+    }
+
+    public void requestCreateConversation(String nom_groupe, final map.VolleyCallBack callBack)
+    {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        String URL = "https://db-ezpfla.000webhostapp.com/createConv.php?id_user="+utilisateur.id_user+"&nom_groupe="+nom_groupe;
+
+        StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
+            Log.i("Réponse", response);
+            callBack.onSuccess(response);
+        }, error -> Log.e("Réponse", error.toString()));
+
+        // Ajoute la requête dans la file
+        queue.add(postRequest);
+    }
 
     // Récupère le nom d'utilisateur
     public String getUsername()

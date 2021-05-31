@@ -78,7 +78,7 @@
         android:background="@color/orange_dark"
         android:backgroundTint="@color/orange"
         android:clickable="true"
-        android:onClick="newConversation"
+        android:onClick="newConversationPopup"
         app:layout_constraintBottom_toBottomOf="@+id/recyclerViewConversation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.876"
