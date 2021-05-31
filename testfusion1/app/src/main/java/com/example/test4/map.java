@@ -37,13 +37,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.applozic.mobicomkit.Applozic;
-import com.applozic.mobicomkit.api.account.register.RegistrationResponse;
-import com.applozic.mobicomkit.api.account.user.User;
-import com.applozic.mobicomkit.listners.AlLoginHandler;
-import com.applozic.mobicomkit.listners.AlLogoutHandler;
-import com.applozic.mobicomkit.uiwidgets.conversation.ConversationUIService;
-import com.applozic.mobicomkit.uiwidgets.conversation.activity.ConversationActivity;
 import com.example.test4.databinding.ActivityMapBinding;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationAvailability;
@@ -107,7 +100,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
     Utilisateur utilisateur;
 
-    Chat chat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -552,12 +544,10 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         mclick = false;
     }
 
-    // Lance la page du chat si la création de compte et/ou la connexion a reussi.
-    public void chat(View v) {
-        //Connexion automatique au serveur chat
-        this.chat = new Chat(utilisateur);
+    // Lance la page contenant la liste des conversations
+    public void conversation(View v) {
 
-        Intent chat = new Intent(this,ChatActivity.class);
+        Intent chat = new Intent(this,ConversationActivity.class);
 
         chat.putExtra("USER_NAME", utilisateur.username);
         chat.putExtra("USER_ID", utilisateur.id_user);
