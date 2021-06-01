@@ -186,6 +186,7 @@ public class ConversationActivity extends AppCompatActivity {
 
         chatActivity.putExtra("TITRE", titre);
         chatActivity.putExtra("USER_ID", utilisateur.id_user);
+        chatActivity.putExtra("USER_NAME", utilisateur.username);
         chatActivity.putExtra("GROUP_ID", id_groupe);
 
         startActivity(chatActivity);
