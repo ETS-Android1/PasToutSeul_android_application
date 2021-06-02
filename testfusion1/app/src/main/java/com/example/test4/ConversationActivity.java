@@ -1,22 +1,17 @@
 package com.example.test4;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,7 +21,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.jetbrains.annotations.NotNull;
+
 
 public class ConversationActivity extends AppCompatActivity {
 
@@ -41,6 +36,8 @@ public class ConversationActivity extends AppCompatActivity {
     String[] titre;
     String[] id_group;
 
+    AlertDialog.Builder builder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -48,6 +45,7 @@ public class ConversationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_conversation);
 
         this.view_popup = getLayoutInflater().inflate(R.layout.popup_new_conv, null);
+        this.builder = new AlertDialog.Builder(this).setView(this.view_popup);
 
         initView();
 
@@ -163,10 +161,9 @@ public class ConversationActivity extends AppCompatActivity {
     // Création d'un popup afin de créer un groupe de conversation
     public void newConversationPopup(View view)
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(this.view_popup);
+        AlertDialog popup = builder.show();
 
-        final AlertDialog popup = builder.show();
+        popup.setCanceledOnTouchOutside(false);
 
         Button cancel = this.view_popup.findViewById(R.id.btnCancelGrp);
         Button create = this.view_popup.findViewById(R.id.btnCreateGroup);
