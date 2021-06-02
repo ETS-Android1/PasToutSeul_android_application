@@ -24,6 +24,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +35,7 @@ public class ConversationActivity extends AppCompatActivity {
     ProgressBar chargementConv;
     EditText nomGrp;
     View view_popup;
-
+    FloatingActionButton floatingActionButton;
     Utilisateur utilisateur;
 
     String[] titre;
@@ -48,10 +49,7 @@ public class ConversationActivity extends AppCompatActivity {
 
         this.view_popup = getLayoutInflater().inflate(R.layout.popup_new_conv, null);
 
-        this.recyclerViewMessage = findViewById(R.id.recyclerViewConversation);
-        this.chargementConv = findViewById(R.id.progressBarConversation);
-        this.noMessageError = findViewById(R.id.textViewNoMessage);
-        this.nomGrp = this.view_popup.findViewById(R.id.editTextNomGroupe);
+        initView();
 
         this.utilisateur = new Utilisateur(String.valueOf(getUserID()),getUsername(),getUserMail(),getUserPassword());
 
@@ -59,9 +57,36 @@ public class ConversationActivity extends AppCompatActivity {
 
     }
 
+    public void initView()
+    {
+        this.recyclerViewMessage = findViewById(R.id.recyclerViewConversation);
+        this.chargementConv = findViewById(R.id.progressBarConversation);
+        this.noMessageError = findViewById(R.id.textViewNoMessage);
+        this.nomGrp = this.view_popup.findViewById(R.id.editTextNomGroupe);
+        this.floatingActionButton = findViewById(R.id.floatingActionButton2);
+    }
+
+    // Requête pour récupérer toutes les conversations de l'utilisateur
+    public void requestAfficheConversation(final map.VolleyCallBack callback)
+    {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        String URL = "https://db-ezpfla.000webhostapp.com/afficheConv.php?id_user="+utilisateur.id_user;
+
+        StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
+            Log.i("Réponse", response);
+            callback.onSuccess(response.trim());
+        }, error -> Log.e("Réponse", error.toString()));
+
+        // Ajoute la requête dans la file
+        queue.add(postRequest);
+    }
+
+    // Traitement du résultat de la requête "requestAfficheConversation"
     public void afficheConversation()
     {
         this.chargementConv.setVisibility(View.VISIBLE);
+
         requestAfficheConversation(res -> {
                     if(res.length() != 0) {
                         String[] line = res.split("<br>");
@@ -83,12 +108,13 @@ public class ConversationActivity extends AppCompatActivity {
 
                         Adapter adapter = new Adapter(this, titre, id_group);
                         recyclerViewMessage.setAdapter(adapter);
+
+                        // Ajout d'un listener pour les items dans la recyclerView
                         recyclerViewMessage.addOnItemTouchListener(
                                 new RecyclerItemClickListener(this, recyclerViewMessage ,new RecyclerItemClickListener.OnItemClickListener() {
                                     @Override public void onItemClick(View view, int position) {
                                         System.out.println(titre[position]+" "+id_group[position]);
                                         launchChat(titre[position],id_group[position]);
-
                                     }
 
                                     @Override public void onLongItemClick(View view, int position) {
@@ -107,22 +133,34 @@ public class ConversationActivity extends AppCompatActivity {
         });
     }
 
-    // Requête pour récupérer toutes les conversations de l'utilisateur
-    public void requestAfficheConversation(final map.VolleyCallBack callback)
+    // Requête permettant de créer un groupe de conversation
+    public void requestCreateConversation(String nom_groupe, final map.VolleyCallBack callBack)
     {
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        String URL = "https://db-ezpfla.000webhostapp.com/afficheConv.php?id_user="+utilisateur.id_user;
+        String URL = "https://db-ezpfla.000webhostapp.com/createConv.php?id_user="+utilisateur.id_user+"&nom_groupe="+nom_groupe;
 
         StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
             Log.i("Réponse", response);
-            callback.onSuccess(response.trim());
+            callBack.onSuccess(response);
         }, error -> Log.e("Réponse", error.toString()));
 
         // Ajoute la requête dans la file
         queue.add(postRequest);
     }
 
+    // Traitement du résultat de la requête "requestCreateConversation"
+    public void createConversation(View view, String nom_groupe)
+    {
+        this.chargementConv.setVisibility(View.VISIBLE);
+
+        requestCreateConversation(nom_groupe, res-> {
+            System.out.println(res);
+            afficheConversation();
+        });
+    }
+
+    // Création d'un popup afin de créer un groupe de conversation
     public void newConversationPopup(View view)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -155,31 +193,7 @@ public class ConversationActivity extends AppCompatActivity {
 
     }
 
-    public void createConversation(View view, String nom_groupe)
-    {
-        this.chargementConv.setVisibility(View.VISIBLE);
-
-        requestCreateConversation(nom_groupe, res-> {
-            System.out.println(res);
-            afficheConversation();
-        });
-    }
-
-    public void requestCreateConversation(String nom_groupe, final map.VolleyCallBack callBack)
-    {
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        String URL = "https://db-ezpfla.000webhostapp.com/createConv.php?id_user="+utilisateur.id_user+"&nom_groupe="+nom_groupe;
-
-        StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
-            Log.i("Réponse", response);
-            callBack.onSuccess(response);
-        }, error -> Log.e("Réponse", error.toString()));
-
-        // Ajoute la requête dans la file
-        queue.add(postRequest);
-    }
-
+    // Lancement du chat
     public void launchChat(String titre, String id_groupe)
     {
         Intent chatActivity = new Intent(this, ChatActivity.class);
@@ -192,13 +206,11 @@ public class ConversationActivity extends AppCompatActivity {
         startActivity(chatActivity);
     }
 
-    // Récupère le nom d'utilisateur
     public String getUsername()
     {
         return getIntent().getStringExtra("USER_NAME");
     }
 
-    // Récupère l'id de l'utilisateur
     public String getUserID()
     {
         String id = getIntent().getStringExtra("USER_ID");

@@ -37,7 +37,7 @@
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Test4"
-            tools:ignore="Instantiatable" />
+            android:windowSoftInputMode="adjustPan"/>
 
 
         <!--

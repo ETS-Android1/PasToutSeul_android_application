@@ -5,19 +5,30 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.w3c.dom.Text;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
     Boolean isChat;
 
     String[] name,mess,heure;
+
     Context context;
+
+    ArrayList<String> nom;
+    ArrayList<String> message;
+    ArrayList<String> temps;
 
     public Adapter(Context ctxt, String[] nom, String[] message)
     {
@@ -28,12 +39,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     }
 
 
-    public Adapter(Context ctxt, String[] nom, String[] message, String []time)
+    public Adapter(Context ctxt, ArrayList<String> nom, ArrayList<String> message, ArrayList<String> time)
     {
-        this.name = nom;
-        this.mess = message;
+        this.nom = nom;
+        this.message = message;
         this.context = ctxt;
-        this.heure = time;
+        this.temps = time;
         this.isChat = true;
     }
 
@@ -44,7 +55,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
         LayoutInflater inflater = LayoutInflater.from(this.context);
-
         if(!isChat)
         {
             view = inflater.inflate(R.layout.row_conversation, parent,false);
@@ -67,17 +77,29 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             holder.titre.setText(name[position]);
             holder.lastMessage.setText("Dernier message : "+mess[position]);
         }
-        else{
-            holder.nom.setText(name[position]);
-            holder.messageChat.setText(mess[position]);
-            holder.heure.setText(heure[position]);
+        else
+        {
+            Date date = new Date();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+            holder.messageChat.setText("["+ dateFormat.format(date)+"] "+nom.get(position)+" : "+ message.get(position));
         }
-
     }
 
     @Override
     public int getItemCount() {
-        return name.length;
+        if(!isChat){return name.length;}
+        else{return nom.size();}
+
+    }
+
+
+    public void addItem(String name, String messageContent, String time)
+    {
+        this.nom.add(name);
+        this.message.add(messageContent);
+        this.temps.add(time);
+
+        notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -94,7 +116,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             }
             else
                 {
-                nom = itemView.findViewById(R.id.textViewExpediteur);
                 messageChat = itemView.findViewById(R.id.textViewMessage);
             }
 
