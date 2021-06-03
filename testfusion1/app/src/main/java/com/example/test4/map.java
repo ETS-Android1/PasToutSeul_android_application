@@ -1115,7 +1115,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                         String heure;
                         String nom_user;
 
-                        String string[] = new String[6];
+                        String string[];
 
 
                         for(int i = 0; i < line_length; i++)
