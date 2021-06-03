@@ -42,8 +42,8 @@
 
         <TextView
             android:id="@+id/textViewTitleConversation"
-            android:layout_width="83dp"
-            android:layout_height="37dp"
+            android:layout_width="369dp"
+            android:layout_height="35dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
@@ -53,9 +53,9 @@
             android:layout_marginStart="21dp"
             android:layout_marginLeft="21dp"
             android:layout_marginTop="5dp"
-            android:layout_marginEnd="304dp"
-            android:layout_marginRight="304dp"
-            android:layout_marginBottom="33dp"
+            android:layout_marginEnd="18dp"
+            android:layout_marginRight="18dp"
+            android:layout_marginBottom="35dp"
             android:text="Titre"
             android:textSize="25dp"
             android:textStyle="bold" />
