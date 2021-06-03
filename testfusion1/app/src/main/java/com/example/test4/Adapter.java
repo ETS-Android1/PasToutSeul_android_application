@@ -38,7 +38,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         this.isChat = false;
     }
 
-
     public Adapter(Context ctxt, ArrayList<String> nom, ArrayList<String> message, ArrayList<String> time)
     {
         this.nom = nom;
@@ -65,7 +64,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         }
 
         return new ViewHolder(view);
-
     }
 
 
@@ -79,9 +77,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         }
         else
         {
-            Date date = new Date();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-            holder.messageChat.setText("["+ dateFormat.format(date)+"] "+nom.get(position)+" : "+ message.get(position));
+            String[] date_heure = temps.get(position).split(" ");
+            String date = yyyy_mm_ddTodd_mm_yyyy(date_heure[0]);
+            String[] time = date_heure[1].split(":");
+            holder.messageChat.setText("["+date+" "+time[0]+":"+time[1]+"] "+nom.get(position)+" : "+ message.get(position));
         }
     }
 
@@ -91,7 +90,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         else{return nom.size();}
 
     }
-
 
     public void addItem(String name, String messageContent, String time)
     {
@@ -122,5 +120,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         }
     }
 
+    // Converti une date yyyy-dd-mm en dd-mm-yyyy
+    public String yyyy_mm_ddTodd_mm_yyyy(String date)
+    {
+        String []string = date.split("-");
 
+        return string[2]+"/"+string[1]+"/"+string[0];
+    }
 }
