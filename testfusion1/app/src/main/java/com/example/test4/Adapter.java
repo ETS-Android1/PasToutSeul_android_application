@@ -78,9 +78,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         else
         {
             String[] date_heure = temps.get(position).split(" ");
-            String date = yyyy_mm_ddTodd_mm_yyyy(date_heure[0]);
+            String date_formatFR = yyyy_mm_ddTodd_mm_yyyy(date_heure[0]);
             String[] time = date_heure[1].split(":");
-            holder.messageChat.setText("["+date+" "+time[0]+":"+time[1]+"] "+nom.get(position)+" : "+ message.get(position));
+            holder.messageChat.setText("["+date_formatFR+" "+time[0]+":"+time[1]+"] "+nom.get(position)+" : "+ message.get(position));
         }
     }
 
@@ -121,9 +121,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     }
 
     // Converti une date yyyy-dd-mm en dd-mm-yyyy
-    public String yyyy_mm_ddTodd_mm_yyyy(String date)
+    public String yyyy_mm_ddTodd_mm_yyyy(String d)
     {
-        String []string = date.split("-");
+        System.out.println(d);
+        String []string = d.split("-");
 
         return string[2]+"/"+string[1]+"/"+string[0];
     }

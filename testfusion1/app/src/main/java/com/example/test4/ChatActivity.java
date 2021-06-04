@@ -104,10 +104,9 @@ public class ChatActivity extends AppCompatActivity
         if(!inputMessage.equals(""))
         {
             Date date = new Date();
-            SimpleDateFormat dateFormatFR = new SimpleDateFormat("dd/MM/yyyy HH:mm");
             SimpleDateFormat dateFormatUS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-            adapter.addItem(this.username,inputMessage,dateFormatFR.format(date));
+            adapter.addItem(this.username,inputMessage,dateFormatUS.format(date));
             sendMessage(inputMessage,dateFormatUS.format(date));
             editTextMessage.setText("");
         }
@@ -159,4 +158,6 @@ public class ChatActivity extends AppCompatActivity
 
         queue.add(getRequest);
     }
+
+
 }
