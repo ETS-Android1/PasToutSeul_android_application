@@ -1,10 +1,16 @@
 package com.example.test4;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,6 +21,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,25 +39,36 @@ public class ChatActivity extends AppCompatActivity
 
     String titre, id_user, id_group, username;
 
-    TextView titreView;
-    EditText editTextMessage;
+    TextView titreView, msgError;
+
+    EditText addTextView,editTextMessage;
 
     Adapter adapter;
     RecyclerView recyclerMessage;
 
     // Liste des messages avec leurs informations
-    ArrayList<String> nom = new ArrayList<String>();
-    ArrayList<String> message = new ArrayList<String>();
-    ArrayList<String> temps = new ArrayList<String>();
+    ArrayList<String> nom = new ArrayList<>();
+    ArrayList<String> message = new ArrayList<>();
+    ArrayList<String> temps = new ArrayList<>();
 
     // Création d'un service qui mettra à jour les messages toutes les x secondes
     ScheduledExecutorService update;
+
+    // Fenêtre popup pour ajouter un utilisateur
+    AlertDialog.Builder builder;
+    View view_popup;
+
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        // Initialastion des variables pour la fenêtre popup
+        this.view_popup = getLayoutInflater().inflate(R.layout.popup_add_people, null);
+        this.builder = new AlertDialog.Builder(this).setView(this.view_popup);
 
         // Initialisation des variables transmis par le père
         this.titre = getIntent().getStringExtra("TITRE");
@@ -59,7 +78,9 @@ public class ChatActivity extends AppCompatActivity
 
         initViewID();
 
+
         initRecyclerView();
+        progressBar.setVisibility(View.INVISIBLE);
 
         // Mise à jour des messages toutes les 5 secondes
         this.update = Executors.newScheduledThreadPool(1);
@@ -72,10 +93,14 @@ public class ChatActivity extends AppCompatActivity
         this.titreView.setText(this.titre);
         this.editTextMessage = findViewById(R.id.editTextChat);
         this.recyclerMessage = findViewById(R.id.recyclerViewChat);
+        this.addTextView = this.view_popup.findViewById(R.id.editTextNomUser);
+        this.msgError = this.view_popup.findViewById(R.id.textViewAddError);
+        this.progressBar = findViewById(R.id.progressBarChat);
     }
 
     public void initRecyclerView()
     {
+        this.progressBar.setVisibility(View.VISIBLE);
         getMessages((res ->
                 {
                     if(res.trim().length() != 0)
@@ -104,6 +129,7 @@ public class ChatActivity extends AppCompatActivity
 
                     // Création du recycler view
                     recyclerMessage.setAdapter(adapter);
+                    this.progressBar.setVisibility(View.INVISIBLE);
                 }));
     }
 
@@ -119,13 +145,13 @@ public class ChatActivity extends AppCompatActivity
             SimpleDateFormat dateFormatUS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
             adapter.addItem(this.username,inputMessage,dateFormatUS.format(date));
-            sendMessage(inputMessage,dateFormatUS.format(date));
+            sendMessageRequest(inputMessage,dateFormatUS.format(date));
             editTextMessage.setText("");
         }
     }
 
     // Envoie d'un message via une requête https
-    public void sendMessage(String message,String date)
+    public void sendMessageRequest(String message,String date)
     {
         RequestQueue queue = Volley.newRequestQueue(this);
 
@@ -214,5 +240,100 @@ public class ChatActivity extends AppCompatActivity
         }, error -> Log.e("Réponse", error.toString()));
 
         queue.add(getRequest);
+    }
+
+    public void popupAdd(View view)
+    {
+        AlertDialog popup = builder.show();
+
+        popup.setCanceledOnTouchOutside(false);
+
+        Button quitter = this.view_popup.findViewById(R.id.btnCancelAdd);
+        Button add = this.view_popup.findViewById(R.id.btnAddPeople);
+
+        quitter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((ViewGroup)view_popup.getParent()).removeView(view_popup);
+                popup.dismiss();
+            }
+        });
+
+        add.setOnClickListener(new View.OnClickListener()
+        {
+            @SuppressLint("ResourceAsColor")
+            @Override
+            public void onClick(View v)
+            {
+                msgError.setText("");
+                addTextView.setBackgroundResource(R.drawable.backwithborder_noerror);
+                if(!addTextView.getText().toString().equals(""))
+                {
+                    addPerson(addTextView.getText().toString(),id_group, res ->
+                    {
+                        String response = res.trim();
+                        System.out.println(response);
+                        if(response.equals("error_username"))
+                        {
+                            msgError.setText("Cet utilisateur n'existe pas.");
+                            addTextView.setBackgroundResource(R.drawable.backwithborder_error);
+                            //addTextView.setTextColor(R.color.rouge_fonce);
+                        }
+                        else if(response.equals("exist"))
+                        {
+                            msgError.setText("Cet utilisateur à déja été ajouté.");
+                            addTextView.setBackgroundResource(R.drawable.backwithborder_error);
+                            //addTextView.setTextColor(R.color.rouge_fonce);
+                        }
+                        else
+                        {
+                            msgError.setText("");
+                            addTextView.setBackgroundResource(R.drawable.backwithborder_noerror);
+                            addTextView.setText("");
+                            //addTextView.setTextColor(R.color.black);
+                            Toast.makeText(ChatActivity.this, res, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                else
+                {
+                    addTextView.setBackgroundResource(R.drawable.backwithborder_error);
+                    msgError.setText("Veuillez mettre un nom d'utilisateur.");
+                    //addTextView.setHintTextColor(R.color.rouge_clair);
+                }
+
+
+            }
+        });
+    }
+
+    public void addPerson(String name, String id_grp, final map.VolleyCallBack callback)
+    {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        String URL = "https://db-ezpfla.000webhostapp.com/addPeople.php";
+
+        StringRequest postRequest = new StringRequest(Request.Method.POST, URL, response -> {
+            Log.i("Réponse", response);
+            callback.onSuccess(response);
+        }, error -> Log.e("Réponse", error.toString())){
+            @Override
+            protected Map<String,String> getParams()
+            {
+                Map<String,String> logs = new HashMap<>();
+
+                //Ajout des arguments
+                logs.put("nom_user",name);
+                logs.put("id_groupe",id_grp);
+
+                return logs;
+            }
+        };
+
+        //Gérer les timeout
+        postRequest.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        // Ajout de la requête dans la file d'attente
+        queue.add(postRequest);
     }
 }

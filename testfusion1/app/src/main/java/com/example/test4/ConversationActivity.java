@@ -1,10 +1,13 @@
 package com.example.test4;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -29,13 +32,14 @@ public class ConversationActivity extends AppCompatActivity {
     TextView noMessageError;
     ProgressBar chargementConv;
     EditText nomGrp;
-    View view_popup;
+
     FloatingActionButton floatingActionButton;
     Utilisateur utilisateur;
 
     String[] titre;
     String[] id_group;
 
+    View view_popup;
     AlertDialog.Builder builder;
 
     @Override
@@ -60,8 +64,8 @@ public class ConversationActivity extends AppCompatActivity {
         this.recyclerViewMessage = findViewById(R.id.recyclerViewConversation);
         this.chargementConv = findViewById(R.id.progressBarConversation);
         this.noMessageError = findViewById(R.id.textViewNoMessage);
-        this.nomGrp = this.view_popup.findViewById(R.id.editTextNomGroupe);
         this.floatingActionButton = findViewById(R.id.floatingActionButton2);
+        this.nomGrp = this.view_popup.findViewById(R.id.editTextNomGroupe);
     }
 
     // Requête pour récupérer toutes les conversations de l'utilisateur
@@ -167,6 +171,20 @@ public class ConversationActivity extends AppCompatActivity {
 
         Button cancel = this.view_popup.findViewById(R.id.btnCancelGrp);
         Button create = this.view_popup.findViewById(R.id.btnCreateGroup);
+
+        // Bouton retour
+        popup.setOnKeyListener(new Dialog.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface arg0, int keyCode,
+                                 KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK)
+                {
+                    ((ViewGroup)view_popup.getParent()).removeView(view_popup);
+                    popup.dismiss();
+                }
+                return true;
+            }
+        });
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override

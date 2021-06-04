@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     android:background="@drawable/orange_jaune">
 
+    <ProgressBar
+        android:id="@+id/progressBarChat"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="103dp"
+        android:layout_height="95dp"
+        android:indeterminateDrawable="@drawable/progress"
+        android:indeterminate="true"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
     <EditText
         android:id="@+id/editTextChat"
         android:layout_width="273dp"
@@ -51,10 +63,10 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarTitreChat"
-        android:fitsSystemWindows="true"
         android:layout_width="412dp"
         android:layout_height="56dp"
         android:background="?attr/colorPrimary"
+        android:fitsSystemWindows="true"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -65,8 +77,8 @@
 
     <TextView
         android:id="@+id/textViewTitleChat"
-        android:layout_width="267dp"
-        android:layout_height="27dp"
+        android:layout_width="228dp"
+        android:layout_height="29dp"
         android:gravity="center"
         android:text="Titre"
         android:textColor="#444"
@@ -77,4 +89,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.02" />
+
+    <ImageButton
+        android:id="@+id/imageButton2"
+        android:onClick="popupAdd"
+        android:layout_width="32dp"
+        android:layout_height="29dp"
+        android:background="@drawable/add_friends"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.96"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.019" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
