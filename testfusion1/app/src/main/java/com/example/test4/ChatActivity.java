@@ -22,6 +22,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 public class ChatActivity extends AppCompatActivity
 {
 
@@ -33,9 +37,13 @@ public class ChatActivity extends AppCompatActivity
     Adapter adapter;
     RecyclerView recyclerMessage;
 
+    // Liste des messages avec leurs informations
     ArrayList<String> nom = new ArrayList<String>();
     ArrayList<String> message = new ArrayList<String>();
     ArrayList<String> temps = new ArrayList<String>();
+
+    // Création d'un service qui mettra à jour les messages toutes les x secondes
+    ScheduledExecutorService update;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -52,6 +60,10 @@ public class ChatActivity extends AppCompatActivity
         initViewID();
 
         initRecyclerView();
+
+        // Mise à jour des messages toutes les 5 secondes
+        this.update = Executors.newScheduledThreadPool(1);
+        update.scheduleAtFixedRate(this::updateMessages, 5, 5, TimeUnit.SECONDS);
     }
 
     public void initViewID()
@@ -74,7 +86,7 @@ public class ChatActivity extends AppCompatActivity
 
                         for(int i = 0; i < n; i++)
                         {
-                            System.out.println(lines[i]);
+                            //System.out.println(lines[i]);
                             element = lines[i].split("!§!");
                             nom.add(element[0]);
                             message.add(element[4]);
@@ -159,5 +171,48 @@ public class ChatActivity extends AppCompatActivity
         queue.add(getRequest);
     }
 
+    public void updateMessages()
+    {
+        Date date = new Date();
+        SimpleDateFormat dateFormatUS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        getNewMessages(dateFormatUS.format(date),res -> {
+            if(res.trim().length() != 0)
+            {
+                String[] lines = res.split("<!§!>");
+                String[] element;
+                int n = lines.length;
 
+                for(int i = 0; i < n; i++)
+                {
+                    element = lines[i].split("!§!");
+                    nom.add(element[0]);
+                    message.add(element[4]);
+                    temps.add(element[2]);
+
+                    this.adapter.addItem(element[0],element[4],element[2]);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        this.update.shutdown();
+        this.finish();
+    }
+
+    public void getNewMessages(String timeLastUpdate, final map.VolleyCallBack callback)
+    {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        String URL = "https://db-ezpfla.000webhostapp.com/getNewMessages.php?id_grp="+this.id_group+"&id_usr="+this.username+"&time="+timeLastUpdate;
+
+        StringRequest getRequest = new StringRequest(Request.Method.GET, URL, response -> {
+            Log.i("Réponse", response);
+            callback.onSuccess(response);
+        }, error -> Log.e("Réponse", error.toString()));
+
+        queue.add(getRequest);
+    }
 }
