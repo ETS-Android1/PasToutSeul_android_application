@@ -36,7 +36,9 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="@drawable/alignement_selec"
-            android:button="@drawable/ic_homme" />
+            android:button="@drawable/ic_personne_0"
+            android:onClick="checkRB1"
+            />
 
         <RadioButton
             android:id="@+id/radioButton2"
@@ -45,7 +47,9 @@
             android:layout_marginStart="25dp"
             android:layout_marginLeft="25dp"
             android:background="@drawable/alignement_selec"
-            android:button="@drawable/ic_femme" />
+            android:button="@drawable/ic_personne_1"
+            android:onClick="checkRB2"
+            />
 
         <RadioButton
             android:id="@+id/radioButton3"
@@ -54,7 +58,9 @@
             android:layout_marginStart="25dp"
             android:layout_marginLeft="25dp"
             android:background="@drawable/alignement_selec"
-            android:button="@drawable/ic_handicape" />
+            android:button="@drawable/ic_personne_2"
+            android:onClick="checkRB3"
+            />
 
     </RadioGroup>
 

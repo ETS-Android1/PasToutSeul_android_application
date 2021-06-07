@@ -3,6 +3,7 @@ package com.example.test4;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,9 +22,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -96,10 +99,15 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
     RelativeLayout layoutMap;
 
-    RadioGroup rg;
+    RadioButton rb1;
+    RadioButton rb2;
+    RadioButton rb3;
+
+    int icone;
 
     Utilisateur utilisateur;
 
+    View view_popup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +123,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+
+
         // Informations sur l'utilisateur
         utilisateur = new Utilisateur(String.valueOf(getUserID()),getUsername(),getUserMail(),getUserPassword());
 
@@ -129,10 +139,12 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         this.Dispcomm = findViewById(R.id.textView15);
         this.mflc = LocationServices.getFusedLocationProviderClient(this);
         this.pgrb = findViewById(R.id.progressBarMap);
-        this.rg = findViewById(R.id.radioGroup);
 
-
-
+        this.view_popup = getLayoutInflater().inflate(R.layout.addmarker_layout, null);
+        this.rb1 = this.view_popup.findViewById(R.id.radioButton);
+        this.rb2 = this.view_popup.findViewById(R.id.radioButton2);
+        this.rb3 = this.view_popup.findViewById(R.id.radioButton3);
+        this.icone = 0;
         //change de place la toolbar google maps
         View locationButton = ((View) mapFragment.getView().findViewById(Integer.parseInt("1")).
                 getParent()).findViewById(Integer.parseInt("4"));
@@ -383,7 +395,10 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 areYouSure.setView(customAddMarkerLayout);
                 areYouSure.setMessage("Veuillez entrer des informations sur la personne");
 
+
                 areYouSure.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+
+
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // si sdf est choisi
@@ -395,14 +410,29 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                         String heure = string_date[1];
 
                         //déclaration de l'int pr savoir si le sdf est un homme, une femme ou un handicapé
-                        //int selectedId = rg.getCheckedRadioButtonId();
+                        //int selectedId = rb1.get();
+
                         //string du prénom, commentaire et envie du sdf
                         //prenom.getText();
                         //Comm.getText()
                         //Envie.getText()
-
-                        mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+utilisateur.username+" le "+yyyy_mm_ddTodd_mm_yyyy(jour)+" à "+heure).position(latLng).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
-                        addPin(lat,lng,Long.parseLong(utilisateur.id_user),jour+" "+heure);
+                        System.out.println(icone);
+                        switch(icone){
+                            case 1 :
+                                // Ajout d'un pin
+                                mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+utilisateur.username+" le "+yyyy_mm_ddTodd_mm_yyyy(jour)+" à "+heure).position(latLng).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_1)));
+                                break;
+                            case 2 :
+                                // Ajout d'un pin
+                                mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+utilisateur.username+" le "+yyyy_mm_ddTodd_mm_yyyy(jour)+" à "+heure).position(latLng).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_2)));
+                                break;
+                            default :
+                                // Ajout d'un pin
+                                mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+utilisateur.username+" le "+yyyy_mm_ddTodd_mm_yyyy(jour)+" à "+heure).position(latLng).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_0)));
+                                break;
+                        }
+                        System.out.println(icone);
+                        addPin(lat,lng,Long.parseLong(utilisateur.id_user),jour+" "+heure,icone);
                         mapclick2();
                     }
                 });
@@ -476,6 +506,21 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     public void quitBtn(View view)
     {
         quit();
+    }
+
+    public void checkRB1(View view)
+    {
+        icone = 0;
+    }
+
+    public void checkRB2(View view)
+    {
+        icone = 1;
+    }
+
+    public void checkRB3(View view)
+    {
+        icone = 2;
     }
 
     // Click sur le menu
@@ -1061,11 +1106,11 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
 
     // Ajouter un pin dans notre base de données via une requête de type GET
-    public void addPin(double latitude, double longitude, long id_user, String date)
+    public void addPin(double latitude, double longitude, long id_user, String date, int icone)
     {
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        String URL = "https://db-ezpfla.000webhostapp.com/addPin.php?id="+id_user+"&long="+longitude+"&lat="+latitude+"&date="+date;
+        String URL = "https://db-ezpfla.000webhostapp.com/addPin.php?id="+id_user+"&long="+longitude+"&lat="+latitude+"&date="+date+"&icone="+icone;
 
         StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
             Log.i("Réponse", response);
@@ -1114,7 +1159,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                         String date;
                         String heure;
                         String nom_user;
-
+                        String icone;
                         String string[];
 
 
@@ -1128,9 +1173,24 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                             date = string[4];
                             heure = string[5];
                             nom_user = string[6];
+                            icone = string[7];
 
-                            // Ajout d'un pin
-                            mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+nom_user+" le "+yyyy_mm_ddTodd_mm_yyyy(date)+" à "+heure).position(new LatLng(latitude,longitude)).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
+                            switch(icone){
+                                case "1" :
+                                    // Ajout d'un pin
+                                    mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+nom_user+" le "+yyyy_mm_ddTodd_mm_yyyy(date)+" à "+heure).position(new LatLng(latitude,longitude)).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_1)));
+                                    break;
+                                case "2" :
+                                    // Ajout d'un pin
+                                    mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+nom_user+" le "+yyyy_mm_ddTodd_mm_yyyy(date)+" à "+heure).position(new LatLng(latitude,longitude)).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_2)));
+                                    break;
+                                default :
+                                    // Ajout d'un pin
+                                    mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+nom_user+" le "+yyyy_mm_ddTodd_mm_yyyy(date)+" à "+heure).position(new LatLng(latitude,longitude)).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_0)));
+                                    break;
+                            }
+
+
 
                         }
                     }
