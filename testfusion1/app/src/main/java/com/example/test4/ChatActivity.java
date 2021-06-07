@@ -2,8 +2,11 @@ package com.example.test4;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -250,6 +253,20 @@ public class ChatActivity extends AppCompatActivity
 
         Button quitter = this.view_popup.findViewById(R.id.btnCancelAdd);
         Button add = this.view_popup.findViewById(R.id.btnAddPeople);
+
+        // Bouton retour
+        popup.setOnKeyListener(new Dialog.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface arg0, int keyCode,
+                                 KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK)
+                {
+                    ((ViewGroup)view_popup.getParent()).removeView(view_popup);
+                    popup.dismiss();
+                }
+                return true;
+            }
+        });
 
         quitter.setOnClickListener(new View.OnClickListener() {
             @Override

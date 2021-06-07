@@ -512,7 +512,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                                         }
                                     });}}
 
-                        } else{Toast.makeText(getApplicationContext(),"veuillez mettre votre geolocalisation",Toast.LENGTH_SHORT).show();}
+                        } else{Toast.makeText(getApplicationContext(),"Veuillez mettre votre geolocalisation",Toast.LENGTH_SHORT).show();}
                     }
                 });
 
