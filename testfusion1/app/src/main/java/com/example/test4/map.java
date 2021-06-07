@@ -401,7 +401,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                         //Comm.getText()
                         //Envie.getText()
 
-                        mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+utilisateur.username+" le "+yyyy_mm_ddTodd_mm_yyyy(jour)+" à "+heure+" (...)").position(latLng).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
+                        mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+utilisateur.username+" le "+yyyy_mm_ddTodd_mm_yyyy(jour)+" à "+heure).position(latLng).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
                         addPin(lat,lng,Long.parseLong(utilisateur.id_user),jour+" "+heure);
                         mapclick2();
                     }
@@ -1130,7 +1130,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                             nom_user = string[6];
 
                             // Ajout d'un pin
-                            mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+nom_user+" le "+yyyy_mm_ddTodd_mm_yyyy(date)+" à "+heure+" (...)").position(new LatLng(latitude,longitude)).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
+                            mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+nom_user+" le "+yyyy_mm_ddTodd_mm_yyyy(date)+" à "+heure).position(new LatLng(latitude,longitude)).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_help__3_)));
 
                         }
                     }
