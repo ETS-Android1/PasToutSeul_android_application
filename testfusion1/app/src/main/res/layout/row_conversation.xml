@@ -6,7 +6,7 @@
         android:id="@+id/cardView"
         android:layout_width="413dp"
         android:layout_height="77dp"
-        android:background="@color/orange_fonce"
+        android:background="@color/orangeoff"
         tools:layout_editor_absoluteX="-1dp"
         tools:layout_editor_absoluteY="-2dp"
         tools:ignore="MissingConstraints">
@@ -14,7 +14,7 @@
     <RelativeLayout
         android:layout_width="408dp"
         android:layout_height="75dp"
-        android:background="@color/orange_light"
+        android:background="@color/redoff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.4"

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/orange_fonce"
+    android:background="@color/redoff"
     android:padding="10dp">
 
 
@@ -14,8 +14,9 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:text="@string/appli"
-        android:textColor="#444"
-        android:textSize="18sp"
+        android:fontFamily="@font/montserrat"
+        android:textColor="#333"
+        android:textSize="20dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

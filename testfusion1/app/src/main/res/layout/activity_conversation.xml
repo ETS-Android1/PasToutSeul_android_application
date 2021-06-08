@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/orange_jaune">
+    android:background="@color/orangeoff">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewConversation"
@@ -35,11 +35,12 @@
 
     <TextView
         android:id="@+id/textViewTitleConversation"
-        android:layout_width="152dp"
+        android:layout_width="wrap_content"
         android:layout_height="26dp"
         android:text="Vos conversations"
-        android:textColor="#444"
-        android:textSize="18sp"
+        android:fontFamily="@font/montserrat"
+        android:textColor="#333"
+        android:textSize="20dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/recyclerViewConversation"
         app:layout_constraintEnd_toEndOf="@+id/toolbar2"
@@ -76,7 +77,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/orange_dark"
-        android:backgroundTint="@color/orange"
+        android:backgroundTint="@color/redoff"
         android:clickable="true"
         android:onClick="newConversationPopup"
         app:layout_constraintBottom_toBottomOf="@+id/recyclerViewConversation"

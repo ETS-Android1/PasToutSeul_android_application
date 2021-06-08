@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/orange_jaune">
+    android:background="@color/orangeoff">
 
     <ProgressBar
         android:id="@+id/progressBarChat"
@@ -27,8 +27,8 @@
         android:background="@drawable/backwithborder_chat"
         android:hint="Taper votre message"
         android:padding="16dp"
-        android:textColor="@color/white"
-        android:textColorHint="@android:color/white"
+        android:textColor="@color/gris"
+        android:textColorHint="@color/gris"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button"
         app:layout_constraintHorizontal_bias="0.576"
@@ -44,7 +44,7 @@
         android:background="@drawable/backwithborder_chat"
         android:onClick="send"
         android:text="Envoyer"
-        android:textColor="@android:color/white"
+        android:textColor="@color/gris"
         app:layout_constraintBottom_toBottomOf="@+id/editTextChat"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/editTextChat" />
@@ -77,13 +77,14 @@
 
     <TextView
         android:id="@+id/textViewTitleChat"
-        android:layout_width="228dp"
+        android:layout_width="wrap_content"
         android:layout_height="29dp"
         android:gravity="center"
         android:text="Titre"
-        android:textColor="#444"
-        android:textSize="18sp"
+        android:textColor="#333"
+        android:textSize="20dp"
         android:textStyle="bold"
+        android:fontFamily="@font/montserrat"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

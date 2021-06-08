@@ -2,12 +2,12 @@
     <!-- Base application theme. -->
     <style name="Theme.Test4" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/orange_fonce</item>
-        <item name="colorPrimaryVariant">@color/orange_dark</item>
+        <item name="colorPrimary">@color/redoff</item>
+        <item name="colorPrimaryVariant">@color/redoff</item>
         <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/orange_fonce</item>
-        <item name="colorSecondaryVariant">@color/orange_dark</item>
+        <item name="colorSecondary">@color/redoff</item>
+        <item name="colorSecondaryVariant">@color/redoff</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>

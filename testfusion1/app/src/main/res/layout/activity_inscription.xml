@@ -6,8 +6,7 @@
     android:clickable="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/orange_jaune"
-    android:theme="@style/Theme.Test4">
+    android:background="@color/orangeoff">
 
 
     <EditText
@@ -17,6 +16,7 @@
         android:background="@drawable/backwithborder_noerror"
         android:ems="10"
         android:hint="  Adresse e-mail"
+        android:fontFamily="@font/montserrat"
         android:inputType="textEmailAddress"
         android:textStyle="bold"
         android:textColorHint="@color/gris"
@@ -37,7 +37,8 @@
         app:layout_constraintHorizontal_bias="0.973"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextPasswordRegister2"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"
+        android:fontFamily="@font/montserrat"/>
 
     <EditText
         android:id="@+id/editTextPasswordRegister"
@@ -53,7 +54,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextMailRegister"
-        app:layout_constraintVertical_bias="0.07" />
+        app:layout_constraintVertical_bias="0.07"
+        android:fontFamily="@font/montserrat"/>
 
     <TextView
         android:id="@+id/txtErrPwd1"
@@ -88,6 +90,7 @@
         android:background="@drawable/backwithborder_noerror"
         android:ems="10"
         android:hint="  Répétez le mot de passe"
+        android:fontFamily="@font/montserrat"
         android:inputType="textPassword"
         android:textStyle="bold"
         android:textColorHint="@color/gris"
@@ -104,6 +107,7 @@
         android:background="@drawable/backwithborder_noerror"
         android:ems="10"
         android:hint="  Nom d'utilisateur "
+        android:fontFamily="@font/montserrat"
         android:inputType="textEmailAddress"
         android:textStyle="bold"
         android:textColorHint="@color/gris"
@@ -120,8 +124,9 @@
         android:layout_marginTop="36dp"
         android:onClick="createAccount"
         android:text="Créer un compte"
+        android:fontFamily="@font/montserrat"
         android:textStyle="bold"
-        app:backgroundTint="@color/orange"
+        app:backgroundTint="@color/redoff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -136,6 +141,7 @@
         android:background="@color/transparent"
         android:onClick="loginActivityBtn"
         android:text="Déja un compte ?"
+        android:fontFamily="@font/montserrat"
         android:textColor="@color/black"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"

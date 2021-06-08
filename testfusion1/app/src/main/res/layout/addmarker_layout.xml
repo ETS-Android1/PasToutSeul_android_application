@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    tools:context=".map">
+    tools:context=".map"
+    android:background="@drawable/marker">
 
     <EditText
         android:id="@+id/editText2"
@@ -14,6 +15,7 @@
         android:layout_marginTop="24dp"
         android:hint="@string/prénom"
         android:textStyle="bold"
+        android:fontFamily="@font/montserrat"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
@@ -75,7 +77,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.513"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText2" />
+        app:layout_constraintTop_toBottomOf="@+id/editText2"
+        android:fontFamily="@font/montserrat"/>
 
     <EditText
         android:id="@+id/editTextTextEnvie"
@@ -87,6 +90,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.51"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName"
+        android:fontFamily="@font/montserrat"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
