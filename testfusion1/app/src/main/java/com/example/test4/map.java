@@ -599,6 +599,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         chat.putExtra("USER_MAIL", utilisateur.email);
         chat.putExtra("USER_PASSWORD",utilisateur.password);
         startActivity(chat);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     private BitmapDescriptor BitmapFromVector(Context context, int vectorResId) {
@@ -1270,4 +1271,12 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
         return string[2]+"/"+string[1]+"/"+string[0];
     }
+    //affiche les numéros d'urgence
+    public void sos(View v){
+        Intent i = new Intent(this, sos.class);
+        startActivity(i);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+
 }

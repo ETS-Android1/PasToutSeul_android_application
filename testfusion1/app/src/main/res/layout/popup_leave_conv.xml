@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/marker"
     >
 
 
@@ -12,7 +13,7 @@
         android:id="@+id/relativeLayout2"
         android:layout_width="411dp"
         android:layout_height="54dp"
-        android:background="@color/orange_fonce"
+        android:background="@color/redoff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.571"
@@ -29,22 +30,23 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="105dp"
-            android:layout_marginLeft="105dp"
+            android:layout_marginStart="95dp"
+            android:layout_marginLeft="95dp"
             android:layout_marginTop="15dp"
-            android:layout_marginEnd="105dp"
-            android:layout_marginRight="105dp"
+            android:layout_marginEnd="95dp"
+            android:layout_marginRight="95dp"
             android:layout_marginBottom="15dp"
             android:text="Quitter la conversation ?"
             android:textColor="#444"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:fontFamily="@font/montserrat"/>
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="410dp"
         android:layout_height="174dp"
-        android:background="@color/orange_light"
+        android:background="@color/orangeoff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -69,7 +71,8 @@
             android:layout_marginEnd="109dp"
             android:layout_marginRight="109dp"
             android:layout_marginBottom="14dp"
-            android:text="Annuler" />
+            android:text="Annuler"
+            android:fontFamily="@font/montserrat"/>
 
         <Button
             android:id="@+id/btnLeaveConv"
@@ -88,7 +91,8 @@
             android:layout_marginEnd="257dp"
             android:layout_marginRight="257dp"
             android:layout_marginBottom="14dp"
-            android:text="Quitter" />
+            android:text="Quitter"
+            android:fontFamily="@font/montserrat"/>
 
         <TextView
             android:id="@+id/textViewLeave"
@@ -109,7 +113,8 @@
             android:gravity="fill_horizontal"
             android:text="Êtes-vous   sur  de  vouloir  quitter  la conversation ?  Vous ne pourrez plus recevoir   ou   envoyer   de  nouveaux messages."
             android:textColor="@color/black"
-            android:textSize="14dp" />
+            android:textSize="14dp"
+            android:fontFamily="@font/montserrat"/>
 
     </RelativeLayout>
 
