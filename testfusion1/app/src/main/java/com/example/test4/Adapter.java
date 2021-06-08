@@ -2,7 +2,10 @@ package com.example.test4;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -74,6 +77,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         {
             holder.titre.setText(name[position]);
             holder.lastMessage.setText("Dernier message : "+mess[position]);
+
         }
         else
         {
@@ -96,6 +100,15 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         this.nom.add(name);
         this.message.add(messageContent);
         this.temps.add(time);
+
+        notifyDataSetChanged();
+    }
+
+    public void clear()
+    {
+        this.nom.clear();
+        this.message.clear();
+        this.temps.clear();
 
         notifyDataSetChanged();
     }
@@ -128,4 +141,5 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
         return string[2]+"/"+string[1]+"/"+string[0];
     }
+
 }

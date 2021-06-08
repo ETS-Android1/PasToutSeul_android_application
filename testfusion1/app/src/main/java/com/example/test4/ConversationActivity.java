@@ -39,8 +39,10 @@ public class ConversationActivity extends AppCompatActivity {
     String[] titre;
     String[] id_group;
 
-    View view_popup;
+    View view_popup_add;
     AlertDialog.Builder builder;
+
+    Adapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,15 +50,29 @@ public class ConversationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
 
-        this.view_popup = getLayoutInflater().inflate(R.layout.popup_new_conv, null);
-        this.builder = new AlertDialog.Builder(this).setView(this.view_popup);
+        this.view_popup_add = getLayoutInflater().inflate(R.layout.popup_new_conv, null);
+        this.builder = new AlertDialog.Builder(this).setView(this.view_popup_add);
 
         initView();
 
         this.utilisateur = new Utilisateur(String.valueOf(getUserID()),getUsername(),getUserMail(),getUserPassword());
 
-        afficheConversation();
+    }
 
+    // Lancement de l'activité ou quand on revient sur l'activité
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        /*
+        if(this.adapter != null)
+        {
+            adapter.clear();
+        }
+        */
+
+        afficheConversation();
+        System.out.println("Je reviens");
     }
 
     public void initView()
@@ -65,7 +81,7 @@ public class ConversationActivity extends AppCompatActivity {
         this.chargementConv = findViewById(R.id.progressBarConversation);
         this.noMessageError = findViewById(R.id.textViewNoMessage);
         this.floatingActionButton = findViewById(R.id.floatingActionButton2);
-        this.nomGrp = this.view_popup.findViewById(R.id.editTextNomGroupe);
+        this.nomGrp = this.view_popup_add.findViewById(R.id.editTextNomGroupe);
     }
 
     // Requête pour récupérer toutes les conversations de l'utilisateur
@@ -108,7 +124,7 @@ public class ConversationActivity extends AppCompatActivity {
                             System.out.println(titre[i] + " " + id_group[i]);
                         }
 
-                        Adapter adapter = new Adapter(this, titre, id_group);
+                        adapter = new Adapter(this, titre, id_group);
                         recyclerViewMessage.setAdapter(adapter);
 
                         // Ajout d'un listener pour les items dans la recyclerView
@@ -169,17 +185,19 @@ public class ConversationActivity extends AppCompatActivity {
 
         popup.setCanceledOnTouchOutside(false);
 
-        Button cancel = this.view_popup.findViewById(R.id.btnCancelGrp);
-        Button create = this.view_popup.findViewById(R.id.btnCreateGroup);
+        // Les boutons sur les popups
+        Button cancel = this.view_popup_add.findViewById(R.id.btnCancelGrp);
+        Button create = this.view_popup_add.findViewById(R.id.btnCreateGroup);
 
         // Bouton retour
         popup.setOnKeyListener(new Dialog.OnKeyListener() {
             @Override
             public boolean onKey(DialogInterface arg0, int keyCode,
                                  KeyEvent event) {
+                // Click sur le bouton retour
                 if (keyCode == KeyEvent.KEYCODE_BACK)
                 {
-                    ((ViewGroup)view_popup.getParent()).removeView(view_popup);
+                    ((ViewGroup)view_popup_add.getParent()).removeView(view_popup_add);
                     popup.dismiss();
                 }
                 return true;
@@ -189,7 +207,7 @@ public class ConversationActivity extends AppCompatActivity {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((ViewGroup)view_popup.getParent()).removeView(view_popup);
+                ((ViewGroup)view_popup_add.getParent()).removeView(view_popup_add);
                 popup.dismiss();
             }
         });
@@ -197,7 +215,7 @@ public class ConversationActivity extends AppCompatActivity {
         create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((ViewGroup)view_popup.getParent()).removeView(view_popup);
+                ((ViewGroup)view_popup_add.getParent()).removeView(view_popup_add);
 
                 String nom_groupe = nomGrp.getText().toString();
                 createConversation(v,nom_groupe);
@@ -207,6 +225,7 @@ public class ConversationActivity extends AppCompatActivity {
         });
 
     }
+
 
     // Lancement du chat
     public void launchChat(String titre, String id_groupe)

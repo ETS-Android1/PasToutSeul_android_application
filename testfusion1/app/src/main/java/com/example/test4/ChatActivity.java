@@ -58,8 +58,8 @@ public class ChatActivity extends AppCompatActivity
     ScheduledExecutorService update;
 
     // Fenêtre popup pour ajouter un utilisateur
-    AlertDialog.Builder builder;
-    View view_popup;
+    View view_popup_add, view_popup_leave;
+    AlertDialog.Builder builder, builder2;
 
     ProgressBar progressBar;
 
@@ -70,8 +70,11 @@ public class ChatActivity extends AppCompatActivity
         setContentView(R.layout.activity_chat);
 
         // Initialastion des variables pour la fenêtre popup
-        this.view_popup = getLayoutInflater().inflate(R.layout.popup_add_people, null);
-        this.builder = new AlertDialog.Builder(this).setView(this.view_popup);
+        this.view_popup_add = getLayoutInflater().inflate(R.layout.popup_add_people, null);
+        this.builder = new AlertDialog.Builder(this).setView(this.view_popup_add);
+
+        this.view_popup_leave = getLayoutInflater().inflate(R.layout.popup_leave_conv, null);
+        this.builder2 = new AlertDialog.Builder(this).setView(this.view_popup_leave);
 
         // Initialisation des variables transmis par le père
         this.titre = getIntent().getStringExtra("TITRE");
@@ -96,8 +99,8 @@ public class ChatActivity extends AppCompatActivity
         this.titreView.setText(this.titre);
         this.editTextMessage = findViewById(R.id.editTextChat);
         this.recyclerMessage = findViewById(R.id.recyclerViewChat);
-        this.addTextView = this.view_popup.findViewById(R.id.editTextNomUser);
-        this.msgError = this.view_popup.findViewById(R.id.textViewAddError);
+        this.addTextView = this.view_popup_add.findViewById(R.id.editTextNomUser);
+        this.msgError = this.view_popup_add.findViewById(R.id.textViewAddError);
         this.progressBar = findViewById(R.id.progressBarChat);
     }
 
@@ -251,8 +254,8 @@ public class ChatActivity extends AppCompatActivity
 
         popup.setCanceledOnTouchOutside(false);
 
-        Button quitter = this.view_popup.findViewById(R.id.btnCancelAdd);
-        Button add = this.view_popup.findViewById(R.id.btnAddPeople);
+        Button quitter = this.view_popup_add.findViewById(R.id.btnCancelAdd);
+        Button add = this.view_popup_add.findViewById(R.id.btnAddPeople);
 
         // Bouton retour
         popup.setOnKeyListener(new Dialog.OnKeyListener() {
@@ -261,7 +264,7 @@ public class ChatActivity extends AppCompatActivity
                                  KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK)
                 {
-                    ((ViewGroup)view_popup.getParent()).removeView(view_popup);
+                    ((ViewGroup)view_popup_add.getParent()).removeView(view_popup_add);
                     popup.dismiss();
                 }
                 return true;
@@ -271,7 +274,7 @@ public class ChatActivity extends AppCompatActivity
         quitter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((ViewGroup)view_popup.getParent()).removeView(view_popup);
+                ((ViewGroup)view_popup_add.getParent()).removeView(view_popup_add);
                 popup.dismiss();
             }
         });
@@ -342,6 +345,91 @@ public class ChatActivity extends AppCompatActivity
                 //Ajout des arguments
                 logs.put("nom_user",name);
                 logs.put("id_groupe",id_grp);
+
+                return logs;
+            }
+        };
+
+        //Gérer les timeout
+        postRequest.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        // Ajout de la requête dans la file d'attente
+        queue.add(postRequest);
+    }
+
+
+    // Création d'un popup pour quitter la conversation
+    public void leaveConversationPopup(View view)
+    {
+        AlertDialog popup = builder2.show();
+
+        // Desactive les clicks en dehors de la fenêtre popup
+        popup.setCanceledOnTouchOutside(false);
+
+        // Les boutons sur les popups
+        Button cancel = this.view_popup_leave.findViewById(R.id.btnCancelLeave);
+        Button leave = this.view_popup_leave.findViewById(R.id.btnLeaveConv);
+
+        // Bouton retour
+        popup.setOnKeyListener(new Dialog.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface arg0, int keyCode,
+                                 KeyEvent event) {
+                // Click sur le bouton retour
+                if (keyCode == KeyEvent.KEYCODE_BACK)
+                {
+                    ((ViewGroup)view_popup_leave.getParent()).removeView(view_popup_leave);
+                    // Fermeture de la fenêtre popup
+                    popup.dismiss();
+                }
+                return true;
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((ViewGroup)view_popup_leave.getParent()).removeView(view_popup_leave);
+                // Fermeture de la fenêtre popup
+                popup.dismiss();
+            }
+        });
+
+        leave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((ViewGroup)view_popup_leave.getParent()).removeView(view_popup_leave);
+
+                // Fermeture de la fenêtre popup
+                popup.dismiss();
+
+                // Quitte la conversation
+                leave(res ->{
+                    // Fermeture du chat
+                    ChatActivity.super.finish();
+                });
+            }
+        });
+    }
+
+    public void leave(final map.VolleyCallBack callBack)
+    {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        String URL = "https://db-ezpfla.000webhostapp.com/leaveConv.php";
+
+        StringRequest postRequest = new StringRequest(Request.Method.POST, URL, response -> {
+            Log.i("Réponse", response);
+            callBack.onSuccess(response);
+        }, error -> Log.e("Réponse", error.toString())){
+            @Override
+            protected Map<String,String> getParams()
+            {
+                Map<String,String> logs = new HashMap<>();
+
+                //Ajout des arguments
+                logs.put("id_user",id_user);
+                logs.put("id_group",id_group);
 
                 return logs;
             }

@@ -92,16 +92,29 @@
 
     <ImageButton
         android:id="@+id/imageButton2"
-        android:onClick="popupAdd"
-        android:layout_width="32dp"
-        android:layout_height="29dp"
+        android:layout_width="41dp"
+        android:layout_height="39dp"
         android:background="@drawable/add_friends"
+        android:onClick="popupAdd"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.04"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.014" />
+
+    <ImageButton
+        android:id="@+id/imageButton444124"
+        android:layout_width="41dp"
+        android:layout_height="39dp"
+        android:background="@drawable/leave"
+        android:onClick="leaveConversationPopup"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.96"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.019" />
+        app:layout_constraintTop_toTopOf="@+id/toolbarTitreChat"
+        app:layout_constraintVertical_bias="0.015" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
