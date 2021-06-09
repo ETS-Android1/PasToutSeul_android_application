@@ -3,7 +3,6 @@ package com.example.test4;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,17 +21,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -55,7 +53,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.io.IOException;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -67,7 +66,7 @@ import jxl.Sheet;
 import jxl.Workbook;
 
 public class map extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,
-        GoogleMap.OnMyLocationClickListener{
+        GoogleMap.OnMyLocationClickListener {
 
     private GoogleMap mMap;
     private map activity;
@@ -256,9 +255,9 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
         pgrb.setVisibility(View.INVISIBLE);
 
-        mMap.setOnInfoWindowLongClickListener(new GoogleMap.OnInfoWindowLongClickListener() {
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
-            public void onInfoWindowLongClick(Marker marker) {
+            public void onInfoWindowClick(Marker marker) {
 
                 if (marker.getSnippet().equals("")){
 
@@ -373,6 +372,23 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
                     moreInfos.show();
                 }
+                else if (marker.getSnippet().equals("")){
+
+                }
+
+                else if (marker.getSnippet().charAt(0) == '3' || marker.getSnippet().charAt(0) == '0'){
+                    String tel = "tel:"+ marker.getSnippet();
+                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                    intent.setData(Uri.parse(tel));
+                    startActivity(intent);
+                }
+
+                else if (marker.getSnippet().charAt(0) == 'h'){
+                    String site = marker.getSnippet();
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(site));
+                    startActivity(intent);
+                }
             }
         });
 
@@ -445,6 +461,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 });
 
                 areYouSure.show();
+
 
             }}
         }
@@ -1259,6 +1276,9 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     public void onMyLocationClick(@NonNull Location location) {
 
     }
+
+
+
 
     public interface VolleyCallBack{
         void onSuccess(String res);

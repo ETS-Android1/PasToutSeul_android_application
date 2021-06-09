@@ -22,7 +22,7 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar2"
-        android:layout_width="409dp"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
@@ -76,7 +76,7 @@
         android:id="@+id/floatingActionButton2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/orange_dark"
+        android:background="@color/redoff"
         android:backgroundTint="@color/redoff"
         android:clickable="true"
         android:onClick="newConversationPopup"
