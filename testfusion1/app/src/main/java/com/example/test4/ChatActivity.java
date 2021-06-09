@@ -69,6 +69,8 @@ public class ChatActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+
+
         // Initialastion des variables pour la fenêtre popup
         this.view_popup_add = getLayoutInflater().inflate(R.layout.popup_add_people, null);
         this.builder = new AlertDialog.Builder(this).setView(this.view_popup_add);
@@ -82,6 +84,7 @@ public class ChatActivity extends AppCompatActivity
         this.username = getIntent().getStringExtra("USER_NAME");
         this.id_group = getIntent().getStringExtra("GROUP_ID");
 
+        System.out.println("Lancement du chat : "+titre);
         initViewID();
 
 
@@ -150,7 +153,7 @@ public class ChatActivity extends AppCompatActivity
             Date date = new Date();
             SimpleDateFormat dateFormatUS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-            adapter.addItem(this.username,inputMessage,dateFormatUS.format(date));
+            this.adapter.addItem(this.username,inputMessage,dateFormatUS.format(date));
             sendMessageRequest(inputMessage,dateFormatUS.format(date));
             editTextMessage.setText("");
         }

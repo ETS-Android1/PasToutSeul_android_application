@@ -1,8 +1,6 @@
 package com.example.test4;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,32 +22,31 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class ConversationActivity extends AppCompatActivity {
 
     RecyclerView recyclerViewMessage;
-    TextView noMessageError;
-    ProgressBar chargementConv;
-    EditText nomGrp;
+    TextView textViewMessageError;
+    ProgressBar prgbConversation;
+    EditText editTextNomGrp;
 
     FloatingActionButton floatingActionButton;
     Utilisateur utilisateur;
-
-    String[] titre;
-    String[] id_group;
 
     View view_popup_add;
     AlertDialog.Builder builder;
 
     Adapter adapter;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
-
         this.view_popup_add = getLayoutInflater().inflate(R.layout.popup_new_conv, null);
         this.builder = new AlertDialog.Builder(this).setView(this.view_popup_add);
 
@@ -64,12 +61,6 @@ public class ConversationActivity extends AppCompatActivity {
     public void onResume()
     {
         super.onResume();
-        /*
-        if(this.adapter != null)
-        {
-            adapter.clear();
-        }
-        */
 
         afficheConversation();
         System.out.println("Je reviens");
@@ -78,10 +69,10 @@ public class ConversationActivity extends AppCompatActivity {
     public void initView()
     {
         this.recyclerViewMessage = findViewById(R.id.recyclerViewConversation);
-        this.chargementConv = findViewById(R.id.progressBarConversation);
-        this.noMessageError = findViewById(R.id.textViewNoMessage);
+        this.prgbConversation = findViewById(R.id.progressBarConversation);
+        this.textViewMessageError = findViewById(R.id.textViewNoMessage);
         this.floatingActionButton = findViewById(R.id.floatingActionButton2);
-        this.nomGrp = this.view_popup_add.findViewById(R.id.editTextNomGroupe);
+        this.editTextNomGrp = this.view_popup_add.findViewById(R.id.editTextNomGroupe);
     }
 
     // Requête pour récupérer toutes les conversations de l'utilisateur
@@ -91,9 +82,10 @@ public class ConversationActivity extends AppCompatActivity {
 
         String URL = "https://db-ezpfla.000webhostapp.com/afficheConv.php?id_user="+utilisateur.id_user;
 
-        StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
+        StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response ->
+        {
             Log.i("Réponse", response);
-            callback.onSuccess(response.trim());
+            callback.onSuccess(response);
         }, error -> Log.e("Réponse", error.toString()));
 
         // Ajoute la requête dans la file
@@ -103,60 +95,75 @@ public class ConversationActivity extends AppCompatActivity {
     // Traitement du résultat de la requête "requestAfficheConversation"
     public void afficheConversation()
     {
-        this.chargementConv.setVisibility(View.VISIBLE);
+        // Affichage lors du lancement de la requête
+        this.prgbConversation.setVisibility(View.VISIBLE);
+        textViewMessageError.setText("");
 
-        requestAfficheConversation(res -> {
-                    if(res.length() != 0) {
+        // Lancement de la requête
+        requestAfficheConversation(res ->
+        {
+                    if(res.trim().length() != 0)
+                    {
+                        // Séparation de chaque lignes de données
                         String[] line = res.split("<br>");
 
-                        int line_length = line.length;
+                        int nline= line.length;
 
-                        this.titre = new String[line_length];
-                        this.id_group = new String[line_length];
+                        String[] id_group = new String[nline];
+                        String[] titre = new String[nline];
 
+                        String[] lastMessage = new String[nline];
                         String[] string;
 
-                        for (int i = 0; i < line_length; i++) {
+                        for (int i = 0; i < nline; i++) {
                             string = line[i].split("\\.");
-                            this.titre[i] = string[0];
-                            this.id_group[i] = string[1];
 
-                            System.out.println(titre[i] + " " + id_group[i]);
+                            // Problème : Il y a un saut de ligne dans la réponse du serveur ce qui impact l'affichage
+                            // Solution temporaire : Pour l'instant, on supprime les saut de lignes le temps de trouver la src du problème
+                            titre[i] = string[0].replace("\n","");
+
+                            id_group[i] = string[1];
+                            lastMessage[i] = "["+string[3]+"] "+string[2];
+
+                            //System.out.println(titre[i]+" "+lastMessage[i]);
                         }
 
-                        adapter = new Adapter(this, titre, id_group);
+                        adapter = new Adapter(this, titre, lastMessage);
+
+                        // Ajout des données des items dans notre recyclerView
                         recyclerViewMessage.setAdapter(adapter);
 
                         // Ajout d'un listener pour les items dans la recyclerView
                         recyclerViewMessage.addOnItemTouchListener(
-                                new RecyclerItemClickListener(this, recyclerViewMessage ,new RecyclerItemClickListener.OnItemClickListener() {
-                                    @Override public void onItemClick(View view, int position) {
-                                        System.out.println(titre[position]+" "+id_group[position]);
-                                        launchChat(titre[position],id_group[position]);
+                                new RecyclerItemClickListener(this, recyclerViewMessage ,new RecyclerItemClickListener.OnItemClickListener()
+                                {
+                                    @Override public void onItemClick(View view, int position)
+                                    {
+                                            launchChat(titre[position],id_group[position]);
                                     }
 
-                                    @Override public void onLongItemClick(View view, int position) {
-                                        System.out.println("long click");
+                                    @Override
+                                    public void onLongItemClick(View view, int position)
+                                    {
+                                            // Rien à faire
                                     }
-                                })
-                        );
-                        this.chargementConv.setVisibility(View.INVISIBLE);
+                                }));
                     }
                     else
                     {
-                        noMessageError.setText("Vous n'avez aucune conversation à afficher");
-                        this.chargementConv.setVisibility(View.INVISIBLE);
+                        textViewMessageError.setText(R.string.pas_de_conversation);
                     }
-
+            this.prgbConversation.setVisibility(View.INVISIBLE);
         });
     }
 
     // Requête permettant de créer un groupe de conversation
-    public void requestCreateConversation(String nom_groupe, final map.VolleyCallBack callBack)
+    public void requestCreateConversation(String nom_groupe, String date, final map.VolleyCallBack callBack)
     {
+        // Initisalisation de la reqûete
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        String URL = "https://db-ezpfla.000webhostapp.com/createConv.php?id_user="+utilisateur.id_user+"&nom_groupe="+nom_groupe;
+        String URL = "https://db-ezpfla.000webhostapp.com/createConv.php?id_user="+utilisateur.id_user+"&nom_groupe="+nom_groupe+"&date="+date;
 
         StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
             Log.i("Réponse", response);
@@ -168,12 +175,17 @@ public class ConversationActivity extends AppCompatActivity {
     }
 
     // Traitement du résultat de la requête "requestCreateConversation"
-    public void createConversation(View view, String nom_groupe)
+    public void createConversation(String nom_groupe)
     {
-        this.chargementConv.setVisibility(View.VISIBLE);
+        // Affichage
+        this.prgbConversation.setVisibility(View.VISIBLE);
 
-        requestCreateConversation(nom_groupe, res-> {
-            System.out.println(res);
+        Date date = new Date();
+        SimpleDateFormat dateFormatUS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        // Lancement de la requête
+        requestCreateConversation(nom_groupe,dateFormatUS.format(date), res-> {
+            //System.out.println(res);
             afficheConversation();
         });
     }
@@ -183,6 +195,7 @@ public class ConversationActivity extends AppCompatActivity {
     {
         AlertDialog popup = builder.show();
 
+        // Bloque les clicks en dehors de la fenêtre pop-up
         popup.setCanceledOnTouchOutside(false);
 
         // Les boutons sur les popups
@@ -190,38 +203,37 @@ public class ConversationActivity extends AppCompatActivity {
         Button create = this.view_popup_add.findViewById(R.id.btnCreateGroup);
 
         // Bouton retour
-        popup.setOnKeyListener(new Dialog.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface arg0, int keyCode,
-                                 KeyEvent event) {
-                // Click sur le bouton retour
-                if (keyCode == KeyEvent.KEYCODE_BACK)
-                {
-                    ((ViewGroup)view_popup_add.getParent()).removeView(view_popup_add);
-                    popup.dismiss();
-                }
-                return true;
-            }
-        });
-
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        popup.setOnKeyListener((arg0, keyCode, event) -> {
+            // Click sur le bouton retour
+            if (keyCode == KeyEvent.KEYCODE_BACK)
+            {
                 ((ViewGroup)view_popup_add.getParent()).removeView(view_popup_add);
                 popup.dismiss();
             }
+            return true;
         });
 
-        create.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((ViewGroup)view_popup_add.getParent()).removeView(view_popup_add);
+        // Bouton annuler
+        cancel.setOnClickListener(v -> {
+            ((ViewGroup)view_popup_add.getParent()).removeView(view_popup_add);
+            popup.dismiss();
+        });
 
-                String nom_groupe = nomGrp.getText().toString();
-                createConversation(v,nom_groupe);
+        // Bouton créer
+        create.setOnClickListener(v -> {
+            ((ViewGroup)view_popup_add.getParent()).removeView(view_popup_add);
 
-                popup.dismiss();
+            String nom_groupe = editTextNomGrp.getText().toString();
+
+            if(nom_groupe.trim().equals(""))
+            {
+                // Nom de groupe initiale lorsqu'il y a aucun nom renseigné
+                nom_groupe = "(Pas de nom)";
             }
+
+            createConversation(nom_groupe);
+
+            popup.dismiss();
         });
 
     }
@@ -232,11 +244,13 @@ public class ConversationActivity extends AppCompatActivity {
     {
         Intent chatActivity = new Intent(this, ChatActivity.class);
 
+        // Envoi des variables vers chatActivity
         chatActivity.putExtra("TITRE", titre);
         chatActivity.putExtra("USER_ID", utilisateur.id_user);
         chatActivity.putExtra("USER_NAME", utilisateur.username);
         chatActivity.putExtra("GROUP_ID", id_groupe);
 
+        // Lancement du chat
         startActivity(chatActivity);
     }
 
@@ -247,8 +261,7 @@ public class ConversationActivity extends AppCompatActivity {
 
     public String getUserID()
     {
-        String id = getIntent().getStringExtra("USER_ID");
-        return id;
+        return getIntent().getStringExtra("USER_ID");
     }
 
     public String getUserMail()

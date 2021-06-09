@@ -17,4 +17,5 @@
     <string name="locate_and_zoom">locate and zoom</string>
     <string name="nom">nom</string>
     <string name="actuel">actuel :</string>
+    <string name="pas_de_conversation">Vous n\'avez aucune conversation à afficher</string>
 </resources>

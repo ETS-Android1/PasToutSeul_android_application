@@ -4,8 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/cardView"
-        android:layout_width="fill_parent"
-        android:layout_height="77dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="@drawable/button"
         tools:layout_editor_absoluteX="-1dp"
         tools:layout_editor_absoluteY="-2dp"
@@ -23,8 +23,8 @@
 
         <TextView
             android:id="@+id/textViewLastMessage"
-            android:layout_width="354dp"
-            android:layout_height="26dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
@@ -38,14 +38,14 @@
             android:layout_marginRight="9dp"
             android:layout_marginBottom="5dp"
             android:text="TextView"
-            android:textColor="@color/transparent"
+            android:textColor="@color/gris"
             android:fontFamily="@font/montserrat"
             />
 
         <TextView
             android:id="@+id/textViewTitleConversation"
-            android:layout_width="369dp"
-            android:layout_height="35dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"

@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
@@ -54,7 +55,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     @NonNull
     @org.jetbrains.annotations.NotNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
         View view;
         LayoutInflater inflater = LayoutInflater.from(this.context);
         if(!isChat)
@@ -71,13 +72,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position)
+    public void onBindViewHolder(final @NotNull ViewHolder holder, int position)
     {
         if(!isChat)
         {
             holder.titre.setText(name[position]);
             holder.lastMessage.setText("Dernier message : "+mess[position]);
-
         }
         else
         {
@@ -100,15 +100,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         this.nom.add(name);
         this.message.add(messageContent);
         this.temps.add(time);
-
-        notifyDataSetChanged();
-    }
-
-    public void clear()
-    {
-        this.nom.clear();
-        this.message.clear();
-        this.temps.clear();
 
         notifyDataSetChanged();
     }
@@ -136,7 +127,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     // Converti une date yyyy-dd-mm en dd-mm-yyyy
     public String yyyy_mm_ddTodd_mm_yyyy(String d)
     {
-        System.out.println(d);
         String []string = d.split("-");
 
         return string[2]+"/"+string[1]+"/"+string[0];
