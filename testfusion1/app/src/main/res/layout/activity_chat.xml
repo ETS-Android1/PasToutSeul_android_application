@@ -51,7 +51,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewChat"
-        android:layout_width="411dp"
+        android:layout_width="fill_parent"
         android:layout_height="601dp"
         android:background="@color/transparent"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -59,11 +59,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbarTitreChat"
         tools:itemCount="5"
-        tools:listitem="" />
+        tools:listitem=""
+        android:scrollbars="vertical"/>
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarTitreChat"
-        android:layout_width="412dp"
+        android:layout_width="fill_parent"
         android:layout_height="56dp"
         android:background="?attr/colorPrimary"
         android:fitsSystemWindows="true"
