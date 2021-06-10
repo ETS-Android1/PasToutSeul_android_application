@@ -21,7 +21,7 @@
     <EditText
         android:id="@+id/editTextChat"
         android:layout_width="273dp"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="18dp"
         android:layout_marginBottom="4dp"
         android:background="@drawable/backwithborder_chat"
@@ -38,12 +38,13 @@
 
     <Button
         android:id="@+id/button"
-        android:layout_width="71dp"
-        android:layout_height="44dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginRight="16dp"
         android:background="@drawable/backwithborder_chat"
         android:onClick="send"
         android:text="Envoyer"
+        android:fontFamily="@font/montserrat"
         android:textColor="@color/gris"
         app:layout_constraintBottom_toBottomOf="@+id/editTextChat"
         app:layout_constraintEnd_toEndOf="parent"
