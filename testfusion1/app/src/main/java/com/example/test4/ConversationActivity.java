@@ -23,6 +23,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 
@@ -40,7 +41,6 @@ public class ConversationActivity extends AppCompatActivity {
     AlertDialog.Builder builder;
 
     Adapter adapter;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +61,7 @@ public class ConversationActivity extends AppCompatActivity {
     public void onResume()
     {
         super.onResume();
-
         afficheConversation();
-        System.out.println("Je reviens");
     }
 
     public void initView()
@@ -109,29 +107,34 @@ public class ConversationActivity extends AppCompatActivity {
 
                         int nline= line.length;
 
-                        String[] id_group = new String[nline];
-                        String[] titre = new String[nline];
+                        //String[] id_group = new String[nline];
+                        //String[] titre = new String[nline];
+                        //String[] lastMessage = new String[nline];
+                        String[] element;
 
-                        String[] lastMessage = new String[nline];
-                        String[] string;
+                        ArrayList<String> titre = new ArrayList<>();
+                        ArrayList<String> lastMessage = new ArrayList<>();
+                        ArrayList<String> time = new ArrayList<>();
+                        ArrayList<String> id_group = new ArrayList<>();
+
 
                         for (int i = 0; i < nline; i++) {
-                            string = line[i].split("\\.");
+                            element = line[i].split("\\.");
 
                             // Problème : Il y a un saut de ligne dans la réponse du serveur ce qui impact l'affichage
                             // Solution temporaire : Pour l'instant, on supprime les saut de lignes le temps de trouver la src du problème
-                            titre[i] = string[0].replace("\n","");
-
-                            id_group[i] = string[1];
-                            lastMessage[i] = "["+string[3]+"] "+string[2];
-
+                            //titre[i] = string[0].replace("\n","");
+                            titre.add(element[0].replace("\n",""));
+                            id_group.add(element[1]);
+                            lastMessage.add(element[2]);
+                            time.add(element[3]);
                             //System.out.println(titre[i]+" "+lastMessage[i]);
                         }
 
-                        adapter = new Adapter(this, titre, lastMessage);
+                        this.adapter = new Adapter(this, titre, lastMessage, time,false);
 
                         // Ajout des données des items dans notre recyclerView
-                        recyclerViewMessage.setAdapter(adapter);
+                        recyclerViewMessage.setAdapter(this.adapter);
 
                         // Ajout d'un listener pour les items dans la recyclerView
                         recyclerViewMessage.addOnItemTouchListener(
@@ -139,7 +142,7 @@ public class ConversationActivity extends AppCompatActivity {
                                 {
                                     @Override public void onItemClick(View view, int position)
                                     {
-                                            launchChat(titre[position],id_group[position]);
+                                            launchChat(titre.get(position),id_group.get(position));
                                     }
 
                                     @Override
@@ -249,6 +252,9 @@ public class ConversationActivity extends AppCompatActivity {
         chatActivity.putExtra("USER_ID", utilisateur.id_user);
         chatActivity.putExtra("USER_NAME", utilisateur.username);
         chatActivity.putExtra("GROUP_ID", id_groupe);
+
+        // Supprime les items de la recycler view pour éviter les bugs visuels lors du retour sur cette activity
+        this.recyclerViewMessage.setAdapter(null);
 
         // Lancement du chat
         startActivity(chatActivity);
