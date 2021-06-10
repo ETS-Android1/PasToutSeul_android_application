@@ -129,7 +129,7 @@ public class ChatActivity extends AppCompatActivity
                     }
 
                     // Intialisation des datas dans notre recycler view
-                    adapter = new Adapter(this, nom, message, temps);
+                    adapter = new Adapter(this, nom, message, temps,true);
 
                     // Affichage commencant à partir du bas
                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);

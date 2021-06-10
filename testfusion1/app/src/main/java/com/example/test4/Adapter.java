@@ -24,9 +24,8 @@ import java.util.Date;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
+    // ConversationActivity ou ChatActivity
     Boolean isChat;
-
-    String[] name,mess,heure;
 
     Context context;
 
@@ -34,21 +33,13 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     ArrayList<String> message;
     ArrayList<String> temps;
 
-    public Adapter(Context ctxt, String[] nom, String[] message)
-    {
-        this.name = nom;
-        this.mess = message;
-        this.context = ctxt;
-        this.isChat = false;
-    }
-
-    public Adapter(Context ctxt, ArrayList<String> nom, ArrayList<String> message, ArrayList<String> time)
+    public Adapter(Context ctxt, ArrayList<String> nom, ArrayList<String> message, ArrayList<String> time, boolean chat)
     {
         this.nom = nom;
         this.message = message;
         this.context = ctxt;
         this.temps = time;
-        this.isChat = true;
+        this.isChat = chat;
     }
 
     @SuppressLint("ResourceType")
@@ -76,11 +67,13 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     {
         if(!isChat)
         {
-            holder.titre.setText(name[position]);
-            holder.lastMessage.setText("Dernier message : "+mess[position]);
+            System.out.println(isChat.toString());
+            holder.titre.setText(nom.get(position));
+            holder.lastMessage.setText("Dernier message : "+"["+temps.get(position)+"] "+message.get(position));
         }
         else
         {
+            System.out.println(isChat.toString());
             String[] date_heure = temps.get(position).split(" ");
             String date_formatFR = yyyy_mm_ddTodd_mm_yyyy(date_heure[0]);
             String[] time = date_heure[1].split(":");
@@ -90,9 +83,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        if(!isChat){return name.length;}
-        else{return nom.size();}
-
+        return nom.size();
     }
 
     public void addItem(String name, String messageContent, String time)
@@ -102,6 +93,21 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         this.temps.add(time);
 
         notifyDataSetChanged();
+    }
+
+    public void clearConversation()
+    {
+        int size = nom.size();
+
+        if(size != 0)
+        {
+            //this.name.;
+            this.message.clear();
+            this.temps.clear();
+
+            notifyItemRangeRemoved(0, size);
+        }
+
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
