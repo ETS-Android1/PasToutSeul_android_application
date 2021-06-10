@@ -67,17 +67,28 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     {
         if(!isChat)
         {
-            System.out.println(isChat.toString());
             holder.titre.setText(nom.get(position));
-            holder.lastMessage.setText("Dernier message : "+"["+temps.get(position)+"] "+message.get(position));
+
+            String[] date_heure = temps.get(position).split(" ");
+            String date = yyyy_mm_ddTodd_mm_yyyy(date_heure[0]);
+            String[] h_m_s = date_heure[1].split(":");
+            String printedMessage = message.get(position);
+
+            // Si le message est trop long, on affiche partiellement le message
+            if(printedMessage.length() >= 20)
+            {
+                printedMessage = printedMessage.substring(0,19)+" ...";
+            }
+
+            holder.lastMessage.setText("Dernier message : "+"["+date+" "+h_m_s[0]+":"+h_m_s[1]+"] "+printedMessage);
         }
         else
         {
-            System.out.println(isChat.toString());
             String[] date_heure = temps.get(position).split(" ");
             String date_formatFR = yyyy_mm_ddTodd_mm_yyyy(date_heure[0]);
             String[] time = date_heure[1].split(":");
             holder.messageChat.setText("["+date_formatFR+" "+time[0]+":"+time[1]+"] "+nom.get(position)+" : "+ message.get(position));
+
         }
     }
 
