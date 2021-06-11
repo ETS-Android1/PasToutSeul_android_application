@@ -207,8 +207,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                                     });
                                 }
                             }
-
                         }
+
                         else
                         {
                             // Pas d"accès à la géolocalisation
@@ -224,7 +224,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
             {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
-
         }
 
         pgrb.setVisibility(View.VISIBLE);
