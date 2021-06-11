@@ -79,13 +79,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
     ImageButton btnmclick;
 
-    EditText prenom;
-    EditText Comm;
-    EditText Envie;
-
-    TextView Disprenom;
-    TextView Dispenvie;
-    TextView Dispcomm;
+    TextView Disprenom,Dispenvie,Dispcomm;
 
     Geocoder geocoder;
 
@@ -96,11 +90,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
     ProgressBar pgrb;
 
-    RelativeLayout layoutMap;
-
-    RadioButton rb1;
-    RadioButton rb2;
-    RadioButton rb3;
+    RadioButton rb1,rb2,rb3;
 
     int icone;
 
@@ -122,7 +112,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-
+        this.view_popup = getLayoutInflater().inflate(R.layout.addmarker_layout, null);
 
         // Informations sur l'utilisateur
         utilisateur = new Utilisateur(String.valueOf(getUserID()),getUsername(),getUserMail(),getUserPassword());
@@ -130,16 +120,15 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         this.activity = this;
         this.mclick = false;
         this.btnmclick = findViewById(R.id.btnmapclick);
-        this.prenom = findViewById(R.id.editText2);
-        this.Comm = findViewById(R.id.editTextTextPersonName);
-        this.Envie = findViewById(R.id.editTextTextEnvie);
+
         this.Disprenom = findViewById(R.id.textView2);
         this.Dispenvie = findViewById(R.id.editTextTextEnvie);
         this.Dispcomm = findViewById(R.id.textView15);
+
         this.mflc = LocationServices.getFusedLocationProviderClient(this);
         this.pgrb = findViewById(R.id.progressBarMap);
 
-        this.view_popup = getLayoutInflater().inflate(R.layout.addmarker_layout, null);
+
         this.rb1 = this.view_popup.findViewById(R.id.radioButton);
         this.rb2 = this.view_popup.findViewById(R.id.radioButton2);
         this.rb3 = this.view_popup.findViewById(R.id.radioButton3);
@@ -395,13 +384,16 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         // Détection d'un click sur la map
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener()
         {
+            EditText prenom = view_popup.findViewById(R.id.editText2);
+            EditText Comm = view_popup.findViewById(R.id.editTextTextPersonName);
+            EditText Envie = view_popup.findViewById(R.id.editTextTextEnvie);
+
             @Override
             public void onMapClick(LatLng latLng) {if(mclick)
             {
                 // Coordonnées GPS
                 lat = latLng.latitude;
                 lng = latLng.longitude;
-
 
                 AlertDialog.Builder areYouSure = new AlertDialog.Builder(activity,R.style.MyDialogTheme);
                 areYouSure.setTitle("Vérification");
@@ -417,6 +409,9 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
+
+
                         // si sdf est choisi
                         Date date = new Date();
                         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -430,9 +425,10 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
                         //string du prénom, commentaire et envie du sdf
                         //prenom.getText();
-                        //Comm.getText()
+                        String com = Comm.getText().toString();
+                        System.out.println("Commentaire : "+com);
                         //Envie.getText()
-                        System.out.println(icone);
+
                         switch(icone){
                             case 1 :
                                 // Ajout d'un pin
@@ -447,7 +443,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                                 mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+utilisateur.username+" le "+yyyy_mm_ddTodd_mm_yyyy(jour)+" à "+heure).position(latLng).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_0)));
                                 break;
                         }
-                        System.out.println(icone);
                         addPin(lat,lng,Long.parseLong(utilisateur.id_user),jour+" "+heure,icone);
                         mapclick2();
                     }
