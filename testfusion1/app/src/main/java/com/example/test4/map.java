@@ -18,9 +18,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -97,7 +99,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     Utilisateur utilisateur;
 
     View view_popup;
-
+    AlertDialog.Builder builder;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -112,7 +114,9 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        // Fenêtre popup pour ajouter un marqueur
         this.view_popup = getLayoutInflater().inflate(R.layout.addmarker_layout, null);
+        this.builder = new AlertDialog.Builder(this).setView(this.view_popup);
 
         // Informations sur l'utilisateur
         utilisateur = new Utilisateur(String.valueOf(getUserID()),getUsername(),getUserMail(),getUserPassword());
@@ -383,83 +387,79 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         // Détection d'un click sur la map
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener()
         {
-            EditText prenom = view_popup.findViewById(R.id.editText2);
-            EditText Comm = view_popup.findViewById(R.id.editTextTextPersonName);
-            EditText Envie = view_popup.findViewById(R.id.editTextTextEnvie);
-
             @Override
-            public void onMapClick(LatLng latLng) {if(mclick)
+            public void onMapClick(LatLng latLng)
             {
-                // Coordonnées GPS
-                lat = latLng.latitude;
-                lng = latLng.longitude;
+                if(mclick) {
+                    // Coordonnées GPS
+                    lat = latLng.latitude;
+                    lng = latLng.longitude;
 
-                AlertDialog.Builder areYouSure = new AlertDialog.Builder(activity,R.style.MyDialogTheme);
-                areYouSure.setTitle("Vérification");
+                    AlertDialog popup = builder.show();
 
-                View customAddMarkerLayout = getLayoutInflater().inflate(R.layout.addmarker_layout, null);
+                    // Desactive les click en dehors de la fenêtre
+                    popup.setCanceledOnTouchOutside(false);
 
-                areYouSure.setView(customAddMarkerLayout);
-                areYouSure.setMessage("Veuillez entrer des informations sur la personne");
+                    // Champ de saisie de la fenêtre popup
+                    EditText editTxtPrenom = view_popup.findViewById(R.id.editText2);
+                    EditText editTxtComment = view_popup.findViewById(R.id.editTextTextPersonName);
+                    EditText editTxtEnvie = view_popup.findViewById(R.id.editTextTextEnvie);
 
+                    // Bouton de la fenêtre popup
+                    Button valider = view_popup.findViewById(R.id.btnMarkerValider);
+                    Button annuler = view_popup.findViewById(R.id.btnMarkerAnnuler);
 
-                areYouSure.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                    // Bouton retour
+                    popup.setOnKeyListener((arg0, keyCode, event) -> {
+                        // Click sur le bouton retour
+                        if (keyCode == KeyEvent.KEYCODE_BACK) {
+                            ((ViewGroup) view_popup.getParent()).removeView(view_popup);
+                            popup.dismiss();
+                        }
+                        return true;
+                    });
 
+                    // Bouton annuler
+                    annuler.setOnClickListener(v -> {
+                        ((ViewGroup) view_popup.getParent()).removeView(view_popup);
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                        editTxtPrenom.setText("");
+                        editTxtComment.setText("");
+                        editTxtEnvie.setText("");
 
+                        popup.dismiss();
+                    });
 
+                    // Bouton valider
+                    valider.setOnClickListener(v -> {
+                        ((ViewGroup) view_popup.getParent()).removeView(view_popup);
 
-                        // si sdf est choisi
+                        // Récupération de la saisie de l'utilisateur
+                        String stringPrenom = editTxtPrenom.getText().toString();
+                        String stringComment = editTxtComment.getText().toString();
+                        String stringEnvie = editTxtEnvie.getText().toString();
+
+                        // Récupération de la date
                         Date date = new Date();
                         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        String []string_date = dateFormat.format(date).split(" ");
 
+                        // Récupère le jour et l'heure
+                        String[] string_date = dateFormat.format(date).split(" ");
                         String jour = string_date[0];
                         String heure = string_date[1];
 
-                        //déclaration de l'int pr savoir si le sdf est un homme, une femme ou un handicapé
-                        //int selectedId = rb1.get();
-
-                        //string du prénom, commentaire et envie du sdf
-                        //prenom.getText();
-                        String com = Comm.getText().toString();
-                        System.out.println("Commentaire : "+com);
-                        //Envie.getText()
-
-                        switch(icone){
-                            case 1 :
-                                // Ajout d'un pin
-                                mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+utilisateur.username+" le "+yyyy_mm_ddTodd_mm_yyyy(jour)+" à "+heure).position(latLng).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_1)));
-                                break;
-                            case 2 :
-                                // Ajout d'un pin
-                                mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+utilisateur.username+" le "+yyyy_mm_ddTodd_mm_yyyy(jour)+" à "+heure).position(latLng).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_2)));
-                                break;
-                            default :
-                                // Ajout d'un pin
-                                mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+utilisateur.username+" le "+yyyy_mm_ddTodd_mm_yyyy(jour)+" à "+heure).position(latLng).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_0)));
-                                break;
-                        }
-                        addPin(lat,lng,Long.parseLong(utilisateur.id_user),jour+" "+heure,icone);
+                        addPin(lat, lng, Long.parseLong(utilisateur.id_user), jour, heure, icone, stringPrenom, stringComment, stringEnvie);
                         mapclick2();
-                    }
-                });
 
-                areYouSure.setNegativeButton("non", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                        editTxtPrenom.setText("");
+                        editTxtComment.setText("");
+                        editTxtEnvie.setText("");
 
-                    }
-                });
-
-                areYouSure.show();
-
-
-            }}
-        }
-        );
+                        popup.dismiss();
+                    });
+                }
+            }
+        });
 
         // Action à réaliser lorsque le caméra a bougé
         mMap.setOnCameraMoveStartedListener(new GoogleMap.OnCameraMoveStartedListener()
@@ -473,7 +473,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 }
             }
         });
-
     }
 
     public void quit()
@@ -1113,16 +1112,33 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     }
 
 
-
-
-
-
-    // Ajouter un pin dans notre base de données via une requête de type GET
-    public void addPin(double latitude, double longitude, long id_user, String date, int icone)
+    // Ajouter un pin sur la carte et dans notre base de données via une requête de type GET
+    public void addPin(double latitude, double longitude, long id_user, String jour, String heure, int icone, String prenom, String comment, String envie)
     {
+        LatLng latLng = new LatLng(latitude,longitude);
+
+        // Ajout d'un pin sur la carte
+        switch(icone){
+            case 1 :
+                // Ajout d'un pin
+                mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+utilisateur.username+" le "+yyyy_mm_ddTodd_mm_yyyy(jour)+" à "+heure).position(latLng).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_1)));
+                break;
+            case 2 :
+                // Ajout d'un pin
+                mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+utilisateur.username+" le "+yyyy_mm_ddTodd_mm_yyyy(jour)+" à "+heure).position(latLng).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_2)));
+                break;
+            default :
+                // Ajout d'un pin
+                mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+utilisateur.username+" le "+yyyy_mm_ddTodd_mm_yyyy(jour)+" à "+heure).position(latLng).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_0)));
+                break;
+        }
+
+        String date = jour+" "+heure;
+
+        // Ajout du pin dans la BDD
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        String URL = "https://db-ezpfla.000webhostapp.com/addPin.php?id="+id_user+"&long="+longitude+"&lat="+latitude+"&date="+date+"&icone="+icone;
+        String URL = "https://db-ezpfla.000webhostapp.com/addPin.php?id="+id_user+"&long="+longitude+"&lat="+latitude+"&date="+date+"&icone="+icone+"&prenom="+prenom+"&commentaire="+comment+"&envie="+envie;
 
         StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
             Log.i("Réponse", response);
