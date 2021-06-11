@@ -293,7 +293,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                     String id_pin = infos[2];
 
                     // Affichage d'une fenêtre avec des informations supplémentaires
-                    AlertDialog.Builder moreInfos = new AlertDialog.Builder(activity,R.style.MyDialogTheme);
+                    AlertDialog.Builder moreInfos = new AlertDialog.Builder(activity,R.style.MyDialogTheme2);
 
                     View customAddMarkerLayout = getLayoutInflater().inflate(R.layout.marker_layout, null);
 
@@ -322,7 +322,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                         public void onClick(DialogInterface dialog, int which) {
 
                             //Fenêtre pour confirmer son choix
-                            AlertDialog.Builder oui_non = new AlertDialog.Builder(activity);
+                            AlertDialog.Builder oui_non = new AlertDialog.Builder(activity,R.style.MyDialogTheme);
 
                             oui_non.setTitle("Êtes-vous sûr ?");
                             oui_non.setMessage("Ce pin sera supprimer au bout de 2 signalements");

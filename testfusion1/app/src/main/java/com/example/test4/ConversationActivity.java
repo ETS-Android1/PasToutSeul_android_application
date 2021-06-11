@@ -48,7 +48,7 @@ public class ConversationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
         this.view_popup_add = getLayoutInflater().inflate(R.layout.popup_new_conv, null);
-        this.builder = new AlertDialog.Builder(this).setView(this.view_popup_add);
+        this.builder = new AlertDialog.Builder(this,R.style.MyDialogTheme).setView(this.view_popup_add);
 
         initView();
 

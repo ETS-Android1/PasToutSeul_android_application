@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="MyDialogTheme" parent="Theme.MaterialComponents.Light.Dialog">
-        <item name="android:background">@drawable/marker</item>
         <item name="android:windowBackground">@drawable/marker</item>
         <item name="android:textColor">@android:color/black</item>
         <item name="colorAccent">@android:color/black</item>
         <item name="fontFamily">@font/montserrat</item>
     </style>
+
+    <style name="MyDialogTheme2" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="android:windowBackground">@drawable/button</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="colorAccent">@android:color/black</item>
+        <item name="fontFamily">@font/montserrat</item>
+    </style>
+
 </resources>

@@ -7,31 +7,32 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     tools:context=".map"
     android:background="@drawable/marker"
-    android:padding="25dp" >
+    android:padding="20dp" >
 
     <EditText
         android:id="@+id/editText2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/montserrat"
         android:hint="@string/prénom"
         android:textStyle="bold"
-        android:fontFamily="@font/montserrat"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <RadioGroup
         android:id="@+id/radioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
+
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText2"
         tools:ignore="UselessParent">
 
         <RadioButton
@@ -40,8 +41,7 @@
             android:layout_height="48dp"
             android:background="@drawable/alignement_selec"
             android:button="@drawable/ic_personne_0"
-            android:onClick="checkRB1"
-            />
+            android:onClick="checkRB1" />
 
         <RadioButton
             android:id="@+id/radioButton2"
@@ -51,8 +51,7 @@
             android:layout_marginLeft="25dp"
             android:background="@drawable/alignement_selec"
             android:button="@drawable/ic_personne_1"
-            android:onClick="checkRB2"
-            />
+            android:onClick="checkRB2" />
 
         <RadioButton
             android:id="@+id/radioButton3"
@@ -62,58 +61,64 @@
             android:layout_marginLeft="25dp"
             android:background="@drawable/alignement_selec"
             android:button="@drawable/ic_personne_2"
-            android:onClick="checkRB3"
-            />
+            android:onClick="checkRB3" />
 
     </RadioGroup>
 
     <EditText
         android:id="@+id/editTextTextPersonName"
         android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="16dp"
         android:ems="10"
-        android:hint="commentaire sur la personne"
+        android:fontFamily="@font/montserrat"
+        android:hint="   Commentaire sur la personne"
+        android:background="@drawable/rounded_bg"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.513"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText2"
-        android:fontFamily="@font/montserrat"/>
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
     <EditText
         android:id="@+id/editTextTextEnvie"
         android:layout_width="300dp"
-        android:layout_height="wrap_content"
+        android:layout_height="35dp"
+        android:layout_marginTop="8dp"
         android:ems="10"
-        android:hint="Envie de la personne"
+        android:fontFamily="@font/montserrat"
+        android:background="@drawable/rounded_bg"
+        android:hint="   Envie de la personne"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.51"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName"
-        android:fontFamily="@font/montserrat"/>
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
 
     <Button
         android:id="@+id/btnMarkerValider"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:background="@drawable/button"
+        android:background="@drawable/button2"
         android:text="Valider"
         app:layout_constraintEnd_toStartOf="@+id/btnMarkerAnnuler"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextEnvie" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextEnvie"
+        android:fontFamily="@font/montserrat"
+        android:stateListAnimator="@null"/>
 
     <Button
         android:id="@+id/btnMarkerAnnuler"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:background="@drawable/button2"
+        android:background="@drawable/button"
         android:text="Annuler"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btnMarkerValider"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextEnvie" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextEnvie"
+        android:fontFamily="@font/montserrat"
+        android:stateListAnimator="@null"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
