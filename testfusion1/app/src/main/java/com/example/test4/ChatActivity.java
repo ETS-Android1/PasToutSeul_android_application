@@ -73,10 +73,10 @@ public class ChatActivity extends AppCompatActivity
 
         // Initialastion des variables pour la fenêtre popup
         this.view_popup_add = getLayoutInflater().inflate(R.layout.popup_add_people, null);
-        this.builder = new AlertDialog.Builder(this).setView(this.view_popup_add);
+        this.builder = new AlertDialog.Builder(this,R.style.MyDialogTheme).setView(this.view_popup_add);
 
         this.view_popup_leave = getLayoutInflater().inflate(R.layout.popup_leave_conv, null);
-        this.builder2 = new AlertDialog.Builder(this).setView(this.view_popup_leave);
+        this.builder2 = new AlertDialog.Builder(this,R.style.MyDialogTheme).setView(this.view_popup_leave);
 
         // Initialisation des variables transmis par le père
         this.titre = getIntent().getStringExtra("TITRE");

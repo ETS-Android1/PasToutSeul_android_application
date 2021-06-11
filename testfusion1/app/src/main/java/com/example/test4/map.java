@@ -116,7 +116,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
         // Fenêtre popup pour ajouter un marqueur
         this.view_popup = getLayoutInflater().inflate(R.layout.addmarker_layout, null);
-        this.builder = new AlertDialog.Builder(this).setView(this.view_popup);
+        this.builder = new AlertDialog.Builder(this,R.style.MyDialogTheme).setView(this.view_popup);
 
         // Informations sur l'utilisateur
         utilisateur = new Utilisateur(String.valueOf(getUserID()),getUsername(),getUserMail(),getUserPassword());
@@ -244,6 +244,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         secoursIslamique();
         secoursCatholique();
         secoursPopulaire();
+        croixrouge();
 
         pgrb.setVisibility(View.INVISIBLE);
 
@@ -342,6 +343,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                                                 secoursIslamique();
                                                 secoursCatholique();
                                                 secoursPopulaire();
+                                                croixrouge();
                                             }
                                             setSDFMarkers();
                                         }
@@ -1111,6 +1113,50 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         }
     }
 
+    // Ajout des marqueur des croix rouges
+    public void croixrouge() {
+
+        try {
+            AssetManager am = getAssets();
+
+            InputStream is = am.open("CroixRouge.xls");
+
+            Workbook wb = Workbook.getWorkbook(is);
+
+            Sheet s = wb.getSheet(0);
+
+            int row = s.getRows();
+
+            for (int i=1; i<row;i++){
+                Cell c = s.getCell(2,i);
+
+                // Tri des données
+                String[] latlong = c.getContents().split(",");
+
+                double latitude = Double.parseDouble(latlong[0]);
+                double longitude = Double.parseDouble(latlong[1]);
+
+                LatLng loc = new LatLng(latitude, longitude);
+
+                String nom = s.getCell(0,i).getContents();
+                String site = s.getCell(3,i).getContents();
+                String tel = s.getCell(4,i).getContents();
+
+                if (tel == "") {
+                    mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_croixrouge)));
+                }
+                else {
+                    mMap.addMarker(new MarkerOptions().snippet(tel).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_croixrouge)));
+                }
+            }
+
+        } catch (Exception e)
+        {
+            Log.d("binks", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
 
     // Ajouter un pin sur la carte et dans notre base de données via une requête de type GET
     public void addPin(double latitude, double longitude, long id_user, String jour, String heure, int icone, String prenom, String comment, String envie)
@@ -1308,5 +1354,10 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
+    public void don(View v){
+        Intent i = new Intent(this, donate.class);
+        startActivity(i);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
 
 }

@@ -6,7 +6,8 @@
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
     tools:context=".map"
-    android:background="@drawable/marker">
+    android:background="@drawable/marker"
+    android:padding="25dp" >
 
     <EditText
         android:id="@+id/editText2"
@@ -97,26 +98,22 @@
         android:id="@+id/btnMarkerValider"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="88dp"
-        android:layout_marginLeft="88dp"
-        android:layout_marginTop="260dp"
-        android:text="Valider"
+        android:layout_marginTop="16dp"
         android:background="@drawable/button"
+        android:text="Valider"
         app:layout_constraintEnd_toStartOf="@+id/btnMarkerAnnuler"
-        app:layout_constraintHorizontal_bias="0.086"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextEnvie" />
 
     <Button
         android:id="@+id/btnMarkerAnnuler"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="260dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/button2"
         android:text="Annuler"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.687"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/btnMarkerValider"
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextEnvie" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

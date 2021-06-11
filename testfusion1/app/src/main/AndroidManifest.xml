@@ -18,7 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Test4">
-        <activity android:name=".sos"></activity>
+        <activity android:name=".donate"></activity>
+        <activity android:name=".sos" />
         <activity android:name=".emmausMarker" />
         <activity
             android:name=".Compte"
