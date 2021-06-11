@@ -56,6 +56,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.jetbrains.annotations.NotNull;
+import org.w3c.dom.Text;
 
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -81,12 +82,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
     ImageButton btnmclick;
 
-    TextView Disprenom,Dispenvie,Dispcomm;
-
-    Geocoder geocoder;
-
-    List<Address> addresses;
-
     double lat;
     double lng;
 
@@ -100,6 +95,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
     View view_popup;
     AlertDialog.Builder builder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -108,6 +104,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
         binding = ActivityMapBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        this.mclick = false;
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -122,12 +120,10 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         utilisateur = new Utilisateur(String.valueOf(getUserID()),getUsername(),getUserMail(),getUserPassword());
 
         this.activity = this;
-        this.mclick = false;
-        this.btnmclick = findViewById(R.id.btnmapclick);
 
-        this.Disprenom = findViewById(R.id.textView2);
-        this.Dispenvie = findViewById(R.id.editTextTextEnvie);
-        this.Dispcomm = findViewById(R.id.textView15);
+
+
+        this.btnmclick = findViewById(R.id.btnmapclick);
 
         this.mflc = LocationServices.getFusedLocationProviderClient(this);
         this.pgrb = findViewById(R.id.progressBarMap);
@@ -291,16 +287,37 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                if (marker.getTitle().equals("Sans abri"))
+                if (marker.getTitle().contains("Sans abri"))
                 {
+                    String[] infos = marker.getTitle().split(" ");
+                    String id_pin = infos[2];
+
                     // Affichage d'une fenêtre avec des informations supplémentaires
                     AlertDialog.Builder moreInfos = new AlertDialog.Builder(activity,R.style.MyDialogTheme);
+
                     View customAddMarkerLayout = getLayoutInflater().inflate(R.layout.marker_layout, null);
+
+                    // Affichage des infos
+                    TextView prenom = customAddMarkerLayout.findViewById(R.id.textViewPrenom);
+                    TextView commentaire = customAddMarkerLayout.findViewById(R.id.textViewCommentaire);
+                    TextView envie = customAddMarkerLayout.findViewById(R.id.textViewEnvie);
+
                     moreInfos.setView(customAddMarkerLayout);
                     moreInfos.setTitle("Plus d'informations");
                     moreInfos.setMessage(marker.getSnippet());
 
-                    moreInfos.setNeutralButton("Signaler une erreur", new DialogInterface.OnClickListener() {
+                    requestSdfInfos(Integer.parseInt(id_pin), res ->
+                    {
+                        String[] strings = res.split("<!§!>");
+
+                        prenom.setText(strings[0]);
+                        commentaire.setText(strings[1]);
+                        envie.setText(strings[2]);
+
+
+                    });
+                    moreInfos.setNeutralButton("Signaler une erreur", new DialogInterface.OnClickListener()
+                    {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
@@ -320,14 +337,17 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                             });
 
                             // Si on valide, alors on envoie le signalement.
-                            oui_non.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                            oui_non.setPositiveButton("Oui", new DialogInterface.OnClickListener()
+                            {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     ((ViewGroup)customAddMarkerLayout.getParent()).removeView(customAddMarkerLayout);
                                     LatLng latLng = marker.getPosition();
-                                    requestReport(latLng.latitude, latLng.longitude, new VolleyCallBack() {
+                                    requestReport(latLng.latitude, latLng.longitude, new VolleyCallBack()
+                                    {
                                         @Override
-                                        public void onSuccess(String res) {
+                                        public void onSuccess(String res)
+                                        {
                                             if(res.equals("delete"))
                                             {
                                                 // Actualise les marqueurs
@@ -348,14 +368,13 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                                             setSDFMarkers();
                                         }
                                     });
-
-                                    moreInfos.show();
                                 }
                             });
-
                             oui_non.show();
                         }
                     });
+
+
 
                     moreInfos.setPositiveButton("Fermer", new DialogInterface.OnClickListener() {
                         @Override
@@ -364,7 +383,16 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                         }
                     });
 
-                    moreInfos.show();
+                    requestSdfInfos(Integer.parseInt(id_pin), res ->
+                    {
+                        String[] strings = res.split("<!§!>");
+
+                        prenom.setText(strings[0]);
+                        commentaire.setText(strings[1]);
+                        envie.setText(strings[2]);
+                        moreInfos.show();
+
+                    });
                 }
                 else if (marker.getSnippet().equals("")){
 
@@ -441,6 +469,10 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                         String stringComment = editTxtComment.getText().toString();
                         String stringEnvie = editTxtEnvie.getText().toString();
 
+                        System.out.println("Prenom : "+stringPrenom);
+                        System.out.println("Comment : "+stringComment);
+                        System.out.println("Envie : "+stringEnvie);
+
                         // Récupération de la date
                         Date date = new Date();
                         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -450,7 +482,10 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                         String jour = string_date[0];
                         String heure = string_date[1];
 
-                        addPin(lat, lng, Long.parseLong(utilisateur.id_user), jour, heure, icone, stringPrenom, stringComment, stringEnvie);
+                        addPin(lat, lng, Long.parseLong(utilisateur.id_user), jour, heure, icone, stringPrenom, stringComment, stringEnvie, res ->
+                        {
+                            setSDFMarkers();
+                        });
                         mapclick2();
 
                         editTxtPrenom.setText("");
@@ -1158,28 +1193,27 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     }
 
 
-    // Ajouter un pin sur la carte et dans notre base de données via une requête de type GET
-    public void addPin(double latitude, double longitude, long id_user, String jour, String heure, int icone, String prenom, String comment, String envie)
+    // Ajouter un pin dans notre base de données via une requête de type GET
+    public void addPin(double latitude, double longitude, long id_user, String jour, String heure, int icone, String prenom, String comment, String envie, final VolleyCallBack callBack)
     {
         LatLng latLng = new LatLng(latitude,longitude);
 
-        // Ajout d'un pin sur la carte
-        switch(icone){
-            case 1 :
-                // Ajout d'un pin
-                mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+utilisateur.username+" le "+yyyy_mm_ddTodd_mm_yyyy(jour)+" à "+heure).position(latLng).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_1)));
-                break;
-            case 2 :
-                // Ajout d'un pin
-                mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+utilisateur.username+" le "+yyyy_mm_ddTodd_mm_yyyy(jour)+" à "+heure).position(latLng).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_2)));
-                break;
-            default :
-                // Ajout d'un pin
-                mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+utilisateur.username+" le "+yyyy_mm_ddTodd_mm_yyyy(jour)+" à "+heure).position(latLng).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_0)));
-                break;
-        }
-
+        // Date yyyy-MM-dd HH-mm:ss
         String date = jour+" "+heure;
+
+        // Si vide
+        if(prenom.isEmpty())
+        {
+            prenom = "(Aucune informations)";
+        }
+        if(comment.isEmpty())
+        {
+            comment = "(Aucune informations)";
+        }
+        if(envie.isEmpty())
+        {
+            envie = "(Aucune informations)";
+        }
 
         // Ajout du pin dans la BDD
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -1188,10 +1222,12 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
         StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
             Log.i("Réponse", response);
+            callBack.onSuccess(null);
         }, error -> Log.e("Réponse", error.toString()));
 
         // Ajoute la requête dans la file
         queue.add(postRequest);
+
     }
 
     // Récupère le nom d'utilisateur
@@ -1228,6 +1264,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                         int line_length = line.length;
 
                         // Informations sur les pins
+                        String id_user;
                         double longitude;
                         double latitude;
                         String date;
@@ -1242,6 +1279,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                             // Tri une nouvelle fois les informations mais en détails
                             string = line[i].split(" ");
 
+                            id_user = string[0];
                             longitude = Double.parseDouble(string[1]);
                             latitude = Double.parseDouble(string[2]);
                             date = string[4];
@@ -1252,25 +1290,21 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                             switch(icone){
                                 case "1" :
                                     // Ajout d'un pin
-                                    mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+nom_user+" le "+yyyy_mm_ddTodd_mm_yyyy(date)+" à "+heure).position(new LatLng(latitude,longitude)).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_1)));
+                                    mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+nom_user+" le "+yyyy_mm_ddTodd_mm_yyyy(date)+" à "+heure).position(new LatLng(latitude,longitude)).title("Sans abri "+id_user).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_1)));
                                     break;
                                 case "2" :
                                     // Ajout d'un pin
-                                    mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+nom_user+" le "+yyyy_mm_ddTodd_mm_yyyy(date)+" à "+heure).position(new LatLng(latitude,longitude)).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_2)));
+                                    mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+nom_user+" le "+yyyy_mm_ddTodd_mm_yyyy(date)+" à "+heure).position(new LatLng(latitude,longitude)).title("Sans abri "+id_user).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_2)));
                                     break;
                                 default :
                                     // Ajout d'un pin
-                                    mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+nom_user+" le "+yyyy_mm_ddTodd_mm_yyyy(date)+" à "+heure).position(new LatLng(latitude,longitude)).title("Sans abri").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_0)));
+                                    mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+nom_user+" le "+yyyy_mm_ddTodd_mm_yyyy(date)+" à "+heure).position(new LatLng(latitude,longitude)).title("Sans abri "+id_user).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_0)));
                                     break;
                             }
-
-
-
                         }
                     }
-
                 }
-                );
+        );
     }
 
     // Déclaration et envoi d'une requête pour récupérer des données sur les marqueurs dans la BDD.
@@ -1295,7 +1329,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     {
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        String URL = "https://db-ezpfla.000webhostapp.com/reportPin.php?username="+getUsername()+"&latitude="+mMap.getCameraPosition().target.latitude+"&longitude="+mMap.getCameraPosition().target.longitude;
+        String URL = "https://db-ezpfla.000webhostapp.com/reportPin.php?username="+getUsername()+"&latitude="+latitude+"&longitude="+longtitude;
 
         // Envoi de la requête et on redirige la réponse à sa réception
         StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
@@ -1316,11 +1350,27 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         // Envoi de la requête et on redirige la réponse à sa réception
         StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
             Log.i("Réponse", response);
-            System.out.println(response);
         }, error -> Log.e("Réponse", error.toString()));
 
         // Ajout de la requête dans la file
         queue.add(postRequest);
+    }
+
+    public void requestSdfInfos(int id_pin,final VolleyCallBack callBack)
+    {
+        System.out.println("id_pin = "+id_pin);
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        String URL = "https://db-ezpfla.000webhostapp.com/getSdfInfos.php?pin="+id_pin;
+
+        // Envoi de la requête et on redirige la réponse à sa réception
+        StringRequest getRequest = new StringRequest(Request.Method.GET, URL, response -> {
+            Log.i("Réponse", response);
+            callBack.onSuccess(response);
+        }, error -> Log.e("Réponse", error.toString()));
+
+        // Ajout de la requête dans la file
+        queue.add(getRequest);
     }
 
     @Override
