@@ -190,7 +190,15 @@ public class ConversationActivity extends AppCompatActivity {
         // Lancement de la requête
         requestCreateConversation(nom_groupe,dateFormatUS.format(date), res-> {
             //System.out.println(res);
-            afficheConversation();
+            Intent conv = new Intent(this,ConversationActivity.class);
+
+            conv.putExtra("USER_NAME", getUsername());
+            conv.putExtra("USER_ID", getUserID());
+            conv.putExtra("USER_MAIL",getUserMail());
+            conv.putExtra("USER_PASSWORD",getUserPassword());
+
+            startActivity(conv);
+            this.finish();
         });
     }
 
