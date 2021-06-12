@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -51,6 +52,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -163,12 +165,15 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     public void onMapReady(GoogleMap googleMap)
     {
         mMap = googleMap;
+
         mMap.getUiSettings().setRotateGesturesEnabled(false);
         mMap.setMinZoomPreference(13);
         mMap.setMapType(3);
         mMap.setMyLocationEnabled(true);
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
+
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         {
@@ -241,6 +246,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         secoursCatholique();
         secoursPopulaire();
         croixrouge();
+        ANRS();
 
         pgrb.setVisibility(View.INVISIBLE);
 
@@ -322,7 +328,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                         public void onClick(DialogInterface dialog, int which) {
 
                             //Fenêtre pour confirmer son choix
-                            AlertDialog.Builder oui_non = new AlertDialog.Builder(activity,R.style.MyDialogTheme);
+                            AlertDialog.Builder oui_non = new AlertDialog.Builder(activity,R.style.MyDialogTheme2);
 
                             oui_non.setTitle("Êtes-vous sûr ?");
                             oui_non.setMessage("Ce pin sera supprimer au bout de 2 signalements");
@@ -364,6 +370,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                                                 secoursCatholique();
                                                 secoursPopulaire();
                                                 croixrouge();
+                                                ANRS();
                                             }
                                             setSDFMarkers();
                                         }
@@ -1178,6 +1185,49 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 }
                 else {
                     mMap.addMarker(new MarkerOptions().snippet(tel).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_croixrouge)));
+                }
+            }
+
+        } catch (Exception e)
+        {
+            Log.d("binks", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void ANRS() {
+
+        try {
+            AssetManager am = getAssets();
+
+            InputStream is = am.open("ANRS.xls");
+
+            Workbook wb = Workbook.getWorkbook(is);
+
+            Sheet s = wb.getSheet(0);
+
+            int row = s.getRows();
+
+            for (int i=1; i<row;i++){
+                Cell c = s.getCell(2,i);
+
+                // Tri des données
+                String[] latlong = c.getContents().split(",");
+
+                double latitude = Double.parseDouble(latlong[0]);
+                double longitude = Double.parseDouble(latlong[1]);
+
+                LatLng loc = new LatLng(latitude, longitude);
+
+                String nom = s.getCell(0,i).getContents();
+                String site = s.getCell(3,i).getContents();
+                String tel = s.getCell(4,i).getContents();
+
+                if (tel == "") {
+                    mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_anrs)));
+                }
+                else {
+                    mMap.addMarker(new MarkerOptions().snippet(tel).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_anrs)));
                 }
             }
 

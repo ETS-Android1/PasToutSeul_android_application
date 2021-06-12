@@ -88,12 +88,13 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         }
         if(isParticipantPopup)
         {
-            view = inflater.inflate(R.layout.message, parent,false);
+            view = inflater.inflate(R.layout.participants, parent,false);
         }
 
         return new ViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(final @NotNull ViewHolder holder, int position)
     {
@@ -108,12 +109,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             String printedMessage = message.get(position);
 
             // Si le message est trop long, on affiche partiellement le message
-            if(printedMessage.length() >= 20)
+            if(printedMessage.length() >= 80)
             {
-                printedMessage = printedMessage.substring(0,19)+" ...";
+                printedMessage = printedMessage.substring(0,79)+" ...";
             }
 
-            holder.lastMessage.setText("Dernier message : "+"["+date+" "+h_m_s[0]+":"+h_m_s[1]+"] "+printedMessage);
+            holder.lastMessage.setText("["+date+" "+h_m_s[0]+":"+h_m_s[1]+"]  "+"Dernier message : "+printedMessage);
 
         }
         if(isChat)

@@ -40,4 +40,9 @@ public class donate extends AppCompatActivity {
         intent.setData(Uri.parse("https://www.restosducoeur.org/faire-un-don-financier/"));
         startActivity(intent);
     }
+    public void call6(View v){
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("https://anrs.asso.fr/"));
+        startActivity(intent);
+    }
 }

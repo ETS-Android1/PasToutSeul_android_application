@@ -20,19 +20,20 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
+
     <TextView
         android:id="@+id/textView13"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="38dp"
+        android:layout_marginTop="36dp"
         android:fontFamily="@font/montserrat"
         android:text="Emmaüs solidarité"
-        app:layout_constraintStart_toEndOf="@+id/imageView4"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar2"
         android:textColor="#333"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/imageView4"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar2" />
 
     <ImageView
         android:id="@+id/imageView4"
@@ -75,19 +76,19 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="77dp"
+        android:layout_marginTop="78dp"
         android:fontFamily="@font/montserrat"
         android:text="Secours populaire français"
-        app:layout_constraintStart_toEndOf="@+id/imageView5"
-        app:layout_constraintTop_toBottomOf="@+id/textView13"
         android:textColor="#333"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/imageView5"
+        app:layout_constraintTop_toBottomOf="@+id/textView13" />
 
     <ImageButton
         android:id="@+id/button3"
         android:layout_width="50dp"
         android:layout_height="48dp"
-        android:layout_marginTop="54dp"
+        android:layout_marginTop="52dp"
         android:layout_marginEnd="18dp"
         android:layout_marginRight="18dp"
         android:background="@drawable/button"
@@ -113,19 +114,19 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="78dp"
+        android:layout_marginTop="76dp"
         android:fontFamily="@font/montserrat"
         android:text="Secours catholique"
-        app:layout_constraintStart_toEndOf="@+id/imageView6"
-        app:layout_constraintTop_toBottomOf="@+id/textView20"
         android:textColor="#333"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/imageView6"
+        app:layout_constraintTop_toBottomOf="@+id/textView20" />
 
     <ImageButton
         android:id="@+id/button4"
         android:layout_width="50dp"
         android:layout_height="48dp"
-        android:layout_marginTop="54dp"
+        android:layout_marginTop="52dp"
         android:layout_marginEnd="18dp"
         android:layout_marginRight="18dp"
         android:background="@drawable/button"
@@ -169,13 +170,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="77dp"
+        android:layout_marginTop="76dp"
         android:fontFamily="@font/montserrat"
         android:text="Croix-Rouge française"
-        app:layout_constraintStart_toEndOf="@+id/imageView7"
-        app:layout_constraintTop_toBottomOf="@+id/textView21"
         android:textColor="#333"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/imageView7"
+        app:layout_constraintTop_toBottomOf="@+id/textView21" />
 
     <ImageView
         android:id="@+id/imageView7"
@@ -251,27 +252,27 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="77dp"
+        android:layout_marginTop="76dp"
+        android:fontFamily="@font/montserrat"
         android:text="Les Restos du cœur"
-        app:layout_constraintStart_toEndOf="@+id/imageView8"
-        app:layout_constraintTop_toBottomOf="@+id/textView23"
         android:textColor="#333"
         android:textStyle="bold"
-        android:fontFamily="@font/montserrat"/>
+        app:layout_constraintStart_toEndOf="@+id/imageView8"
+        app:layout_constraintTop_toBottomOf="@+id/textView23" />
 
     <ImageButton
         android:id="@+id/button6"
         android:layout_width="50dp"
         android:layout_height="48dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="52dp"
         android:layout_marginEnd="18dp"
         android:layout_marginRight="18dp"
+        android:background="@drawable/button"
+        android:onClick="call5"
+        android:src="@drawable/ic_browser"
         android:text="Button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button5"
-        android:background="@drawable/button"
-        android:src="@drawable/ic_browser"
-        android:onClick="call5"/>
+        app:layout_constraintTop_toBottomOf="@+id/button5" />
 
     <TextView
         android:id="@+id/textView36"
@@ -284,4 +285,57 @@
         app:layout_constraintTop_toBottomOf="@+id/textView35"
         android:maxWidth="250dp"
         android:fontFamily="@font/montserrat"/>
+
+    <ImageView
+        android:id="@+id/imageView9"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView8"
+        android:background="@drawable/ic_anrs" />
+
+    <TextView
+        android:id="@+id/textView37"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="76dp"
+        android:fontFamily="@font/montserrat"
+        android:maxWidth="270dp"
+        android:text="Association Nationale de Réadaptation Sociale "
+        android:textColor="#333"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/imageView9"
+        app:layout_constraintTop_toBottomOf="@+id/textView35" />
+
+    <ImageButton
+        android:id="@+id/button7"
+        android:layout_width="50dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="52dp"
+        android:layout_marginEnd="18dp"
+        android:layout_marginRight="18dp"
+        android:background="@drawable/button"
+        android:onClick="call6"
+        android:src="@drawable/ic_browser"
+        android:text="Button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button6" />
+
+    <TextView
+        android:id="@+id/textView38"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:text="Association française reconnue d'utilité publique"
+        app:layout_constraintStart_toEndOf="@+id/imageView8"
+        app:layout_constraintTop_toBottomOf="@+id/textView37"
+        android:maxWidth="250dp"
+        android:fontFamily="@font/montserrat"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

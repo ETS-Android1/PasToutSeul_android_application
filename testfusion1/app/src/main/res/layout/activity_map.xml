@@ -50,11 +50,10 @@
 
         <ImageButton
             android:id="@+id/param"
-            android:layout_width="31dp"
-            android:layout_height="28dp"
-            android:background="@drawable/ic_parametres"
+            android:layout_width="57dp"
+            android:layout_height="35dp"
+            android:background="@drawable/logo"
             android:contentDescription="@string/parametre"
-            android:onClick="Click"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.919"
