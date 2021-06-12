@@ -86,6 +86,7 @@
         android:textColor="#333"
         android:textSize="20dp"
         android:textStyle="bold"
+        android:onClick="participantPopup"
         android:fontFamily="@font/montserrat"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

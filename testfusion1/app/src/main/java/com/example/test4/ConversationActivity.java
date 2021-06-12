@@ -100,6 +100,11 @@ public class ConversationActivity extends AppCompatActivity {
         // Lancement de la requête
         requestAfficheConversation(res ->
         {
+            ArrayList<String> titre = new ArrayList<>();
+            ArrayList<String> lastMessage = new ArrayList<>();
+            ArrayList<String> time = new ArrayList<>();
+            ArrayList<String> id_group = new ArrayList<>();
+
                     if(res.trim().length() != 0)
                     {
                         // Séparation de chaque lignes de données
@@ -112,15 +117,9 @@ public class ConversationActivity extends AppCompatActivity {
                         //String[] lastMessage = new String[nline];
                         String[] element;
 
-                        ArrayList<String> titre = new ArrayList<>();
-                        ArrayList<String> lastMessage = new ArrayList<>();
-                        ArrayList<String> time = new ArrayList<>();
-                        ArrayList<String> id_group = new ArrayList<>();
-
-
-                        for (int i = 0; i < nline; i++) {
+                        for(int i = 0; i < nline; i++) {
                             element = line[i].split("\\.");
-
+                            System.out.println(element[0]);
                             // Problème : Il y a un saut de ligne dans la réponse du serveur ce qui impact l'affichage
                             // Solution temporaire : Pour l'instant, on supprime les saut de lignes le temps de trouver la src du problème
                             //titre[i] = string[0].replace("\n","");
@@ -130,19 +129,21 @@ public class ConversationActivity extends AppCompatActivity {
                             time.add(element[3]);
                             //System.out.println(titre[i]+" "+lastMessage[i]);
                         }
-
-                        this.adapter = new Adapter(this, titre, lastMessage, time,false);
+                        System.out.println("Titre avant lancement du chat : "+titre.toString());
+                        adapter = new Adapter(this, titre, lastMessage, time,"conversation");
 
                         // Ajout des données des items dans notre recyclerView
-                        recyclerViewMessage.setAdapter(this.adapter);
-
+                        recyclerViewMessage.setAdapter(adapter);
                         // Ajout d'un listener pour les items dans la recyclerView
                         recyclerViewMessage.addOnItemTouchListener(
                                 new RecyclerItemClickListener(this, recyclerViewMessage ,new RecyclerItemClickListener.OnItemClickListener()
                                 {
                                     @Override public void onItemClick(View view, int position)
                                     {
-                                            launchChat(titre.get(position),id_group.get(position));
+                                        System.out.println("Titre au lancement du chat : "+titre.toString());
+                                        String title  = titre.get(position);
+                                        String idGrp = id_group.get(position);
+                                        launchChat(title,idGrp);
                                     }
 
                                     @Override
@@ -251,13 +252,14 @@ public class ConversationActivity extends AppCompatActivity {
         chatActivity.putExtra("TITRE", titre);
         chatActivity.putExtra("USER_ID", utilisateur.id_user);
         chatActivity.putExtra("USER_NAME", utilisateur.username);
+        chatActivity.putExtra("USER_MAIL",utilisateur.email);
+        chatActivity.putExtra("USER_PASSWORD",utilisateur.password);
         chatActivity.putExtra("GROUP_ID", id_groupe);
-
-        // Supprime les items de la recycler view pour éviter les bugs visuels lors du retour sur cette activity
-        this.recyclerViewMessage.setAdapter(null);
 
         // Lancement du chat
         startActivity(chatActivity);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        this.finish();
     }
 
     public String getUsername()

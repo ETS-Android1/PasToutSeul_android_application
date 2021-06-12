@@ -2,58 +2,91 @@ package com.example.test4;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.jetbrains.annotations.NotNull;
-import org.w3c.dom.Text;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
     // ConversationActivity ou ChatActivity
-    Boolean isChat;
+    Boolean isChat, isConversation, isParticipantPopup;
 
     Context context;
 
-    ArrayList<String> nom;
-    ArrayList<String> message;
-    ArrayList<String> temps;
+    ArrayList<String> nom, message, temps;
 
-    public Adapter(Context ctxt, ArrayList<String> nom, ArrayList<String> message, ArrayList<String> time, boolean chat)
+    public Adapter(Context ctxt, ArrayList<String> nom, ArrayList<String> message, ArrayList<String> time, String source)
     {
         this.nom = nom;
         this.message = message;
         this.context = ctxt;
         this.temps = time;
-        this.isChat = chat;
+
+        // Source de l'adapter
+        switch (source)
+        {
+            case "chat" :
+                this.isChat = true;
+                this.isConversation = false;
+                this.isParticipantPopup = false;
+                break;
+            case "conversation" :
+                this.isChat = false;
+                this.isConversation = true;
+                this.isParticipantPopup = false;
+                break;
+            default:
+                this.isChat = false;
+                this.isConversation = false;
+                this.isParticipantPopup = true;
+                break;
+        }
+    }
+    public class ViewHolder extends RecyclerView.ViewHolder
+    {
+        TextView titre, lastMessage, messageChat, nomParticipant;
+        public ViewHolder(View view)
+        {
+            super(view);
+            if(isConversation)
+            {
+                titre = itemView.findViewById(R.id.textViewTitleConversation);
+                lastMessage = itemView.findViewById(R.id.textViewLastMessage);
+            }
+            if(isChat)
+            {
+                messageChat = itemView.findViewById(R.id.textViewMessage);
+            }
+            if(isParticipantPopup)
+            {
+                nomParticipant = itemView.findViewById(R.id.textViewMessage);
+            }
+        }
     }
 
-    @SuppressLint("ResourceType")
-    @NonNull
-    @org.jetbrains.annotations.NotNull
+
     @Override
-    public ViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
-        View view;
+    public @NotNull ViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
+        View view = null;
+
         LayoutInflater inflater = LayoutInflater.from(this.context);
-        if(!isChat)
+        if(isConversation)
         {
             view = inflater.inflate(R.layout.row_conversation, parent,false);
         }
-        else
+        if(isChat)
+        {
+            view = inflater.inflate(R.layout.message, parent,false);
+        }
+        if(isParticipantPopup)
         {
             view = inflater.inflate(R.layout.message, parent,false);
         }
@@ -61,12 +94,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         return new ViewHolder(view);
     }
 
-
     @Override
     public void onBindViewHolder(final @NotNull ViewHolder holder, int position)
     {
-        if(!isChat)
+        if(isConversation)
         {
+            System.out.println("ICI 3");
             holder.titre.setText(nom.get(position));
 
             String[] date_heure = temps.get(position).split(" ");
@@ -81,14 +114,18 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             }
 
             holder.lastMessage.setText("Dernier message : "+"["+date+" "+h_m_s[0]+":"+h_m_s[1]+"] "+printedMessage);
+
         }
-        else
+        if(isChat)
         {
             String[] date_heure = temps.get(position).split(" ");
             String date_formatFR = yyyy_mm_ddTodd_mm_yyyy(date_heure[0]);
             String[] time = date_heure[1].split(":");
             holder.messageChat.setText("["+date_formatFR+" "+time[0]+":"+time[1]+"] "+nom.get(position)+" : "+ message.get(position));
-
+        }
+        if(isParticipantPopup)
+        {
+            holder.nomParticipant.setText(nom.get(position));
         }
     }
 
@@ -104,41 +141,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         this.temps.add(time);
 
         notifyDataSetChanged();
-    }
-
-    public void clearConversation()
-    {
-        int size = nom.size();
-
-        if(size != 0)
-        {
-            //this.name.;
-            this.message.clear();
-            this.temps.clear();
-
-            notifyItemRangeRemoved(0, size);
-        }
-
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        TextView titre, lastMessage;
-        TextView nom, messageChat, heure;
-        public ViewHolder(View view)
-        {
-            super(view);
-
-            if(!isChat)
-            {
-                titre = itemView.findViewById(R.id.textViewTitleConversation);
-                lastMessage = itemView.findViewById(R.id.textViewLastMessage);
-            }
-            else
-                {
-                messageChat = itemView.findViewById(R.id.textViewMessage);
-            }
-
-        }
     }
 
     // Converti une date yyyy-dd-mm en dd-mm-yyyy

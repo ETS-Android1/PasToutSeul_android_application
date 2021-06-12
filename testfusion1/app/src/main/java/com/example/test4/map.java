@@ -394,17 +394,12 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
                     });
                 }
-                else if (marker.getSnippet().equals("")){
-
-                }
-
                 else if (marker.getSnippet().charAt(0) == '3' || marker.getSnippet().charAt(0) == '0'){
                     String tel = "tel:"+ marker.getSnippet();
                     Intent intent = new Intent(Intent.ACTION_DIAL);
                     intent.setData(Uri.parse(tel));
                     startActivity(intent);
                 }
-
                 else if (marker.getSnippet().charAt(0) == 'h'){
                     String site = marker.getSnippet();
                     Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -639,14 +634,15 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     // Lance la page contenant la liste des conversations
     public void conversation(View v) {
 
-        Intent chat = new Intent(this,ConversationActivity.class);
+        Intent conv = new Intent(this,ConversationActivity.class);
 
-        chat.putExtra("USER_NAME", utilisateur.username);
-        chat.putExtra("USER_ID", utilisateur.id_user);
-        chat.putExtra("USER_MAIL", utilisateur.email);
-        chat.putExtra("USER_PASSWORD",utilisateur.password);
-        startActivity(chat);
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        conv.putExtra("USER_NAME", utilisateur.username);
+        conv.putExtra("USER_ID", utilisateur.id_user);
+        conv.putExtra("USER_MAIL", utilisateur.email);
+        conv.putExtra("USER_PASSWORD",utilisateur.password);
+        startActivity(conv);
+
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     private BitmapDescriptor BitmapFromVector(Context context, int vectorResId) {
