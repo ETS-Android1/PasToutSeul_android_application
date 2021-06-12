@@ -420,7 +420,8 @@ public class ChatActivity extends AppCompatActivity
                 // Quitte la conversation
                 leave(res ->{
                     // Fermeture du chat
-                    ChatActivity.super.finish();
+                    onBackPressed();
+                    //ChatActivity.super.finish();
                 });
             }
         });
@@ -428,6 +429,35 @@ public class ChatActivity extends AppCompatActivity
 
     public void participantPopup(View view)
     {
+        AlertDialog popup = builder_participant.show();
+
+        // Desactive les clicks en dehors de la fenêtre popup
+        popup.setCanceledOnTouchOutside(false);
+
+        // Bouton retour
+        popup.setOnKeyListener((arg0, keyCode, event) -> {
+            // Click sur le bouton retour
+            if (keyCode == KeyEvent.KEYCODE_BACK)
+            {
+                ((ViewGroup)view_popup_participant.getParent()).removeView(view_popup_participant);
+                popup.dismiss();
+            }
+            return true;
+        });
+
+        // Bouton de la fenêtre
+        Button leave = view_popup_participant.findViewById(R.id.btnLeaveParticipant);
+
+        leave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((ViewGroup)view_popup_participant.getParent()).removeView(view_popup_participant);
+
+                // Fermeture de la fenêtre popup
+                popup.dismiss();
+            }
+        });
+
         getParticipants(this.id_group, res ->
         {
             String[] line = res.split("<br>");
@@ -459,23 +489,6 @@ public class ChatActivity extends AppCompatActivity
             recyclerParticipants.setLayoutManager(new LinearLayoutManager(this));
             recyclerParticipants.setAdapter(adapter);
 
-            AlertDialog popup = builder_participant.show();
-
-            // Desactive les clicks en dehors de la fenêtre popup
-            popup.setCanceledOnTouchOutside(false);
-
-            // Bouton de la fenêtre
-            Button leave = view_popup_participant.findViewById(R.id.btnLeaveParticipant);
-
-            leave.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ((ViewGroup)view_popup_participant.getParent()).removeView(view_popup_participant);
-
-                    // Fermeture de la fenêtre popup
-                    popup.dismiss();
-                }
-            });
         });
 
 
