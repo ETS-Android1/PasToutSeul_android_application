@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".map"
     android:background="@color/orange_light"
-    android:paddingBottom="10dp">
+    android:paddingBottom="15dp"
+    android:paddingTop="5dp">
 
     <TextView
         android:id="@+id/textViewPrenom"
@@ -21,7 +22,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:maxWidth="150dp"/>
 
     <TextView
         android:id="@+id/textViewCommentaire"
@@ -30,7 +32,7 @@
         android:layout_marginTop="16dp"
         android:ems="10"
         android:fontFamily="@font/montserrat"
-        android:maxWidth="200dp"
+        android:maxWidth="250dp"
         android:text="commentaire sur la personne"
         android:textColor="@color/black"
         android:textSize="17sp"
@@ -46,7 +48,7 @@
         android:layout_marginTop="16dp"
         android:ems="10"
         android:fontFamily="@font/montserrat"
-        android:maxWidth="200dp"
+        android:maxWidth="250dp"
         android:text="Envie de la personne"
         android:textColor="@color/black"
         android:textSize="17sp"

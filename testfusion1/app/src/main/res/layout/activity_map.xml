@@ -50,16 +50,17 @@
 
         <ImageButton
             android:id="@+id/param"
-            android:layout_width="57dp"
-            android:layout_height="35dp"
+            android:layout_width="76dp"
+            android:layout_height="45dp"
             android:background="@drawable/logo"
             android:contentDescription="@string/parametre"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.919"
+            app:layout_constraintHorizontal_bias="0.97"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.01" />
+            app:layout_constraintVertical_bias="0.013"
+            android:visibility="invisible"/>
 
         <ImageButton
             android:id="@+id/locatezoom"
@@ -99,7 +100,7 @@
             app:layout_constraintHorizontal_bias="0.081"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.01" />
+            app:layout_constraintVertical_bias="0.025" />
 
         <ImageView
             android:id="@+id/imageView2"
@@ -116,11 +117,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginLeft="20dp"
-            android:layout_marginTop="64dp"
+            android:layout_marginTop="32dp"
             android:background="@drawable/ic_sos"
             android:onClick="sos"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/imageButton" />
 
         <ProgressBar
             android:id="@+id/progressBarMap"

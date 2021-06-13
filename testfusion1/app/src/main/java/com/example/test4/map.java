@@ -11,6 +11,7 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -35,6 +36,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.android.volley.Request;
@@ -77,6 +79,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     private map activity;
     private ActivityMapBinding binding;
     private FusedLocationProviderClient mflc;
+
+    TextView tw;
 
     HashMap hashMapMarker = new HashMap<String, Marker>();
 
@@ -123,7 +127,10 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
         this.activity = this;
 
-
+        //pastoutsuel sur la toolbar en montserrat
+        this.tw = findViewById(R.id.textView);
+        Typeface typeface = ResourcesCompat.getFont(activity, R.font.montserrat);
+        tw.setTypeface(typeface);
 
         this.btnmclick = findViewById(R.id.btnmapclick);
 
@@ -173,7 +180,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
 
-
+        // pour stylisée les textview qui prennent des infos de la base de donée
+        Typeface typeface = ResourcesCompat.getFont(activity, R.font.montserrat);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         {
@@ -275,19 +283,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
             }
         });
 
-        // Action lors d'un clic sur un marker
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                if(marker.getSnippet().equals("emmaus")){
-                    AlertDialog.Builder popup = new AlertDialog.Builder(activity);
-                    LayoutInflater inflater = activity.getLayoutInflater();
-                    View view = inflater.inflate(R.layout.activity_emmaus_marker, null);
-                    popup.setView(view);
-                }
-                return false;
-            }
-        });
+
 
         //Quand on clique sur la fenêtre d'un marqueur
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
@@ -317,8 +313,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                         String[] strings = res.split("<!§!>");
 
                         prenom.setText(strings[0]);
-                        commentaire.setText(strings[1]);
-                        envie.setText(strings[2]);
+                        commentaire.setText("envie : "+strings[2]);
+                        envie.setText("commentaire : "+strings[1]);
 
 
                     });
@@ -395,8 +391,11 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                         String[] strings = res.split("<!§!>");
 
                         prenom.setText(strings[0]);
-                        commentaire.setText(strings[1]);
-                        envie.setText(strings[2]);
+                        prenom.setTypeface(typeface);
+                        commentaire.setText("envie : "+strings[2]);
+                        commentaire.setTypeface(typeface);
+                        envie.setText("commentaire : "+strings[1]);
+                        envie.setTypeface(typeface);
                         moreInfos.show();
 
                     });
@@ -516,7 +515,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
     public void quit()
     {
-        AlertDialog.Builder quit = new AlertDialog.Builder(activity);
+        AlertDialog.Builder quit = new AlertDialog.Builder(activity,R.style.MyDialogTheme2);
 
         quit.setTitle("Êtes-vous sûr de vouloir quitter ?");
 
