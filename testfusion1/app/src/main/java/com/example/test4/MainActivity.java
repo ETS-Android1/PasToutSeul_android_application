@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         createTouchListenerEditText(pwd);
         createTouchListenerEditText(mail);
 
+        // Cache le clavier lorsqu'on clique en dehors des champs de saisie
         findViewById(R.id.layoutActivityMain).setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -294,9 +295,11 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    public void forgotPwd(View view)
+    public void launchForgotPwd(View view)
     {
-        Toast.makeText(getApplicationContext(), "Mot de passe oublié ?",Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, ForgotPasswordActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     /*

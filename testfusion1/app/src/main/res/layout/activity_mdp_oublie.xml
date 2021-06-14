@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:clickable="true"
+    android:id="@+id/layoutAcitivtyForgotPassword"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/orangeoff">
+
+
+    <TextView
+        android:id="@+id/textViewEnterMail"
+        android:layout_width="277dp"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="Entrez votre e-mail"
+        android:textSize="25dp"
+        android:fontFamily="@font/montserrat"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.18" />
+
+    <EditText
+        android:id="@+id/editTextMailForgotPassword"
+        android:layout_width="285dp"
+        android:layout_height="45dp"
+        android:background="@drawable/rounded_bg"
+        android:ems="10"
+        android:fontFamily="@font/montserrat"
+        android:hint="  E-mail"
+        android:inputType="textEmailAddress"
+        android:textColorHint="@color/gris"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewEnterMail"
+        app:layout_constraintVertical_bias="0.046" />
+
+    <Button
+        android:id="@+id/btnSendMail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_red"
+        android:fontFamily="@font/montserrat"
+        android:paddingLeft="25dp"
+        android:paddingRight="25dp"
+        android:text="Valider"
+        android:textStyle="bold"
+        android:onClick="sendCode"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextMailForgotPassword"
+        app:layout_constraintVertical_bias="0.046" />
+
+    <TextView
+        android:id="@+id/txtVMailErrorForgotPassword"
+        android:layout_width="272dp"
+        android:layout_height="13dp"
+        android:text=""
+        android:textSize="10dp"
+        android:gravity="center"
+        android:textColor="@color/rouge_clair"
+        android:fontFamily="@font/montserrat"
+        app:layout_constraintBottom_toTopOf="@+id/btnSendMail"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextMailForgotPassword" />
+
+    <ProgressBar
+        android:id="@+id/progressBarForgotPwd"
+        style="?android:attr/progressBarStyle"
+        android:indeterminateDrawable="@drawable/progress"
+        android:layout_width="86dp"
+        android:layout_height="64dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.282" />
+</androidx.constraintlayout.widget.ConstraintLayout>
