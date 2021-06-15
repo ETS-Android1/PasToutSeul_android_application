@@ -2,12 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutAcitivtyCheckCode"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clickable="true"
-    android:id="@+id/layoutAcitivtyCheckCode"
     android:background="@color/orangeoff"
-    >
+    android:clickable="true">
 
     <EditText
         android:id="@+id/editTextCheckCode"
@@ -30,14 +29,14 @@
         android:id="@+id/textView39"
         android:layout_width="291dp"
         android:layout_height="27dp"
-        android:text="E-mail non reçu ? Regardez vos spams."
         android:fontFamily="@font/montserrat"
+        android:text="E-mail non reçu ? Regardez vos spams."
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.273"
+        app:layout_constraintHorizontal_bias="0.283"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextCheckCode"
-        app:layout_constraintVertical_bias="0.072" />
+        app:layout_constraintVertical_bias="0.207" />
 
     <TextView
         android:id="@+id/textView41"
@@ -52,4 +51,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.769" />
+
+    <Button
+        android:id="@+id/btnCheckCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button"
+        android:onClick="checkCode"
+        android:text="Valider"
+        app:layout_constraintBottom_toTopOf="@+id/textView39"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextCheckCode"
+        app:layout_constraintVertical_bias="0.551" />
+
+    <TextView
+        android:id="@+id/txtVErrCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="@color/rouge_fonce"
+        app:layout_constraintBottom_toTopOf="@+id/btnCheckCode"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextCheckCode" />
 </androidx.constraintlayout.widget.ConstraintLayout>

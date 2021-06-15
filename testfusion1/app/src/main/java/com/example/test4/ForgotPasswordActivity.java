@@ -9,6 +9,7 @@ import android.util.Patterns;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,6 +34,7 @@ public class ForgotPasswordActivity extends AppCompatActivity
     EditText editTextEmail;
     TextView txtVMailErrorForgotPassword;
     ProgressBar prgb;
+    Button btnSendMail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -43,6 +46,7 @@ public class ForgotPasswordActivity extends AppCompatActivity
         this.editTextEmail = findViewById(R.id.editTextMailForgotPassword);
         this.txtVMailErrorForgotPassword = findViewById(R.id.txtVMailErrorForgotPassword);
         this.prgb = findViewById(R.id.progressBarForgotPwd);
+        this.btnSendMail = findViewById(R.id.btnSendMail);
 
         // Cache le clavier lorsqu'on clique en dehors des champs de saisie
         hideKeyboardOnClick();
@@ -51,6 +55,7 @@ public class ForgotPasswordActivity extends AppCompatActivity
 
     public void sendCode(View view)
     {
+        btnSendMail.setClickable(false);
         String email = getMail();
         prgb.setVisibility(View.VISIBLE);
         hideKeyboard(view);
@@ -68,7 +73,7 @@ public class ForgotPasswordActivity extends AppCompatActivity
                     {
                         mail.sendMail("PasToutSeul : Mot de passe oublié","Ce code sera valide pendant 5 minutes: "+res, email);
                         Toast.makeText(this, "Un code vient d'être envoyé sur cette adresse suivante : "+email, Toast.LENGTH_LONG).show();
-                        launchCheckCode();
+                        launchCheckCode(email);
                     }
                     catch (Exception e)
                     {
@@ -78,12 +83,19 @@ public class ForgotPasswordActivity extends AppCompatActivity
                 }
                 else
                 {
-                    editTextEmail.setTextColor(this.getResources().getColor(R.color.rouge_clair));
+                    editTextEmail.setTextColor(this.getResources().getColor(R.color.rouge_fonce));
+                    editTextEmail.setHintTextColor(this.getResources().getColor(R.color.rouge_clair));
                     txtVMailErrorForgotPassword.setText("L'email rensigné n'existe pas.");
                     System.out.println("Erreur");
                 }
                 prgb.setVisibility(View.INVISIBLE);
+                btnSendMail.setClickable(true);
             });
+        }
+        else
+        {
+            prgb.setVisibility(View.INVISIBLE);
+            btnSendMail.setClickable(true);
         }
     }
 
@@ -99,7 +111,7 @@ public class ForgotPasswordActivity extends AppCompatActivity
 
         if(!isValidEmail(email))
         {
-            editTextEmail.setTextColor(this.getResources().getColor(R.color.rouge_clair));
+            editTextEmail.setTextColor(this.getResources().getColor(R.color.rouge_fonce));
             editTextEmail.setHintTextColor(this.getResources().getColor(R.color.rouge_clair));
             editTextEmail.setBackgroundResource(R.drawable.backwithborder_error);
             txtVMailErrorForgotPassword.setText("Cet email n'est pas valide.");
@@ -138,7 +150,11 @@ public class ForgotPasswordActivity extends AppCompatActivity
 
         StringRequest postRequest = new StringRequest(Request.Method.POST, URL, response -> {
             Log.i("Réponse", response);
-            callback.onSuccess(response.trim());
+            try {
+                callback.onSuccess(response.trim());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
             // Appel d'une fonction à éxecuter si succès de la requête
         }, error -> Log.e("Réponse", error.toString())) {
             @Override
@@ -155,9 +171,10 @@ public class ForgotPasswordActivity extends AppCompatActivity
         queue.add(postRequest);
     }
 
-    public void launchCheckCode()
+    public void launchCheckCode(String email)
     {
         Intent intent = new Intent(this, CheckCodeActivity.class);
+        intent.putExtra("USER_MAIL",email);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }

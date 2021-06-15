@@ -22,6 +22,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,7 +53,7 @@ public class inscription extends AppCompatActivity {
                     hideKeyboard(v);
                 }
 
-                return false; // return is important...
+                return false;
             }
         });
 
@@ -86,6 +87,7 @@ public class inscription extends AppCompatActivity {
         });
     }
 
+    // Lancement de la page de connexion
     public void startLoginActivity()
     {
         Intent intent = new Intent(inscription.this, MainActivity.class);
@@ -96,11 +98,13 @@ public class inscription extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
+    // Button listener
     public void loginActivityBtn(View view)
     {
         startLoginActivity();
     }
 
+    // Initialisation des vues
     private void initAttributes()
     {
         this.mail = findViewById(R.id.editTextMailRegister);
@@ -348,7 +352,11 @@ public class inscription extends AppCompatActivity {
 
         StringRequest postRequest = new StringRequest(Request.Method.POST, URL, response -> {
             Log.i("Réponse", response);
-            callback.onSuccess(response.trim()); // trim() pour enlever les espaces car la réponse contient des espaces.
+            try {
+                callback.onSuccess(response.trim()); // trim() pour enlever les espaces car la réponse contient des espaces.
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }, error -> Log.e("Réponse", error.toString()))
         {
             @Override
