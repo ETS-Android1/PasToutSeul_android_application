@@ -14,9 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
-public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
-
-    // ConversationActivity ou ChatActivity
+public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>
+{
     Boolean isChat, isConversation, isParticipantPopup;
 
     Context context;
@@ -30,7 +29,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         this.context = ctxt;
         this.temps = time;
 
-        // Source de l'adapter
+        // Source de l'adapter : ChatActivity, ConversationActivity ou la fenêtre popup (popup affichant la liste des participants dans une conversation)
         switch (source)
         {
             case "chat" :
@@ -50,6 +49,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                 break;
         }
     }
+
+    // Récupération des éléments contenu dans chaque items dans la recycler view
     public class ViewHolder extends RecyclerView.ViewHolder
     {
         TextView titre, lastMessage, messageChat, nomParticipant;
@@ -72,7 +73,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         }
     }
 
-
+    // Récupération des layouts des items dans la recyclerView
     @Override
     public @NotNull ViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
         View view = null;
@@ -94,7 +95,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         return new ViewHolder(view);
     }
 
-    @SuppressLint("SetTextI18n")
+
+    // Assignation des valeurs dans chaque éléments des items dans la recyclerView
     @Override
     public void onBindViewHolder(final @NotNull ViewHolder holder, int position)
     {
@@ -135,6 +137,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         return nom.size();
     }
 
+    // Ajout d'un item dans la recyclerView + mise à jour direct de la recycler view
     public void addItem(String name, String messageContent, String time)
     {
         this.nom.add(name);

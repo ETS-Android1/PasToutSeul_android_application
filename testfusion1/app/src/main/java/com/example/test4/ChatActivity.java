@@ -42,6 +42,7 @@ import java.util.concurrent.TimeUnit;
 public class ChatActivity extends AppCompatActivity
 {
 
+    // Infos sur l'utilisateur
     String titre, id_user, id_group, username, email, password;
 
     TextView titreView, msgError;
@@ -127,17 +128,28 @@ public class ChatActivity extends AppCompatActivity
     public void initRecyclerViewChat()
     {
         this.progressBar.setVisibility(View.VISIBLE);
+        // Récupération de tous les messages dans une conversation
         getMessages((res ->
                 {
+                    // Affiche les messages si il y en a
+                    // Liste des messages reçues sous la formes :
+                    // (NOM D'UTILISATEUR)!§!(IDENTIFIANT UTILISATEUR)!§!(DATE : yyyy-MM-dd HH-mm-ss)!§!(IDENTIFIANT GROUPE)!§!(MESSAGE)<!§!>
+                    // 0 : NOM D'UTILISATEUR
+                    // 1 : IDENTIFIANT UTILISATEUR
+                    // 2 : DATE : yyyy-MM-dd HH-mm-ss
+                    // 3 : IDENTIFIANT GROUPE
+                    // 4 : MESSAGE
                     if(res.trim().length() != 0)
                     {
+                        // Tri de la liste d'informations reçues
                         String[] lines = res.split("<!§!>");
                         String[] element;
+
+                        // Nombre de messages au total
                         int n = lines.length;
 
                         for(int i = 0; i < n; i++)
                         {
-                            //System.out.println(lines[i]);
                             element = lines[i].split("!§!");
                             nom.add(element[0]);
                             message.add(element[4]);
@@ -162,15 +174,21 @@ public class ChatActivity extends AppCompatActivity
     // Ajoute dans la recyclerView ce que l'utilisateur à tapé sur le clavier si c'est pas vide.
     public void send(View view)
     {
+        // Récupération du contenu du champ de saisie
         String inputMessage = editTextMessage.getText().toString();
 
         if(!inputMessage.equals(""))
         {
+            // Récupère la date actuelle
             Date date = new Date();
             SimpleDateFormat dateFormatUS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+            // Ajout du message dans la recyclerView
             this.adapter.addItem(this.username,inputMessage,dateFormatUS.format(date));
+
+            // Envoi du message
             sendMessageRequest(inputMessage,dateFormatUS.format(date));
+
             editTextMessage.setText("");
         }
     }
@@ -182,6 +200,7 @@ public class ChatActivity extends AppCompatActivity
 
         String URL = "https://db-ezpfla.000webhostapp.com/sendMessage.php";
 
+        // Types de requête
         StringRequest postRequest = new StringRequest(Request.Method.POST, URL, response -> {
             Log.i("Réponse", response);
         }, error -> Log.e("Réponse", error.toString())){
@@ -208,7 +227,7 @@ public class ChatActivity extends AppCompatActivity
 
     }
 
-    // Récupération de tous les messages
+    // Récupération de tous les messages dans la base de données
     public void getMessages(final map.VolleyCallBack callback)
     {
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -226,13 +245,25 @@ public class ChatActivity extends AppCompatActivity
     // Mis à jour des nouveaux messages sur l'affichage
     public void updateMessages()
     {
+        // Récupération de la date pour récupérer seulement les nouveaux messages
         Date date = new Date();
         SimpleDateFormat dateFormatUS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        // Récupère les nouveaux messages
         getNewMessages(dateFormatUS.format(date),res -> {
             if(res.trim().length() != 0)
             {
+                // Tri des informations reçues de type :
+                // (NOM D'UTILISATEUR)!§!(IDENTIFIANT UTILISATEUR)!§!(DATE : yyyy-MM-dd HH-mm-ss)!§!(IDENTIFIANT GROUPE)!§!(MESSAGE)<!§!>
+                // 0 : NOM D'UTILISATEUR
+                // 1 : IDENTIFIANT UTILISATEUR
+                // 2 : DATE : yyyy-MM-dd HH-mm-ss
+                // 3 : IDENTIFIANT GROUPE
+                // 4 : MESSAGE
                 String[] lines = res.split("<!§!>");
                 String[] element;
+
+                // Nombre de message(s)
                 int n = lines.length;
 
                 for(int i = 0; i < n; i++)
@@ -242,6 +273,7 @@ public class ChatActivity extends AppCompatActivity
                     message.add(element[4]);
                     temps.add(element[2]);
 
+                    // Ajout du message dans la recyclerView + mise à jour
                     this.adapter.addItem(element[0],element[4],element[2]);
                 }
             }
@@ -251,9 +283,13 @@ public class ChatActivity extends AppCompatActivity
     @Override
     public void onBackPressed()
     {
+        // Arrêt des requêtes
         this.update.shutdown();
+
+        // Fermeture de l'activité
         this.finish();
 
+        // Lancement de l'activité ConversationActivity
         Intent conv = new Intent(this,ConversationActivity.class);
 
         conv.putExtra("USER_NAME", username);
@@ -280,6 +316,7 @@ public class ChatActivity extends AppCompatActivity
         queue.add(getRequest);
     }
 
+    // Récupère les participants d'une conversation
     public void getParticipants(String id_groupe, final map.VolleyCallBack callBack)
     {
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -299,8 +336,10 @@ public class ChatActivity extends AppCompatActivity
     {
         AlertDialog popup = builder_add.show();
 
+        // Bloque les clicks en dehors de la fenêtre popup
         popup.setCanceledOnTouchOutside(false);
 
+        // Récupère les identifiants des boutons de la fenêtre popup
         Button quitter = this.view_popup_add.findViewById(R.id.btnCancelAdd);
         Button add = this.view_popup_add.findViewById(R.id.btnAddPeople);
 
@@ -318,6 +357,7 @@ public class ChatActivity extends AppCompatActivity
             }
         });
 
+        // Bouton quitter
         quitter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -326,6 +366,7 @@ public class ChatActivity extends AppCompatActivity
             }
         });
 
+        // Bouton ajouter
         add.setOnClickListener(new View.OnClickListener()
         {
             @SuppressLint("ResourceAsColor")
@@ -344,20 +385,17 @@ public class ChatActivity extends AppCompatActivity
                         {
                             msgError.setText("Cet utilisateur n'existe pas.");
                             addTextView.setBackgroundResource(R.drawable.backwithborder_error);
-                            //addTextView.setTextColor(R.color.rouge_fonce);
                         }
                         else if(response.equals("exist"))
                         {
                             msgError.setText("Cet utilisateur à déja été ajouté.");
                             addTextView.setBackgroundResource(R.drawable.backwithborder_error);
-                            //addTextView.setTextColor(R.color.rouge_fonce);
                         }
-                        else
+                        else // Utilisateur ajouté
                         {
                             msgError.setText("");
                             addTextView.setBackgroundResource(R.drawable.backwithborder_noerror);
                             addTextView.setText("");
-                            //addTextView.setTextColor(R.color.black);
                             Toast.makeText(ChatActivity.this, res, Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -366,7 +404,6 @@ public class ChatActivity extends AppCompatActivity
                 {
                     addTextView.setBackgroundResource(R.drawable.backwithborder_error);
                     msgError.setText("Veuillez mettre un nom d'utilisateur.");
-                    //addTextView.setHintTextColor(R.color.rouge_clair);
                 }
             }
         });
@@ -400,6 +437,7 @@ public class ChatActivity extends AppCompatActivity
             }
         });
 
+        // Bouton annuler
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -409,6 +447,7 @@ public class ChatActivity extends AppCompatActivity
             }
         });
 
+        // Bouton quitter la conversation
         leave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -448,6 +487,7 @@ public class ChatActivity extends AppCompatActivity
         // Bouton de la fenêtre
         Button leave = view_popup_participant.findViewById(R.id.btnLeaveParticipant);
 
+        // Bouton quitter la fenêtre
         leave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -458,10 +498,14 @@ public class ChatActivity extends AppCompatActivity
             }
         });
 
+        // Récupère la liste des participants dans la conversation
         getParticipants(this.id_group, res ->
         {
+            // Tri des infos reçues de type :
+            //(IDENTIFIANT UTILISATEUR)<!!>(NOM D'UTILISATEUR)<br>
             String[] line = res.split("<br>");
 
+            // Nombre de participant(s)
             int nParticipant = line.length;
 
             ArrayList<String> nom_utilisateur = new ArrayList<>();
@@ -469,6 +513,8 @@ public class ChatActivity extends AppCompatActivity
 
             for(int i = 0; i < nParticipant; i++)
             {
+                // 0 : IDENTIFIANT UTILISATEUR
+                // 1 : NOM D'UTILISATEUR
                 string = line[i].split("<!!>");
 
                 if(string[1].equals(username))

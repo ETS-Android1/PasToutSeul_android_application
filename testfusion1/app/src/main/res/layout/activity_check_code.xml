@@ -71,9 +71,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
+        android:fontFamily="@font/montserrat"
         android:textColor="@color/rouge_fonce"
         app:layout_constraintBottom_toTopOf="@+id/btnCheckCode"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextCheckCode" />
+
+    <ProgressBar
+        android:id="@+id/progressBarCheckCode"
+        style="?android:attr/progressBarStyle"
+        android:indeterminateDrawable="@drawable/progress"
+        android:layout_width="86dp"
+        android:layout_height="64dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.308" />
 </androidx.constraintlayout.widget.ConstraintLayout>

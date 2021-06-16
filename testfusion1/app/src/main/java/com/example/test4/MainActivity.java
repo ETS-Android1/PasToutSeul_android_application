@@ -206,10 +206,13 @@ public class MainActivity extends AppCompatActivity {
         StringRequest postRequest = new StringRequest(Request.Method.POST, URL, response -> {
             Log.i("Réponse", response);
             // Appel d'une fonction à éxecuter si succès de la requête
-            try {
+            try
+            {
                 callback.onSuccess(response.trim()); // trim() pour enlever les espaces car la réponse contient des espaces.
-            } catch (ParseException e) {
-                e.printStackTrace();
+            }
+            catch (Exception exception)
+            {
+                exception.printStackTrace();
             }
         }, error -> Log.e("Réponse", error.toString()))
         {
@@ -233,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public interface VolleyCallBack{
-        void onSuccess(String res) throws ParseException;
+        void onSuccess(String res) throws Exception;
     }
 
     /*

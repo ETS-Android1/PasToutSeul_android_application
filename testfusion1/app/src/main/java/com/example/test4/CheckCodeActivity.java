@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EdgeEffect;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +31,7 @@ public class CheckCodeActivity extends AppCompatActivity
     EditText editTextCheckCode;
     Button btnCheckCode;
     TextView txtVErrCode;
+    ProgressBar prgb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -41,6 +43,7 @@ public class CheckCodeActivity extends AppCompatActivity
         this.editTextCheckCode = findViewById(R.id.editTextCheckCode);
         this.btnCheckCode = findViewById(R.id.btnCheckCode);
         this.txtVErrCode = findViewById(R.id.txtVErrCode);
+        this.prgb = findViewById(R.id.progressBarCheckCode);
 
         // Affiche le code
         editTextCheckCode.setTransformationMethod(null);
@@ -51,34 +54,45 @@ public class CheckCodeActivity extends AppCompatActivity
 
     public void checkCode(View view)
     {
+        // Chargement
+        this.prgb.setVisibility(View.VISIBLE);
+
         // Bloque les click
         btnCheckCode.setClickable(false);
 
+        // Infos nécessaire pour vérifier les informations dans la base de données
         String mail = getMail();
         String code = getCode();
 
-        this.editTextCheckCode.setBackgroundResource(R.drawable.backwithborder_noerror);
-        this.editTextCheckCode.setTextColor(this.getResources().getColor(R.color.black));
-        this.editTextCheckCode.setHintTextColor(this.getResources().getColor(R.color.gris));
-        this.txtVErrCode.setText("");
+        resetAffichage();
 
-        postCheckCode(mail, code, res -> {
+        // Verifie si l'utilisateur a bien renseigné un code pour éviter d'envoyer des requêtes inutiles
+        if(code.length() != 0)
+        {
+            // Requête pour vérifier si le code est correct
+            postCheckCode(mail, code, res -> {
                 if(!res.contains("error"))
                 {
+                    // Tri les informations reçues : "(DATE : yyyy-MM-dd) (DATE : HH-mm-ss) (CODE)"
                     String[] string = res.split(" ");
 
                     String string_code = string[2];
 
+                    // Seule l'heure, les minutes et les secondes sont nécessaires pour vérifier si le code est expiré (5min et après le code est expiré)
                     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
+                    // L'heure à laquelle le mail a été envoyé
                     String time1 = string[1];
+
+                    // L'heure actuelle
                     String time2 = dateFormat.format(new Date());
 
+                    // Conversion String -> Date
                     Date date1 = dateFormat.parse(time1);
                     Date date2 = dateFormat.parse(time2);
 
                     // Différence en ms entre l'emission du code et maintenant
-                    Long diff = date2.getTime() - date1.getTime();
+                    long diff = date2.getTime() - date1.getTime();
 
                     // Expiration si la différence == 5 min (300000 ms)
                     if(diff < 300000) // Valide
@@ -88,22 +102,17 @@ public class CheckCodeActivity extends AppCompatActivity
 
                         if(code.equals(string_code))
                         {
+                            // Si le code est bon, alors on peut changer le mot de passe
                             launchChangePassword();
                         }
                         else
                         {
-                            this.editTextCheckCode.setBackgroundResource(R.drawable.backwithborder_error);
-                            this.editTextCheckCode.setTextColor(this.getResources().getColor(R.color.rouge_clair));
-                            this.editTextCheckCode.setHintTextColor(this.getResources().getColor(R.color.rouge_clair));
-                            this.txtVErrCode.setText("Le code est incorrect");
+                            affichageCodeIncorrect();
                         }
                     }
                     else // Expiré
                     {
-                        this.editTextCheckCode.setBackgroundResource(R.drawable.backwithborder_error);
-                        this.editTextCheckCode.setTextColor(this.getResources().getColor(R.color.rouge_clair));
-                        this.editTextCheckCode.setHintTextColor(this.getResources().getColor(R.color.rouge_clair));
-                        this.txtVErrCode.setText("Le code a expiré.");
+                        affichageCodeExpire();
                     }
                 }
                 else
@@ -111,9 +120,23 @@ public class CheckCodeActivity extends AppCompatActivity
                     System.out.println("ERROR");
                 }
 
+                // Fin chargement
+                this.prgb.setVisibility(View.INVISIBLE);
+
                 // Réactive les clicks
                 btnCheckCode.setClickable(true);
-        });
+            });
+        }
+        else
+        {
+            affichageCodeInvalide();
+
+            // Fin chargement
+            this.prgb.setVisibility(View.INVISIBLE);
+
+            // Réactive les clicks
+            btnCheckCode.setClickable(true);
+        }
     }
 
     // Requête : POST
@@ -128,8 +151,8 @@ public class CheckCodeActivity extends AppCompatActivity
             Log.i("Réponse", response);
             try {
                 callback.onSuccess(response);
-            } catch (ParseException e) {
-                e.printStackTrace();
+            } catch (Exception exception) {
+                exception.printStackTrace();
             }
             // Appel d'une fonction à éxecuter si succès de la requête
         }, error -> Log.e("Réponse", error.toString())) {
@@ -143,6 +166,38 @@ public class CheckCodeActivity extends AppCompatActivity
         };
 
         queue.add(postRequest);
+    }
+
+    public void resetAffichage()
+    {
+        this.editTextCheckCode.setBackgroundResource(R.drawable.backwithborder_noerror);
+        this.editTextCheckCode.setTextColor(this.getResources().getColor(R.color.black));
+        this.editTextCheckCode.setHintTextColor(this.getResources().getColor(R.color.gris));
+        this.txtVErrCode.setText("");
+    }
+
+    public void affichageCodeIncorrect()
+    {
+        this.editTextCheckCode.setBackgroundResource(R.drawable.backwithborder_error);
+        this.editTextCheckCode.setTextColor(this.getResources().getColor(R.color.rouge_clair));
+        this.editTextCheckCode.setHintTextColor(this.getResources().getColor(R.color.rouge_clair));
+        this.txtVErrCode.setText("Le code est incorrect");
+    }
+
+    public void affichageCodeExpire()
+    {
+        this.editTextCheckCode.setBackgroundResource(R.drawable.backwithborder_error);
+        this.editTextCheckCode.setTextColor(this.getResources().getColor(R.color.rouge_clair));
+        this.editTextCheckCode.setHintTextColor(this.getResources().getColor(R.color.rouge_clair));
+        this.txtVErrCode.setText("Le code a expiré.");
+    }
+
+    public void affichageCodeInvalide()
+    {
+        this.editTextCheckCode.setBackgroundResource(R.drawable.backwithborder_error);
+        this.editTextCheckCode.setTextColor(this.getResources().getColor(R.color.rouge_clair));
+        this.editTextCheckCode.setHintTextColor(this.getResources().getColor(R.color.rouge_clair));
+        this.txtVErrCode.setText("Veuillez entrer un code valide.");
     }
 
     public String getCode()

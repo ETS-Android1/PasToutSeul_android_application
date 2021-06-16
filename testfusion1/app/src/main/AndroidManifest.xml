@@ -39,11 +39,6 @@
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".Compte"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.Test4" />
-        <activity
             android:name=".ConversationActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"

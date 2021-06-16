@@ -107,33 +107,39 @@ public class ConversationActivity extends AppCompatActivity {
 
                     if(res.trim().length() != 0)
                     {
-                        // Séparation de chaque lignes de données
+                        // Tri des infos reçues de type :
+                        // (NOM CONVERSATION).(IDENTIFIANT CONVERSATION).(DERNIER MESSAGE ENVOYE).(DATE DERNIER MESSAGE)<br>
+                        // 0 : NOM CONVERSATION
+                        // 1 : IDENTIFIANT CONVERSATION
+                        // 2 : DERNIER MESSAGE ENVOYE
+                        // 3 : DATE DERNIER MESSAGE
                         String[] line = res.split("<br>");
 
-                        int nline= line.length;
+                        // Nombre de conversation
+                        int nConv= line.length;
 
                         //String[] id_group = new String[nline];
                         //String[] titre = new String[nline];
                         //String[] lastMessage = new String[nline];
                         String[] element;
 
-                        for(int i = 0; i < nline; i++) {
+                        for(int i = 0; i < nConv; i++) {
                             element = line[i].split("\\.");
-                            System.out.println(element[0]);
+
                             // Problème : Il y a un saut de ligne dans la réponse du serveur ce qui impact l'affichage
                             // Solution temporaire : Pour l'instant, on supprime les saut de lignes le temps de trouver la src du problème
-                            //titre[i] = string[0].replace("\n","");
                             titre.add(element[0].replace("\n",""));
                             id_group.add(element[1]);
                             lastMessage.add(element[2]);
                             time.add(element[3]);
-                            //System.out.println(titre[i]+" "+lastMessage[i]);
                         }
-                        System.out.println("Titre avant lancement du chat : "+titre.toString());
+
+                        // Création d'une recyclerView avec les infos
                         adapter = new Adapter(this, titre, lastMessage, time,"conversation");
 
                         // Ajout des données des items dans notre recyclerView
                         recyclerViewMessage.setAdapter(adapter);
+
                         // Ajout d'un listener pour les items dans la recyclerView
                         recyclerViewMessage.addOnItemTouchListener(
                                 new RecyclerItemClickListener(this, recyclerViewMessage ,new RecyclerItemClickListener.OnItemClickListener()
@@ -181,15 +187,16 @@ public class ConversationActivity extends AppCompatActivity {
     // Traitement du résultat de la requête "requestCreateConversation"
     public void createConversation(String nom_groupe)
     {
-        // Affichage
+        // Chargement
         this.prgbConversation.setVisibility(View.VISIBLE);
 
         Date date = new Date();
         SimpleDateFormat dateFormatUS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         // Lancement de la requête
-        requestCreateConversation(nom_groupe,dateFormatUS.format(date), res-> {
-            //System.out.println(res);
+        requestCreateConversation(nom_groupe,dateFormatUS.format(date), res->
+        {
+
             Intent conv = new Intent(this,ConversationActivity.class);
 
             conv.putExtra("USER_NAME", getUsername());

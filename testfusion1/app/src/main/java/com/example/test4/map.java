@@ -1428,9 +1428,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
     }
 
-
-
-
     public interface VolleyCallBack{
         void onSuccess(String res);
     }

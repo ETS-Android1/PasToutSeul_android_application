@@ -1,9 +1,6 @@
 package com.example.test4;
 
 
-import android.content.pm.PackageInstaller;
-import android.service.textservice.SpellCheckerService;
-
 import java.util.Properties;
 
 import javax.mail.Authenticator;
@@ -21,6 +18,7 @@ public class emailSender extends javax.mail.Authenticator{
     private String password;
     private Session session;
 
+    // Initialisation des propriétes pour l'envoi d'un mail
     public emailSender()
     {
         Properties properties=new Properties();
@@ -42,30 +40,32 @@ public class emailSender extends javax.mail.Authenticator{
         });
     }
 
+    // Envoi d'un mail avec le titre, son contenu et le destinataire.
     public synchronized void sendMail(String subject, String body, String sender) throws Exception {
-
         try
         {
-
+            // Nouveau message
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(mailSender));
             message.setRecipients(Message.RecipientType.TO, new InternetAddress[]{new InternetAddress(sender)});
             message.setSubject(subject);
             message.setText(body);
 
+            // Envoi du message dans un thread pour éviter de bloquer l'application
             Thread thread = new Thread(() -> {
                 try {
+                    // Envoi d'un message
                     Transport.send(message);
                 } catch (MessagingException e) {
                     e.printStackTrace();
                 }
             });
 
+            // Lance le thread
             thread.start();
         }
         catch (Exception e)
         {
-
             e.printStackTrace();
         }
     }

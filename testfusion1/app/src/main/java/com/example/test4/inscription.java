@@ -350,12 +350,16 @@ public class inscription extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this);
         String URL = "https://db-ezpfla.000webhostapp.com/createAccount.php";
 
-        StringRequest postRequest = new StringRequest(Request.Method.POST, URL, response -> {
+        StringRequest postRequest = new StringRequest(Request.Method.POST, URL, response ->
+        {
             Log.i("Réponse", response);
-            try {
+            try
+            {
                 callback.onSuccess(response.trim()); // trim() pour enlever les espaces car la réponse contient des espaces.
-            } catch (ParseException e) {
-                e.printStackTrace();
+            }
+            catch (Exception exception)
+            {
+                exception.printStackTrace();
             }
         }, error -> Log.e("Réponse", error.toString()))
         {

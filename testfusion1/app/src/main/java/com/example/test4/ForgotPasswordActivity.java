@@ -152,8 +152,8 @@ public class ForgotPasswordActivity extends AppCompatActivity
             Log.i("Réponse", response);
             try {
                 callback.onSuccess(response.trim());
-            } catch (ParseException e) {
-                e.printStackTrace();
+            } catch (Exception exception) {
+                exception.printStackTrace();
             }
             // Appel d'une fonction à éxecuter si succès de la requête
         }, error -> Log.e("Réponse", error.toString())) {

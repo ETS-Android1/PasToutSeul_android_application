@@ -35,10 +35,5 @@ public class menu extends AppCompatActivity {
     }
 
 
-    public void ClickCompte(View v) {
-        if(cmode){
-        Intent i = new Intent(this, Compte.class);
-        startActivity(i);}
-    }
 
 }
