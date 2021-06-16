@@ -284,13 +284,13 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         });
 
 
-
         //Quand on clique sur la fenêtre d'un marqueur
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
                 if (marker.getTitle().contains("Sans abri"))
                 {
+                    pgrb
                     String[] infos = marker.getTitle().split(" ");
                     String id_pin = infos[2];
 
@@ -312,9 +312,9 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                     {
                         String[] strings = res.split("<!§!>");
 
-                        prenom.setText(strings[0]);
-                        commentaire.setText("envie : "+strings[2]);
-                        envie.setText("commentaire : "+strings[1]);
+                        prenom.setText("Prénom : "+strings[0]);
+                        commentaire.setText("Envie : "+strings[2]);
+                        envie.setText("Commentaire : "+strings[1]);
 
 
                     });
