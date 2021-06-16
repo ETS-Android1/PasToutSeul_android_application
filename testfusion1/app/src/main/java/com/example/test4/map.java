@@ -171,6 +171,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     @Override
     public void onMapReady(GoogleMap googleMap)
     {
+        pgrb.setVisibility(View.VISIBLE);
+
         mMap = googleMap;
 
         mMap.getUiSettings().setRotateGesturesEnabled(false);
@@ -187,7 +189,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         {
             if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             {
-                mflc.getLocationAvailability().addOnSuccessListener(new OnSuccessListener<LocationAvailability>() {
+                mflc.getLocationAvailability().addOnSuccessListener(new OnSuccessListener<LocationAvailability>()
+                {
                     @Override
                     public void onSuccess(LocationAvailability locationAvailability)
                     {
@@ -228,7 +231,9 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                             Toast.makeText(getApplicationContext(),"Veuillez mettre votre geolocalisation",Toast.LENGTH_SHORT).show();
                             LatLng loc = new LatLng(48.82317818259686,2.5644479786118968);
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
+
                         }
+                        pgrb.setVisibility(View.INVISIBLE);
                     }
                 });
 
@@ -239,7 +244,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
             }
         }
 
-        pgrb.setVisibility(View.VISIBLE);
+
 
         //Création des marqueurs
         EmmausMarker();
@@ -255,8 +260,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         secoursPopulaire();
         croixrouge();
         ANRS();
-
-        pgrb.setVisibility(View.INVISIBLE);
 
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
@@ -290,7 +293,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
             public void onInfoWindowClick(Marker marker) {
                 if (marker.getTitle().contains("Sans abri"))
                 {
-                    pgrb
+                    pgrb.setVisibility(View.VISIBLE);
                     String[] infos = marker.getTitle().split(" ");
                     String id_pin = infos[2];
 
@@ -316,7 +319,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                         commentaire.setText("Envie : "+strings[2]);
                         envie.setText("Commentaire : "+strings[1]);
 
-
+                        pgrb.setVisibility(View.INVISIBLE);
                     });
                     moreInfos.setNeutralButton("Signaler une erreur", new DialogInterface.OnClickListener()
                     {
@@ -377,8 +380,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                         }
                     });
 
-
-
                     moreInfos.setPositiveButton("Fermer", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -392,9 +393,9 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
                         prenom.setText(strings[0]);
                         prenom.setTypeface(typeface);
-                        commentaire.setText("envie : "+strings[2]);
+                        commentaire.setText("Envie : "+strings[2]);
                         commentaire.setTypeface(typeface);
-                        envie.setText("commentaire : "+strings[1]);
+                        envie.setText("Commentaire : "+strings[1]);
                         envie.setTypeface(typeface);
                         moreInfos.show();
 
@@ -421,7 +422,10 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
             @Override
             public void onMapClick(LatLng latLng)
             {
-                if(mclick) {
+                if(mclick)
+                {
+
+
                     // Coordonnées GPS
                     lat = latLng.latitude;
                     lng = latLng.longitude;
@@ -463,16 +467,14 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
                     // Bouton valider
                     valider.setOnClickListener(v -> {
+                        pgrb.setVisibility(View.VISIBLE);
+
                         ((ViewGroup) view_popup.getParent()).removeView(view_popup);
 
                         // Récupération de la saisie de l'utilisateur
                         String stringPrenom = editTxtPrenom.getText().toString();
                         String stringComment = editTxtComment.getText().toString();
                         String stringEnvie = editTxtEnvie.getText().toString();
-
-                        System.out.println("Prenom : "+stringPrenom);
-                        System.out.println("Comment : "+stringComment);
-                        System.out.println("Envie : "+stringEnvie);
 
                         // Récupération de la date
                         Date date = new Date();
@@ -486,7 +488,9 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                         addPin(lat, lng, Long.parseLong(utilisateur.id_user), jour, heure, icone, stringPrenom, stringComment, stringEnvie, res ->
                         {
                             setSDFMarkers();
+                            pgrb.setVisibility(View.INVISIBLE);
                         });
+
                         mapclick2();
 
                         editTxtPrenom.setText("");
@@ -1403,7 +1407,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
     public void requestSdfInfos(int id_pin,final VolleyCallBack callBack)
     {
-        System.out.println("id_pin = "+id_pin);
         RequestQueue queue = Volley.newRequestQueue(this);
 
         String URL = "https://db-ezpfla.000webhostapp.com/getSdfInfos.php?pin="+id_pin;
