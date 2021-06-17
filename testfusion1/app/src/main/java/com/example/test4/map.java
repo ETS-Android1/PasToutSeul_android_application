@@ -4,24 +4,19 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -34,18 +29,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentActivity;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.test4.databinding.ActivityMapBinding;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -54,19 +43,16 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.jetbrains.annotations.NotNull;
-import org.w3c.dom.Text;
 
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Locale;
 
 import jxl.Cell;
 import jxl.Sheet;
@@ -75,9 +61,11 @@ import jxl.Workbook;
 public class map extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMyLocationClickListener {
 
+    Context context;
+    Requete requete;
+
     private GoogleMap mMap;
     private map activity;
-    private ActivityMapBinding binding;
     private FusedLocationProviderClient mflc;
 
     TextView tw;
@@ -106,10 +94,12 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        //overridePendingTransition(R.anim.slide_right,R.anim.slide_left);
 
-        binding = ActivityMapBinding.inflate(getLayoutInflater());
+        com.example.test4.databinding.ActivityMapBinding binding = ActivityMapBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        this.context = this;
+        this.requete = new Requete(context);
 
         this.mclick = false;
 
@@ -167,9 +157,9 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
-    @SuppressLint("MissingPermission")
+    @SuppressLint({"MissingPermission", "SetTextI18n"})
     @Override
-    public void onMapReady(GoogleMap googleMap)
+    public void onMapReady(@NotNull GoogleMap googleMap)
     {
         pgrb.setVisibility(View.VISIBLE);
 
@@ -189,52 +179,40 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         {
             if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             {
-                mflc.getLocationAvailability().addOnSuccessListener(new OnSuccessListener<LocationAvailability>()
-                {
-                    @Override
-                    public void onSuccess(LocationAvailability locationAvailability)
-                    {
-                        if (locationAvailability.isLocationAvailable()){
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                            {
-                                if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                                        == PackageManager.PERMISSION_GRANTED)
-                                {
-                                    mflc.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>()
-                                    {
-                                        @Override
-                                        public void onSuccess(Location location)
-                                        {
-                                            // On récupère les coordonnées GPS de l'utilisateur
-                                            double latitude = location.getLatitude();
-                                            double longitude = location.getLongitude();
-
-                                            // Conversion en LatLng
-                                            LatLng here = new LatLng(latitude, longitude);
-
-                                            //Création du marqueur de l'utilisateur
-                                            //Marker marker = mMap.addMarker(new MarkerOptions().snippet("userLocation").position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
-                                            //hashMapMarker.put("userLocation", marker);
-                                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 17));
-
-                                            // Affichage des pins concernant les SDF autour de l'utilisateur
-                                            setSDFMarkers();
-                                        }
-                                    });
-                                }
-                            }
-                        }
-
-                        else
+                mflc.getLocationAvailability().addOnSuccessListener(locationAvailability -> {
+                    if (locationAvailability.isLocationAvailable()){
+                        if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                                == PackageManager.PERMISSION_GRANTED)
                         {
-                            // Pas d"accès à la géolocalisation
-                            Toast.makeText(getApplicationContext(),"Veuillez mettre votre geolocalisation",Toast.LENGTH_SHORT).show();
-                            LatLng loc = new LatLng(48.82317818259686,2.5644479786118968);
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
+                            mflc.getLastLocation().addOnSuccessListener(location ->
+                            {
+                                // On récupère les coordonnées GPS de l'utilisateur
+                                double latitude = location.getLatitude();
+                                double longitude = location.getLongitude();
 
+                                // Conversion en LatLng
+                                LatLng here = new LatLng(latitude, longitude);
+
+                                //Création du marqueur de l'utilisateur
+                                //Marker marker = mMap.addMarker(new MarkerOptions().snippet("userLocation").position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
+                                //hashMapMarker.put("userLocation", marker);
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 17));
+
+                                // Affichage des pins concernant les SDF autour de l'utilisateur
+                                setSDFMarkers();
+                            });
                         }
-                        pgrb.setVisibility(View.INVISIBLE);
                     }
+
+                    else
+                    {
+                        // Pas d"accès à la géolocalisation
+                        Toast.makeText(getApplicationContext(),"Veuillez mettre votre geolocalisation",Toast.LENGTH_SHORT).show();
+                        LatLng loc = new LatLng(48.82317818259686,2.5644479786118968);
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15));
+
+                    }
+                    pgrb.setVisibility(View.INVISIBLE);
                 });
 
             }
@@ -261,258 +239,212 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         croixrouge();
         ANRS();
 
-        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-
-                if (marker.getSnippet().equals("")){
-
-                }
-
-                else if (marker.getSnippet().charAt(0) == '3' || marker.getSnippet().charAt(0) == '0'){
-                    String tel = "tel:"+ marker.getSnippet();
-                    Intent intent = new Intent(Intent.ACTION_DIAL);
-                    intent.setData(Uri.parse(tel));
-                    startActivity(intent);
-                }
-
-                else if (marker.getSnippet().charAt(0) == 'h'){
-                    String site = marker.getSnippet();
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse(site));
-                    startActivity(intent);
-                }
-
+        mMap.setOnInfoWindowClickListener(marker ->
+        {
+            if (marker.getSnippet().charAt(0) == '3' || marker.getSnippet().charAt(0) == '0'){
+                String tel = "tel:"+ marker.getSnippet();
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse(tel));
+                startActivity(intent);
             }
+
+            else if (marker.getSnippet().charAt(0) == 'h'){
+                String site = marker.getSnippet();
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(site));
+                startActivity(intent);
+            }
+
         });
 
 
         //Quand on clique sur la fenêtre d'un marqueur
-        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-                if (marker.getTitle().contains("Sans abri"))
+        mMap.setOnInfoWindowClickListener(marker ->
+        {
+            if (marker.getTitle().contains("Sans abri"))
+            {
+                pgrb.setVisibility(View.VISIBLE);
+                String[] infos = marker.getTitle().split(" ");
+                String id_pin = infos[2];
+
+                // Affichage d'une fenêtre avec des informations supplémentaires
+                AlertDialog.Builder moreInfos = new AlertDialog.Builder(activity,R.style.MyDialogTheme2);
+
+                View customAddMarkerLayout = getLayoutInflater().inflate(R.layout.marker_layout, null);
+
+                // Affichage des infos
+                TextView prenom = customAddMarkerLayout.findViewById(R.id.textViewPrenom);
+                TextView commentaire = customAddMarkerLayout.findViewById(R.id.textViewCommentaire);
+                TextView envie = customAddMarkerLayout.findViewById(R.id.textViewEnvie);
+
+                moreInfos.setView(customAddMarkerLayout);
+                moreInfos.setTitle("Plus d'informations");
+                moreInfos.setMessage(marker.getSnippet());
+
+                moreInfos.setNeutralButton("Signaler une erreur", (dialog, which) ->
                 {
-                    pgrb.setVisibility(View.VISIBLE);
-                    String[] infos = marker.getTitle().split(" ");
-                    String id_pin = infos[2];
+                    //Fenêtre pour confirmer son choix
+                    AlertDialog.Builder oui_non = new AlertDialog.Builder(activity,R.style.MyDialogTheme2);
 
-                    // Affichage d'une fenêtre avec des informations supplémentaires
-                    AlertDialog.Builder moreInfos = new AlertDialog.Builder(activity,R.style.MyDialogTheme2);
+                    oui_non.setTitle("Êtes-vous sûr ?");
+                    oui_non.setMessage("Ce pin sera supprimer au bout de 2 signalements");
 
-                    View customAddMarkerLayout = getLayoutInflater().inflate(R.layout.marker_layout, null);
-
-                    // Affichage des infos
-                    TextView prenom = customAddMarkerLayout.findViewById(R.id.textViewPrenom);
-                    TextView commentaire = customAddMarkerLayout.findViewById(R.id.textViewCommentaire);
-                    TextView envie = customAddMarkerLayout.findViewById(R.id.textViewEnvie);
-
-                    moreInfos.setView(customAddMarkerLayout);
-                    moreInfos.setTitle("Plus d'informations");
-                    moreInfos.setMessage(marker.getSnippet());
-
-                    requestSdfInfos(Integer.parseInt(id_pin), res ->
+                    // On annule le signalement.
+                    oui_non.setNegativeButton("Non", (dialog1, which1) ->
                     {
-                        String[] strings = res.split("<!§!>");
-
-                        prenom.setText("Prénom : "+strings[0]);
-                        commentaire.setText("Envie : "+strings[2]);
-                        envie.setText("Commentaire : "+strings[1]);
-
-                        pgrb.setVisibility(View.INVISIBLE);
-                    });
-                    moreInfos.setNeutralButton("Signaler une erreur", new DialogInterface.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                            //Fenêtre pour confirmer son choix
-                            AlertDialog.Builder oui_non = new AlertDialog.Builder(activity,R.style.MyDialogTheme2);
-
-                            oui_non.setTitle("Êtes-vous sûr ?");
-                            oui_non.setMessage("Ce pin sera supprimer au bout de 2 signalements");
-
-                            // On annule le signalement.
-                            oui_non.setNegativeButton("Non", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    ((ViewGroup)customAddMarkerLayout.getParent()).removeView(customAddMarkerLayout);
-                                    moreInfos.show();
-                                }
-                            });
-
-                            // Si on valide, alors on envoie le signalement.
-                            oui_non.setPositiveButton("Oui", new DialogInterface.OnClickListener()
-                            {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    ((ViewGroup)customAddMarkerLayout.getParent()).removeView(customAddMarkerLayout);
-                                    LatLng latLng = marker.getPosition();
-                                    requestReport(latLng.latitude, latLng.longitude, new VolleyCallBack()
-                                    {
-                                        @Override
-                                        public void onSuccess(String res)
-                                        {
-                                            if(res.equals("delete"))
-                                            {
-                                                // Actualise les marqueurs
-                                                mMap.clear();
-                                                EmmausMarker();
-                                                CHRSMarker();
-                                                toiletteMarker();
-                                                doucheMarker();
-                                                restoMarker();
-                                                banque();
-                                                Captif();
-                                                stVincentPaul();
-                                                secoursIslamique();
-                                                secoursCatholique();
-                                                secoursPopulaire();
-                                                croixrouge();
-                                                ANRS();
-                                            }
-                                            setSDFMarkers();
-                                        }
-                                    });
-                                }
-                            });
-                            oui_non.show();
-                        }
-                    });
-
-                    moreInfos.setPositiveButton("Fermer", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-
-                    requestSdfInfos(Integer.parseInt(id_pin), res ->
-                    {
-                        String[] strings = res.split("<!§!>");
-
-                        prenom.setText(strings[0]);
-                        prenom.setTypeface(typeface);
-                        commentaire.setText("Envie : "+strings[2]);
-                        commentaire.setTypeface(typeface);
-                        envie.setText("Commentaire : "+strings[1]);
-                        envie.setTypeface(typeface);
+                        ((ViewGroup)customAddMarkerLayout.getParent()).removeView(customAddMarkerLayout);
                         moreInfos.show();
-
                     });
-                }
-                else if (marker.getSnippet().charAt(0) == '3' || marker.getSnippet().charAt(0) == '0'){
-                    String tel = "tel:"+ marker.getSnippet();
-                    Intent intent = new Intent(Intent.ACTION_DIAL);
-                    intent.setData(Uri.parse(tel));
-                    startActivity(intent);
-                }
-                else if (marker.getSnippet().charAt(0) == 'h'){
-                    String site = marker.getSnippet();
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse(site));
-                    startActivity(intent);
-                }
+
+                    // Si on valide, alors on envoie le signalement.
+                    oui_non.setPositiveButton("Oui", (dialog12, which12) ->
+                    {
+                        ((ViewGroup)customAddMarkerLayout.getParent()).removeView(customAddMarkerLayout);
+
+                        requete.reportPin(getUsername(),id_pin, res -> {
+                            if(res.equals("delete"))
+                            {
+                                // Actualise les marqueurs
+                                mMap.clear();
+                                EmmausMarker();
+                                CHRSMarker();
+                                toiletteMarker();
+                                doucheMarker();
+                                restoMarker();
+                                banque();
+                                Captif();
+                                stVincentPaul();
+                                secoursIslamique();
+                                secoursCatholique();
+                                secoursPopulaire();
+                                croixrouge();
+                                ANRS();
+                            }
+                            setSDFMarkers();
+                        });
+                    });
+                    oui_non.show();
+                });
+
+                moreInfos.setPositiveButton("Fermer", (dialog, which) -> dialog.cancel());
+
+                requete.sdfInfos(Integer.parseInt(id_pin), res ->
+                {
+                    String[] strings = res.split("<!§!>");
+
+                    prenom.setText(strings[0]);
+                    prenom.setTypeface(typeface);
+                    commentaire.setText("Envie : "+strings[2]);
+                    commentaire.setTypeface(typeface);
+                    envie.setText("Commentaire : "+strings[1]);
+                    envie.setTypeface(typeface);
+                    moreInfos.show();
+
+                    pgrb.setVisibility(View.INVISIBLE);
+                });
+            }
+            else if (marker.getSnippet().charAt(0) == '3' || marker.getSnippet().charAt(0) == '0'){
+                String tel = "tel:"+ marker.getSnippet();
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse(tel));
+                startActivity(intent);
+            }
+            else if (marker.getSnippet().charAt(0) == 'h'){
+                String site = marker.getSnippet();
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(site));
+                startActivity(intent);
             }
         });
 
         // Détection d'un click sur la map
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener()
+        mMap.setOnMapClickListener(latLng ->
         {
-            @Override
-            public void onMapClick(LatLng latLng)
+            if(mclick)
             {
-                if(mclick)
-                {
+                // Coordonnées GPS
+                lat = latLng.latitude;
+                lng = latLng.longitude;
 
+                AlertDialog popup = builder.show();
 
-                    // Coordonnées GPS
-                    lat = latLng.latitude;
-                    lng = latLng.longitude;
+                // Desactive les click en dehors de la fenêtre
+                popup.setCanceledOnTouchOutside(false);
 
-                    AlertDialog popup = builder.show();
+                // Champ de saisie de la fenêtre popup
+                EditText editTxtPrenom = view_popup.findViewById(R.id.editText2);
+                EditText editTxtComment = view_popup.findViewById(R.id.editTextTextPersonName);
+                EditText editTxtEnvie = view_popup.findViewById(R.id.editTextTextEnvie);
 
-                    // Desactive les click en dehors de la fenêtre
-                    popup.setCanceledOnTouchOutside(false);
+                // Bouton de la fenêtre popup
+                Button valider = view_popup.findViewById(R.id.btnMarkerValider);
+                Button annuler = view_popup.findViewById(R.id.btnMarkerAnnuler);
 
-                    // Champ de saisie de la fenêtre popup
-                    EditText editTxtPrenom = view_popup.findViewById(R.id.editText2);
-                    EditText editTxtComment = view_popup.findViewById(R.id.editTextTextPersonName);
-                    EditText editTxtEnvie = view_popup.findViewById(R.id.editTextTextEnvie);
-
-                    // Bouton de la fenêtre popup
-                    Button valider = view_popup.findViewById(R.id.btnMarkerValider);
-                    Button annuler = view_popup.findViewById(R.id.btnMarkerAnnuler);
-
-                    // Bouton retour
-                    popup.setOnKeyListener((arg0, keyCode, event) -> {
-                        // Click sur le bouton retour
-                        if (keyCode == KeyEvent.KEYCODE_BACK) {
-                            ((ViewGroup) view_popup.getParent()).removeView(view_popup);
-                            popup.dismiss();
-                        }
-                        return true;
-                    });
-
-                    // Bouton annuler
-                    annuler.setOnClickListener(v -> {
+                // Bouton retour
+                popup.setOnKeyListener((arg0, keyCode, event) -> {
+                    // Click sur le bouton retour
+                    if (keyCode == KeyEvent.KEYCODE_BACK) {
                         ((ViewGroup) view_popup.getParent()).removeView(view_popup);
-
-                        editTxtPrenom.setText("");
-                        editTxtComment.setText("");
-                        editTxtEnvie.setText("");
-
                         popup.dismiss();
+                    }
+                    return true;
+                });
+
+                // Bouton annuler
+                annuler.setOnClickListener(v -> {
+                    ((ViewGroup) view_popup.getParent()).removeView(view_popup);
+
+                    editTxtPrenom.setText("");
+                    editTxtComment.setText("");
+                    editTxtEnvie.setText("");
+
+                    popup.dismiss();
+                });
+
+                // Bouton valider
+                valider.setOnClickListener(v -> {
+                    pgrb.setVisibility(View.VISIBLE);
+
+                    ((ViewGroup) view_popup.getParent()).removeView(view_popup);
+
+                    // Récupération de la saisie de l'utilisateur
+                    String stringPrenom = editTxtPrenom.getText().toString();
+                    String stringComment = editTxtComment.getText().toString();
+                    String stringEnvie = editTxtEnvie.getText().toString();
+
+                    // Récupération de la date
+                    Date date = new Date();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
+
+                    // Récupère le jour et l'heure
+                    String[] string_date = dateFormat.format(date).split(" ");
+                    String jour = string_date[0];
+                    String heure = string_date[1];
+
+                    requete.addPin(lat, lng, Long.parseLong(utilisateur.id_user), jour, heure, icone, stringPrenom, stringComment, stringEnvie, res ->
+                    {
+                        setSDFMarkers();
+                        pgrb.setVisibility(View.INVISIBLE);
                     });
 
-                    // Bouton valider
-                    valider.setOnClickListener(v -> {
-                        pgrb.setVisibility(View.VISIBLE);
+                    mapclick2();
 
-                        ((ViewGroup) view_popup.getParent()).removeView(view_popup);
+                    editTxtPrenom.setText("");
+                    editTxtComment.setText("");
+                    editTxtEnvie.setText("");
 
-                        // Récupération de la saisie de l'utilisateur
-                        String stringPrenom = editTxtPrenom.getText().toString();
-                        String stringComment = editTxtComment.getText().toString();
-                        String stringEnvie = editTxtEnvie.getText().toString();
-
-                        // Récupération de la date
-                        Date date = new Date();
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-                        // Récupère le jour et l'heure
-                        String[] string_date = dateFormat.format(date).split(" ");
-                        String jour = string_date[0];
-                        String heure = string_date[1];
-
-                        addPin(lat, lng, Long.parseLong(utilisateur.id_user), jour, heure, icone, stringPrenom, stringComment, stringEnvie, res ->
-                        {
-                            setSDFMarkers();
-                            pgrb.setVisibility(View.INVISIBLE);
-                        });
-
-                        mapclick2();
-
-                        editTxtPrenom.setText("");
-                        editTxtComment.setText("");
-                        editTxtEnvie.setText("");
-
-                        popup.dismiss();
-                    });
-                }
+                    popup.dismiss();
+                });
             }
         });
 
         // Action à réaliser lorsque le caméra a bougé
-        mMap.setOnCameraMoveStartedListener(new GoogleMap.OnCameraMoveStartedListener()
-        {
-            @Override
-            public void onCameraMoveStarted(int reason) {
-                // REASON_GESTURE : Mouvement de l'écran via l'utilisateur
-                // REASON_DEVELOPER_ANIMATION : Mouvement de l'écran via l'application
-                if (reason == REASON_GESTURE || reason == REASON_DEVELOPER_ANIMATION) {
-                    setSDFMarkers();
-                }
+        mMap.setOnCameraMoveStartedListener(reason -> {
+            // REASON_GESTURE : Mouvement de l'écran via l'utilisateur
+            // REASON_DEVELOPER_ANIMATION : Mouvement de l'écran via l'application
+            if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE || reason == GoogleMap.OnCameraMoveStartedListener.REASON_DEVELOPER_ANIMATION)
+            {
+                setSDFMarkers();
             }
         });
     }
@@ -523,27 +455,22 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
         quit.setTitle("Êtes-vous sûr de vouloir quitter ?");
 
-        quit.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                requestDisconnect();
-                Context context = getApplicationContext();
-                Intent intent = new Intent(context,MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        quit.setPositiveButton("Oui", (dialog, which) ->
+        {
+            // Déconnexion
+            requete.disconnect(getUsername());
+
+            Context context = getApplicationContext();
+            Intent intent = new Intent(context,MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
 
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
 
-            }
         });
 
-        quit.setNegativeButton("Non", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+        quit.setNegativeButton("Non", (dialog, which) -> dialog.cancel());
 
         quit.show();
     }
@@ -575,42 +502,26 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         icone = 2;
     }
 
-    // Click sur le menu
-    public void Click(View v)
-    {
-        Intent i = new Intent(this, menu.class);
-        startActivity(i);
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-    }
-    
     public void locatezoom(View v)
     {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
-                mflc.getLocationAvailability().addOnSuccessListener(new OnSuccessListener<LocationAvailability>() {
-                    @Override
-                    public void onSuccess(LocationAvailability locationAvailability) {
-                        if (locationAvailability.isLocationAvailable()){
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                                        == PackageManager.PERMISSION_GRANTED) {
-                                    mflc.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-                                        @Override
-                                        public void onSuccess(Location location) {
+                mflc.getLocationAvailability().addOnSuccessListener(locationAvailability ->
+                {
+                    if (locationAvailability.isLocationAvailable()){
+                        if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                                == PackageManager.PERMISSION_GRANTED) {
+                            mflc.getLastLocation().addOnSuccessListener(location ->
+                            {
+                                double lat = location.getLatitude();
+                                double lon = location.getLongitude();
+                                LatLng here = new LatLng(lat, lon);
 
-                                            double lat = location.getLatitude();
-                                            double lon = location.getLongitude();
-                                            LatLng here = new LatLng(lat, lon);
-                                            //Marker marker = mMap.addMarker(new MarkerOptions().snippet("userLocation").position(here).title("here").icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_add_location_24)));
-                                            //hashMapMarker.put("userLocation", marker);
-                                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(here, 17),1000,null);
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(here, 17),1000,null);
+                            });}
 
-                                        }
-                                    });}}
-
-                        } else{Toast.makeText(getApplicationContext(),"Veuillez mettre votre geolocalisation",Toast.LENGTH_SHORT).show();}
-                    }
+                    } else{Toast.makeText(getApplicationContext(),"Veuillez mettre votre geolocalisation",Toast.LENGTH_SHORT).show();}
                 });
 
 
@@ -705,7 +616,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel == ""){
+                if (tel.equals("")){
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_emmaus)));
                 }
                 else {
@@ -749,7 +660,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 String nom = s.getCell(0,i).getContents();
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
-                if (tel == "") {
+                if (tel.equals("")) {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_refuge)));
                 }
                 else {
@@ -870,7 +781,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel == "") {
+                if (tel.equals("")) {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_restos_du_coeur_logo)));
                 }
                 else {
@@ -915,7 +826,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel == "") {
+                if (tel.equals("")) {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_secours_populaire_logo)));
                 }
                 else {
@@ -960,7 +871,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel == "") {
+                if (tel.equals("")) {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_catholique)));
                 }
                 else {
@@ -1004,7 +915,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel == "") {
+                if (tel.equals("")) {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_islamique)));
                 }
                 else {
@@ -1049,7 +960,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel == "") {
+                if (tel.equals("")) {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_vincent)));
                 }
                 else {
@@ -1094,7 +1005,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel == "") {
+                if (tel.equals("")) {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_captif)));
                 }
                 else {
@@ -1139,7 +1050,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel == "") {
+                if (tel.equals("")) {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_banquealimentaire)));
                 }
                 else {
@@ -1183,7 +1094,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel == "") {
+                if (tel.equals("")) {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_croixrouge)));
                 }
                 else {
@@ -1226,7 +1137,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel == "") {
+                if (tel.equals("")) {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_anrs)));
                 }
                 else {
@@ -1241,44 +1152,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         }
     }
 
-
-    // Ajouter un pin dans notre base de données via une requête de type GET
-    public void addPin(double latitude, double longitude, long id_user, String jour, String heure, int icone, String prenom, String comment, String envie, final VolleyCallBack callBack)
-    {
-        LatLng latLng = new LatLng(latitude,longitude);
-
-        // Date yyyy-MM-dd HH-mm:ss
-        String date = jour+" "+heure;
-
-        // Si vide
-        if(prenom.isEmpty())
-        {
-            prenom = "(Aucune informations)";
-        }
-        if(comment.isEmpty())
-        {
-            comment = "(Aucune informations)";
-        }
-        if(envie.isEmpty())
-        {
-            envie = "(Aucune informations)";
-        }
-
-        // Ajout du pin dans la BDD
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        String URL = "https://db-ezpfla.000webhostapp.com/addPin.php?id="+id_user+"&long="+longitude+"&lat="+latitude+"&date="+date+"&icone="+icone+"&prenom="+prenom+"&commentaire="+comment+"&envie="+envie;
-
-        StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
-            Log.i("Réponse", response);
-            callBack.onSuccess(null);
-        }, error -> Log.e("Réponse", error.toString()));
-
-        // Ajoute la requête dans la file
-        queue.add(postRequest);
-
-    }
-
     // Récupère le nom d'utilisateur
     public String getUsername()
     {
@@ -1289,7 +1162,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     public long getUserID()
     {
         String id = getIntent().getStringExtra("USER_ID");
-        return Long.valueOf(id).longValue();
+        return Long.parseLong(id);
     }
 
     public String getUserMail()
@@ -1304,121 +1177,52 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     // Ajout d'un marqueur pour chaque coordonnées GPS que l'on reçoit via une requête
     public void setSDFMarkers()
     {
-        requestSDFMarkers(res ->
-                {
-                    if(res.length() != 0){
+        requete.getSDFMarkers(mMap.getCameraPosition().target.latitude,mMap.getCameraPosition().target.longitude,res ->
+        {
+            if(res.length() != 0){
 
-                        // Tri les informations obtenus ligne par ligne
-                        String []line = res.split("<br>");
-                        int line_length = line.length;
+                // Tri les informations obtenus ligne par ligne
+                String []line = res.split("<br>");
 
-                        // Informations sur les pins
-                        String id_user;
-                        double longitude;
-                        double latitude;
-                        String date;
-                        String heure;
-                        String nom_user;
-                        String icone;
-                        String string[];
+                // Informations sur les pins
+                String id_user;
+                double longitude;
+                double latitude;
+                String date;
+                String heure;
+                String nom_user;
+                String icone;
+                String[] string;
 
+                for (String s : line) {
+                    // Tri une nouvelle fois les informations mais en détails
+                    string = s.split(" ");
 
-                        for(int i = 0; i < line_length; i++)
-                        {
-                            // Tri une nouvelle fois les informations mais en détails
-                            string = line[i].split(" ");
+                    id_user = string[0];
+                    longitude = Double.parseDouble(string[1]);
+                    latitude = Double.parseDouble(string[2]);
+                    date = string[4];
+                    heure = string[5];
+                    nom_user = string[6];
+                    icone = string[7];
 
-                            id_user = string[0];
-                            longitude = Double.parseDouble(string[1]);
-                            latitude = Double.parseDouble(string[2]);
-                            date = string[4];
-                            heure = string[5];
-                            nom_user = string[6];
-                            icone = string[7];
-
-                            switch(icone){
-                                case "1" :
-                                    // Ajout d'un pin
-                                    mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+nom_user+" le "+yyyy_mm_ddTodd_mm_yyyy(date)+" à "+heure).position(new LatLng(latitude,longitude)).title("Sans abri "+id_user).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_1)));
-                                    break;
-                                case "2" :
-                                    // Ajout d'un pin
-                                    mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+nom_user+" le "+yyyy_mm_ddTodd_mm_yyyy(date)+" à "+heure).position(new LatLng(latitude,longitude)).title("Sans abri "+id_user).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_2)));
-                                    break;
-                                default :
-                                    // Ajout d'un pin
-                                    mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par "+nom_user+" le "+yyyy_mm_ddTodd_mm_yyyy(date)+" à "+heure).position(new LatLng(latitude,longitude)).title("Sans abri "+id_user).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_0)));
-                                    break;
-                            }
-                        }
+                    switch (icone) {
+                        case "1":
+                            // Ajout d'un pin
+                            mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par " + nom_user + " le " + yyyy_mm_ddTodd_mm_yyyy(date) + " à " + heure).position(new LatLng(latitude, longitude)).title("Sans abri " + id_user).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_1)));
+                            break;
+                        case "2":
+                            // Ajout d'un pin
+                            mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par " + nom_user + " le " + yyyy_mm_ddTodd_mm_yyyy(date) + " à " + heure).position(new LatLng(latitude, longitude)).title("Sans abri " + id_user).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_2)));
+                            break;
+                        default:
+                            // Ajout d'un pin
+                            mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par " + nom_user + " le " + yyyy_mm_ddTodd_mm_yyyy(date) + " à " + heure).position(new LatLng(latitude, longitude)).title("Sans abri " + id_user).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_0)));
+                            break;
                     }
                 }
-        );
-    }
-
-    // Déclaration et envoi d'une requête pour récupérer des données sur les marqueurs dans la BDD.
-    public void requestSDFMarkers(final VolleyCallBack callback)
-    {
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        String URL = "https://db-ezpfla.000webhostapp.com/getPin.php?latitude="+mMap.getCameraPosition().target.latitude+"&longitude="+mMap.getCameraPosition().target.longitude;
-
-        // Envoi de la requête et on redirige la réponse à sa réception
-        StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
-            Log.i("Réponse", response);
-            callback.onSuccess(response.trim());
-        }, error -> Log.e("Réponse", error.toString()));
-
-        // Ajout de la requête dans la file
-        queue.add(postRequest);
-    }
-
-    // Déclaration et envoi d'une requête pour récupérer des données sur les marqueurs dans la BDD.
-    public void requestReport(double latitude, double longtitude, VolleyCallBack callBack)
-    {
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        String URL = "https://db-ezpfla.000webhostapp.com/reportPin.php?username="+getUsername()+"&latitude="+latitude+"&longitude="+longtitude;
-
-        // Envoi de la requête et on redirige la réponse à sa réception
-        StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
-            Log.i("Réponse", response);
-            callBack.onSuccess(response.trim());
-        }, error -> Log.e("Réponse", error.toString()));
-
-        // Ajout de la requête dans la file
-        queue.add(postRequest);
-    }
-
-    public void requestDisconnect()
-    {
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        String URL = "https://db-ezpfla.000webhostapp.com/disconnect.php?username="+getUsername();
-
-        // Envoi de la requête et on redirige la réponse à sa réception
-        StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
-            Log.i("Réponse", response);
-        }, error -> Log.e("Réponse", error.toString()));
-
-        // Ajout de la requête dans la file
-        queue.add(postRequest);
-    }
-
-    public void requestSdfInfos(int id_pin,final VolleyCallBack callBack)
-    {
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        String URL = "https://db-ezpfla.000webhostapp.com/getSdfInfos.php?pin="+id_pin;
-
-        // Envoi de la requête et on redirige la réponse à sa réception
-        StringRequest getRequest = new StringRequest(Request.Method.GET, URL, response -> {
-            Log.i("Réponse", response);
-            callBack.onSuccess(response);
-        }, error -> Log.e("Réponse", error.toString()));
-
-        // Ajout de la requête dans la file
-        queue.add(getRequest);
+            }
+        });
     }
 
     @Override
@@ -1429,10 +1233,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     @Override
     public void onMyLocationClick(@NonNull Location location) {
 
-    }
-
-    public interface VolleyCallBack{
-        void onSuccess(String res);
     }
 
     // Converti une date yyyy-dd-mm en dd-mm-yyyy
