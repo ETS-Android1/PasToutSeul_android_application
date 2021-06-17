@@ -1,9 +1,9 @@
 package com.example.test4;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import android.view.KeyEvent;
 import android.view.View;
@@ -16,18 +16,18 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 
-public class ConversationActivity extends AppCompatActivity {
+public class ConversationActivity extends AppCompatActivity
+{
+    Context context;
+    Requete requete;
 
     RecyclerView recyclerViewMessage;
     TextView textViewMessageError;
@@ -47,6 +47,10 @@ public class ConversationActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
+
+        this.context = this;
+        this.requete = new Requete(context);
+
         this.view_popup_add = getLayoutInflater().inflate(R.layout.popup_new_conv, null);
         this.builder = new AlertDialog.Builder(this,R.style.MyDialogTheme).setView(this.view_popup_add);
 
@@ -73,23 +77,6 @@ public class ConversationActivity extends AppCompatActivity {
         this.editTextNomGrp = this.view_popup_add.findViewById(R.id.editTextNomGroupe);
     }
 
-    // Requête pour récupérer toutes les conversations de l'utilisateur
-    public void requestAfficheConversation(final map.VolleyCallBack callback)
-    {
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        String URL = "https://db-ezpfla.000webhostapp.com/afficheConv.php?id_user="+utilisateur.id_user;
-
-        StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response ->
-        {
-            Log.i("Réponse", response);
-            callback.onSuccess(response);
-        }, error -> Log.e("Réponse", error.toString()));
-
-        // Ajoute la requête dans la file
-        queue.add(postRequest);
-    }
-
     // Traitement du résultat de la requête "requestAfficheConversation"
     public void afficheConversation()
     {
@@ -98,7 +85,7 @@ public class ConversationActivity extends AppCompatActivity {
         textViewMessageError.setText("");
 
         // Lancement de la requête
-        requestAfficheConversation(res ->
+        requete.getConversation(utilisateur.id_user,res ->
         {
             ArrayList<String> titre = new ArrayList<>();
             ArrayList<String> lastMessage = new ArrayList<>();
@@ -115,20 +102,14 @@ public class ConversationActivity extends AppCompatActivity {
                         // 3 : DATE DERNIER MESSAGE
                         String[] line = res.split("<br>");
 
-                        // Nombre de conversation
-                        int nConv= line.length;
-
-                        //String[] id_group = new String[nline];
-                        //String[] titre = new String[nline];
-                        //String[] lastMessage = new String[nline];
                         String[] element;
 
-                        for(int i = 0; i < nConv; i++) {
-                            element = line[i].split("\\.");
+                        for (String s : line) {
+                            element = s.split("\\.");
 
                             // Problème : Il y a un saut de ligne dans la réponse du serveur ce qui impact l'affichage
                             // Solution temporaire : Pour l'instant, on supprime les saut de lignes le temps de trouver la src du problème
-                            titre.add(element[0].replace("\n",""));
+                            titre.add(element[0].replace("\n", ""));
                             id_group.add(element[1]);
                             lastMessage.add(element[2]);
                             time.add(element[3]);
@@ -167,23 +148,6 @@ public class ConversationActivity extends AppCompatActivity {
         });
     }
 
-    // Requête permettant de créer un groupe de conversation
-    public void requestCreateConversation(String nom_groupe, String date, final map.VolleyCallBack callBack)
-    {
-        // Initisalisation de la reqûete
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        String URL = "https://db-ezpfla.000webhostapp.com/createConv.php?id_user="+utilisateur.id_user+"&nom_groupe="+nom_groupe+"&date="+date;
-
-        StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
-            Log.i("Réponse", response);
-            callBack.onSuccess(response);
-        }, error -> Log.e("Réponse", error.toString()));
-
-        // Ajoute la requête dans la file
-        queue.add(postRequest);
-    }
-
     // Traitement du résultat de la requête "requestCreateConversation"
     public void createConversation(String nom_groupe)
     {
@@ -191,12 +155,11 @@ public class ConversationActivity extends AppCompatActivity {
         this.prgbConversation.setVisibility(View.VISIBLE);
 
         Date date = new Date();
-        SimpleDateFormat dateFormatUS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat dateFormatUS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
 
         // Lancement de la requête
-        requestCreateConversation(nom_groupe,dateFormatUS.format(date), res->
+        requete.newConversation(utilisateur.id_user,nom_groupe,dateFormatUS.format(date), res->
         {
-
             Intent conv = new Intent(this,ConversationActivity.class);
 
             conv.putExtra("USER_NAME", getUsername());
