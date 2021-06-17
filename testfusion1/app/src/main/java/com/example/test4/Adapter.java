@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.jetbrains.annotations.NotNull;
@@ -54,6 +53,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>
     public class ViewHolder extends RecyclerView.ViewHolder
     {
         TextView titre, lastMessage, messageChat, nomParticipant;
+        @SuppressLint("CutPasteId")
         public ViewHolder(View view)
         {
             super(view);
@@ -97,14 +97,15 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>
 
 
     // Assignation des valeurs dans chaque éléments des items dans la recyclerView
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(final @NotNull ViewHolder holder, int position)
     {
         if(isConversation)
         {
-            System.out.println("ICI 3");
             holder.titre.setText(nom.get(position));
 
+            // Infos sur le dernier message
             String[] date_heure = temps.get(position).split(" ");
             String date = yyyy_mm_ddTodd_mm_yyyy(date_heure[0]);
             String[] h_m_s = date_heure[1].split(":");
@@ -121,10 +122,13 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>
         }
         if(isChat)
         {
+            // Infos sur un message
             String[] date_heure = temps.get(position).split(" ");
             String date_formatFR = yyyy_mm_ddTodd_mm_yyyy(date_heure[0]);
             String[] time = date_heure[1].split(":");
+
             holder.messageChat.setText("["+date_formatFR+" "+time[0]+":"+time[1]+"] "+nom.get(position)+" : "+ message.get(position));
+
         }
         if(isParticipantPopup)
         {
