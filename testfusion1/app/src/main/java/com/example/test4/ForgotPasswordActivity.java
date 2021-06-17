@@ -1,10 +1,10 @@
 package com.example.test4;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,20 +17,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-
 public class ForgotPasswordActivity extends AppCompatActivity
 {
+    Context context;
+    Requete requete;
+
     EditText editTextEmail;
     TextView txtVMailErrorForgotPassword;
     ProgressBar prgb;
@@ -40,8 +31,10 @@ public class ForgotPasswordActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_mdp_oublie);
+
+        this.context = this;
+        this.requete = new Requete(context);
 
         this.editTextEmail = findViewById(R.id.editTextMailForgotPassword);
         this.txtVMailErrorForgotPassword = findViewById(R.id.txtVMailErrorForgotPassword);
@@ -53,6 +46,7 @@ public class ForgotPasswordActivity extends AppCompatActivity
 
     }
 
+    @SuppressLint("SetTextI18n")
     public void sendCode(View view)
     {
         btnSendMail.setClickable(false);
@@ -62,17 +56,18 @@ public class ForgotPasswordActivity extends AppCompatActivity
 
         if(!hasError(email))
         {
-            postForgotPassword(email, res -> {
+            requete.forgotPassword(email, res -> {
                 if(!res.equals("error"))
                 {
-                    System.out.println("Pas d'erreur");
-                    emailSender mail = new emailSender();
+                    emailSender mail = new emailSender(this);
 
                     // Aucune erreur => Envoi d'un mail
                     try
                     {
-                        mail.sendMail("PasToutSeul : Mot de passe oublié","Ce code sera valide pendant 5 minutes: "+res, email);
+                        mail.sendMail("PasToutSeul : Mot de passe oublié",res, email, "code_6digit.html");
                         Toast.makeText(this, "Un code vient d'être envoyé sur cette adresse suivante : "+email, Toast.LENGTH_LONG).show();
+
+                        // Lancement de l'activity pour vérifier le code reçu par mail
                         launchCheckCode(email);
                     }
                     catch (Exception e)
@@ -86,7 +81,6 @@ public class ForgotPasswordActivity extends AppCompatActivity
                     editTextEmail.setTextColor(this.getResources().getColor(R.color.rouge_fonce));
                     editTextEmail.setHintTextColor(this.getResources().getColor(R.color.rouge_clair));
                     txtVMailErrorForgotPassword.setText("L'email rensigné n'existe pas.");
-                    System.out.println("Erreur");
                 }
                 prgb.setVisibility(View.INVISIBLE);
                 btnSendMail.setClickable(true);
@@ -99,8 +93,7 @@ public class ForgotPasswordActivity extends AppCompatActivity
         }
     }
 
-
-
+    @SuppressLint("SetTextI18n")
     public boolean hasError(String email)
     {
 
@@ -132,45 +125,6 @@ public class ForgotPasswordActivity extends AppCompatActivity
         return !TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    public void postForgotPassword(String mail, MainActivity.VolleyCallBack callback)
-    {
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        // Récupère une date
-        Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String string_date = dateFormat.format(date);
-
-        // Génération d'un code au hasard à envoyer sur le mail de l'utilisateur
-        int code = new Random().nextInt(999999);
-        String string_code = String.format("%06d", code);
-
-        // URL du serveur web
-        String URL = "https://db-ezpfla.000webhostapp.com/forgotPassword.php";
-
-        StringRequest postRequest = new StringRequest(Request.Method.POST, URL, response -> {
-            Log.i("Réponse", response);
-            try {
-                callback.onSuccess(response.trim());
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
-            // Appel d'une fonction à éxecuter si succès de la requête
-        }, error -> Log.e("Réponse", error.toString())) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> logs = new HashMap<>();
-                //Ajout des arguments
-                logs.put("email", mail);
-                logs.put("code", string_code);
-                logs.put("date", string_date);
-                return logs;
-            }
-        };
-
-        queue.add(postRequest);
-    }
-
     public void launchCheckCode(String email)
     {
         Intent intent = new Intent(this, CheckCodeActivity.class);
@@ -194,7 +148,7 @@ public class ForgotPasswordActivity extends AppCompatActivity
     public void hideKeyboard(View view)
     {
         if (this.getCurrentFocus() != null) {
-            InputMethodManager imm = (InputMethodManager)getSystemService(getApplicationContext().INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
