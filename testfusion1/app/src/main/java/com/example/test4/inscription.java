@@ -1,5 +1,7 @@
 package com.example.test4;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -21,21 +23,18 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-
-import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class inscription extends AppCompatActivity {
 
-    EditText mail;
-    EditText pwd;
-    EditText pwd2;
-    EditText Username;
-    TextView errMail;
-    TextView errPwd1;
-    TextView errPwd2;
-    TextView errUsername;
+    Context context;
+    Requete requete;
+
+    EditText mail, pwd, pwd2, Username;
+
+    TextView errMail, errPwd1, errPwd2, errUsername;
+
     ProgressBar pgrb;
 
     @Override
@@ -44,17 +43,15 @@ public class inscription extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_inscription);
+
         initAttributes();
 
-        findViewById(R.id.layoutActivityInscription).setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(MotionEvent.ACTION_UP == event.getAction()) {
-                    hideKeyboard(v);
-                }
-
-                return false;
+        findViewById(R.id.layoutActivityInscription).setOnTouchListener((v, event) -> {
+            if(MotionEvent.ACTION_UP == event.getAction()) {
+                hideKeyboard(v);
             }
+
+            return false;
         });
 
         createTouchListenerEditText(Username);
@@ -74,16 +71,13 @@ public class inscription extends AppCompatActivity {
     * */
     private void createTouchListenerEditText(EditText editText)
     {
-        editText.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(MotionEvent.ACTION_UP == event.getAction()) {
-                    editText.setTextColor(getResources().getColor(R.color.black));
-                    editText.setHintTextColor(getResources().getColor(R.color.gris));
-                }
-
-                return false;
+        editText.setOnTouchListener((v, event) -> {
+            if(MotionEvent.ACTION_UP == event.getAction()) {
+                editText.setTextColor(getResources().getColor(R.color.black));
+                editText.setHintTextColor(getResources().getColor(R.color.gris));
             }
+
+            return false;
         });
     }
 
@@ -107,6 +101,8 @@ public class inscription extends AppCompatActivity {
     // Initialisation des vues
     private void initAttributes()
     {
+        this.context = this;
+        this.requete = new Requete(context);
         this.mail = findViewById(R.id.editTextMailRegister);
         this.pwd = findViewById(R.id.editTextPasswordRegister);
         this.pwd2 = findViewById(R.id.editTextPasswordRegister2);
@@ -151,6 +147,7 @@ public class inscription extends AppCompatActivity {
     private String getUsername(){return Username.getText().toString();}
 
 
+    @SuppressLint("SetTextI18n")
     private boolean checkErrorMail()
     {
         String email = getMail();
@@ -184,10 +181,8 @@ public class inscription extends AppCompatActivity {
     {
         char [] banArray = {'!','"','#','$','%','&','\'', '(',')','*','+',',','-','.','/',':',';','<','=','>','?','@','[','\\',']','^','_','`','{','|','}','~'};
 
-        for(int i = 0; i < banArray.length; i++)
-        {
-            if(username.contains(Character.toString(banArray[i])))
-            {
+        for (char c : banArray) {
+            if (username.contains(Character.toString(c))) {
                 return false;
             }
         }
@@ -203,10 +198,8 @@ public class inscription extends AppCompatActivity {
     {
         char [] banArray = {'!','"','#','$','%','&','\'', '(',')','*','+',',','-','.','/',':',';','<','=','>','?','@','[','\\',']','^','_','`','{','|','}','~'};
 
-        for(int i = 0; i < banArray.length; i++)
-        {
-            if(mdp.contains(Character.toString(banArray[i])))
-            {
+        for (char c : banArray) {
+            if (mdp.contains(Character.toString(c))) {
                 return false;
             }
         }
@@ -214,6 +207,7 @@ public class inscription extends AppCompatActivity {
         return true;
     }
 
+    @SuppressLint("SetTextI18n")
     private boolean checkErrorPassword()
     {
         String password1 = getPwd();
@@ -269,6 +263,7 @@ public class inscription extends AppCompatActivity {
         return false;
     }
 
+    @SuppressLint("SetTextI18n")
     private boolean checkErrorUsername()
     {
         String nom_user = getUsername();
@@ -298,85 +293,49 @@ public class inscription extends AppCompatActivity {
     {
         if (!checkErrorUsername() && !checkErrorMail() && !checkErrorPassword()) // Vérification des erreurs possibles
         {
-            pgrb.setVisibility(view.VISIBLE);
+            pgrb.setVisibility(View.VISIBLE);
             pgrb.bringToFront();
             hideKeyboard(view);
             Thread thread = new Thread()
             {
+                @SuppressLint("SetTextI18n")
                 public void run()
                 {
                     try{
-                        postCreateAccount(getUsername(), getMail(), getPwd(), new MainActivity.VolleyCallBack() {
-                            @Override
-                            public void onSuccess(String res) {
-                                if(res.equals("user_error"))
-                                {
-                                    errUsername.setText("Ce nom d'utilisateur est déja pris");
-                                    affichageErrorUsername();
-                                    pgrb.setVisibility(view.GONE);
-                                }
-                                else if(res.equals("mail_error"))
-                                {
-                                    errMail.setText("Ce mail est déja associé à un compte");
-                                    affichageErrorMail();
-                                    pgrb.setVisibility(view.GONE);
-                                }
-                                else
-                                {
-                                    Toast.makeText(inscription.this,"Création de compte réussi ! ", Toast.LENGTH_LONG).show();
-                                    pgrb.setVisibility(view.GONE);
-                                    startLoginActivity();
-
-                                }
+                        requete.createAccount(getUsername(), getMail(), getPwd(), res -> {
+                            if(res.equals("user_error"))
+                            {
+                                errUsername.setText("Ce nom d'utilisateur est déja pris");
+                                affichageErrorUsername();
+                                pgrb.setVisibility(View.GONE);
+                            }
+                            else if(res.equals("mail_error"))
+                            {
+                                errMail.setText("Ce mail est déja associé à un compte");
+                                affichageErrorMail();
+                                pgrb.setVisibility(View.GONE);
+                            }
+                            else
+                            {
+                                Toast.makeText(inscription.this,"Création de compte réussi ! ", Toast.LENGTH_LONG).show();
+                                pgrb.setVisibility(View.GONE);
+                                startLoginActivity();
 
                             }
+
                         });
                     }
                     catch(Exception e)
                     {
                         e.printStackTrace();
                         System.out.println(e.getMessage());
-                        pgrb.setVisibility(view.GONE);
+                        pgrb.setVisibility(View.GONE);
                     }
                 }
             };
             thread.start();
         }
 
-    }
-
-    private void postCreateAccount(String username, String mail, String password,final MainActivity.VolleyCallBack callback)
-    {
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String URL = "https://db-ezpfla.000webhostapp.com/createAccount.php";
-
-        StringRequest postRequest = new StringRequest(Request.Method.POST, URL, response ->
-        {
-            Log.i("Réponse", response);
-            try
-            {
-                callback.onSuccess(response.trim()); // trim() pour enlever les espaces car la réponse contient des espaces.
-            }
-            catch (Exception exception)
-            {
-                exception.printStackTrace();
-            }
-        }, error -> Log.e("Réponse", error.toString()))
-        {
-            @Override
-            protected Map<String,String> getParams()
-            {
-                Map<String,String> logs = new HashMap<String,String>();
-
-                logs.put("username",username);
-                logs.put("mail",mail);
-                logs.put("password",password);
-
-                return logs;
-            }
-        };
-
-        queue.add(postRequest);
     }
 
     private void affichageErrorMail()
@@ -439,7 +398,7 @@ public class inscription extends AppCompatActivity {
     {
         // Cacher le clavier
         if (this.getCurrentFocus() != null) {
-            InputMethodManager imm = (InputMethodManager)getSystemService(getApplicationContext().INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
