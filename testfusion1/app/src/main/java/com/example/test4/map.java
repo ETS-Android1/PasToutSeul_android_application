@@ -49,9 +49,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
 
 import jxl.Cell;
@@ -70,7 +71,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
     TextView tw;
 
-    HashMap hashMapMarker = new HashMap<String, Marker>();
+    ArrayList<Marker> markerList = new ArrayList<>();
+    ArrayList<Integer> idList = new ArrayList<>();
 
     boolean mclick;
 
@@ -301,26 +303,12 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                     {
                         ((ViewGroup)customAddMarkerLayout.getParent()).removeView(customAddMarkerLayout);
 
+                        // Si on reçoit un certain nombre de signalement, on reçoit le message "delete", alors on le supprime
                         requete.reportPin(getUsername(),id_pin, res -> {
-                            if(res.equals("delete"))
+                            if(res.contains("delete"))
                             {
-                                // Actualise les marqueurs
-                                mMap.clear();
-                                EmmausMarker();
-                                CHRSMarker();
-                                toiletteMarker();
-                                doucheMarker();
-                                restoMarker();
-                                banque();
-                                Captif();
-                                stVincentPaul();
-                                secoursIslamique();
-                                secoursCatholique();
-                                secoursPopulaire();
-                                croixrouge();
-                                ANRS();
+                                marker.remove();
                             }
-                            setSDFMarkers();
                         });
                     });
                     oui_non.show();
@@ -1176,55 +1164,138 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     {
         return getIntent().getStringExtra("USER_PASSWORD");
     }
-    // Ajout d'un marqueur pour chaque coordonnées GPS que l'on reçoit via une requête
+
+    // Ajout d'un marqueur pour chaque coordonnées GPS que l'on reçoit via une requête si il n'a pas été ajouté auparavant.
     public void setSDFMarkers()
     {
+
         requete.getSDFMarkers(mMap.getCameraPosition().target.latitude,mMap.getCameraPosition().target.longitude,res ->
         {
-            if(res.length() != 0){
-
-                // Tri les informations obtenus ligne par ligne
+            if(res.length() != 0)
+            {
+                // Tri les informations en plusieurs lignes
                 String []line = res.split("<br>");
 
                 // Informations sur les pins
-                String id_user;
+                String id_pin;
                 double longitude;
                 double latitude;
                 String date;
                 String heure;
                 String nom_user;
                 String icone;
+                int signalements;
                 String[] string;
 
+                int index = 0;
+
+                Marker marker;
+
                 for (String s : line) {
-                    // Tri une nouvelle fois les informations mais en détails
+                    // Tri une nouvelle fois les informations sur une ligne
                     string = s.split(" ");
 
-                    id_user = string[0];
+                    id_pin = string[0];
                     longitude = Double.parseDouble(string[1]);
                     latitude = Double.parseDouble(string[2]);
+                    signalements = Integer.valueOf(string[3]);
                     date = string[4];
                     heure = string[5];
                     nom_user = string[6];
                     icone = string[7];
 
-                    switch (icone) {
-                        case "1":
-                            // Ajout d'un pin
-                            mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par " + nom_user + " le " + yyyy_mm_ddTodd_mm_yyyy(date) + " à " + heure).position(new LatLng(latitude, longitude)).title("Sans abri " + id_user).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_1)));
-                            break;
-                        case "2":
-                            // Ajout d'un pin
-                            mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par " + nom_user + " le " + yyyy_mm_ddTodd_mm_yyyy(date) + " à " + heure).position(new LatLng(latitude, longitude)).title("Sans abri " + id_user).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_2)));
-                            break;
-                        default:
-                            // Ajout d'un pin
-                            mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par " + nom_user + " le " + yyyy_mm_ddTodd_mm_yyyy(date) + " à " + heure).position(new LatLng(latitude, longitude)).title("Sans abri " + id_user).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_0)));
-                            break;
+                    // ------------------- AJOUT DU PIN S'IL EXISTE PAS -------------------
+                    // Les pins reçues sont triés de manière croissante en fonction de son id.
+                    // Les pins déja ajoutés sont stockés et triés de manière croissante.
+                    // On va donc merge les array sans ajouter les doublons car les id sont uniques
+                    // D'où pourquoi on reprend l'index pour reprendre l'itération là où on s'était arrêter.
+                    if(!pinIfExist(idList,Integer.valueOf(id_pin),index))
+                    {
+                        // Si il n'a pas été signaler plus de 1 fois et qu'il n'existe pas
+                        if (signalements < 2)
+                        {
+                            markerList.toString();
+                            System.out.println("Je suis en vie : "+ id_pin);
+                            switch (icone) {
+                                case "1":
+                                    // Ajout d'un pin
+                                    marker = mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par " + nom_user + " le " + yyyy_mm_ddTodd_mm_yyyy(date) + " à " + heure).position(new LatLng(latitude, longitude)).title("Sans abri " + id_pin).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_1)));
+                                    break;
+                                case "2":
+                                    // Ajout d'un pin
+                                    marker = mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par " + nom_user + " le " + yyyy_mm_ddTodd_mm_yyyy(date) + " à " + heure).position(new LatLng(latitude, longitude)).title("Sans abri " + id_pin).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_2)));
+                                    break;
+                                default:
+                                    // Ajout d'un pin
+                                    marker = mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par " + nom_user + " le " + yyyy_mm_ddTodd_mm_yyyy(date) + " à " + heure).position(new LatLng(latitude, longitude)).title("Sans abri " + id_pin).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_0)));
+                                    break;
+                            }
+                            markerList.add(index, marker);
+
+                            // On verifie le marqueur suivant
+                            index++;
+                        }
+                        // Si il a été signaler plus de 1 fois
+                        else
+                        {
+                            idList.remove(index);
+                        }
+                    }
+                    else
+                    {
+                        // Si le pin existe mais qu'il a été signaler plus de 1 fois
+                        if (signalements >= 2)
+                        {
+                            idList.remove(index);
+                            markerList.get(index).remove();
+                        }
+                        // Si le pin existe  mais qu'il n'a pas été signaler plus de 1 fois
+                        else
+                        {
+                            // On ajoute pas mais on vérifie pour le suivant
+                            index++;
+                        }
                     }
                 }
             }
         });
+    }
+
+    // Ajoute un pin s'il n'existe pas à partir de l'indice index.
+    public boolean pinIfExist(ArrayList<Integer> idList, int id_pin2, int index)
+    {
+        // Si c'est vide => On ajoute
+        if(!idList.isEmpty())
+        {
+            int n = idList.size();
+
+            while(index < n)
+            {
+                int id_pin1 = idList.get(index);
+
+                // On ajoute pas s'il existe.
+                if(id_pin1 == id_pin2)
+                {
+                    return true;
+                }
+                if (id_pin1 > id_pin2)
+                {
+                    idList.add(index,id_pin2);
+                    return false;
+                }
+                index++;
+            }
+        }
+        else
+        {
+            idList.add(id_pin2);
+            return false;
+        }
+
+        // Aucun pin ayant un id > id_pin2 n'a été ajouté
+        idList.add(id_pin2);
+        index++;
+        return false;
     }
 
     @Override
