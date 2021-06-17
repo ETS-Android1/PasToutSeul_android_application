@@ -1,33 +1,28 @@
 package com.example.test4;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EdgeEffect;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.Locale;
 
 public class CheckCodeActivity extends AppCompatActivity
 {
+    Context context;
+    Requete requete;
+
     EditText editTextCheckCode;
     Button btnCheckCode;
     TextView txtVErrCode;
@@ -39,6 +34,9 @@ public class CheckCodeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_check_code);
+
+        this.context = this;
+        this.requete = new Requete(context);
 
         this.editTextCheckCode = findViewById(R.id.editTextCheckCode);
         this.btnCheckCode = findViewById(R.id.btnCheckCode);
@@ -70,7 +68,7 @@ public class CheckCodeActivity extends AppCompatActivity
         if(code.length() != 0)
         {
             // Requête pour vérifier si le code est correct
-            postCheckCode(mail, code, res -> {
+            requete.getCode(mail, res -> {
                 if(!res.contains("error"))
                 {
                     // Tri les informations reçues : "(DATE : yyyy-MM-dd) (DATE : HH-mm-ss) (CODE)"
@@ -79,7 +77,7 @@ public class CheckCodeActivity extends AppCompatActivity
                     String string_code = string[2];
 
                     // Seule l'heure, les minutes et les secondes sont nécessaires pour vérifier si le code est expiré (5min et après le code est expiré)
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.FRANCE);
 
                     // L'heure à laquelle le mail a été envoyé
                     String time1 = string[1];
@@ -139,35 +137,6 @@ public class CheckCodeActivity extends AppCompatActivity
         }
     }
 
-    // Requête : POST
-    public void postCheckCode(String mail,String code, MainActivity.VolleyCallBack callback)
-    {
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        // URL du serveur web
-        String URL = "https://db-ezpfla.000webhostapp.com/checkCode.php";
-
-        StringRequest postRequest = new StringRequest(Request.Method.POST, URL, response -> {
-            Log.i("Réponse", response);
-            try {
-                callback.onSuccess(response);
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
-            // Appel d'une fonction à éxecuter si succès de la requête
-        }, error -> Log.e("Réponse", error.toString())) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> logs = new HashMap<>();
-                //Ajout des arguments
-                logs.put("email", mail);
-                return logs;
-            }
-        };
-
-        queue.add(postRequest);
-    }
-
     public void resetAffichage()
     {
         this.editTextCheckCode.setBackgroundResource(R.drawable.backwithborder_noerror);
@@ -176,6 +145,7 @@ public class CheckCodeActivity extends AppCompatActivity
         this.txtVErrCode.setText("");
     }
 
+    @SuppressLint("SetTextI18n")
     public void affichageCodeIncorrect()
     {
         this.editTextCheckCode.setBackgroundResource(R.drawable.backwithborder_error);
@@ -184,6 +154,7 @@ public class CheckCodeActivity extends AppCompatActivity
         this.txtVErrCode.setText("Le code est incorrect");
     }
 
+    @SuppressLint("SetTextI18n")
     public void affichageCodeExpire()
     {
         this.editTextCheckCode.setBackgroundResource(R.drawable.backwithborder_error);
@@ -192,6 +163,7 @@ public class CheckCodeActivity extends AppCompatActivity
         this.txtVErrCode.setText("Le code a expiré.");
     }
 
+    @SuppressLint("SetTextI18n")
     public void affichageCodeInvalide()
     {
         this.editTextCheckCode.setBackgroundResource(R.drawable.backwithborder_error);
@@ -225,7 +197,7 @@ public class CheckCodeActivity extends AppCompatActivity
     public void hideKeyboard(View view)
     {
         if (this.getCurrentFocus() != null) {
-            InputMethodManager imm = (InputMethodManager)getSystemService(getApplicationContext().INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
