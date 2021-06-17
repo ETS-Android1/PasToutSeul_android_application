@@ -1,6 +1,11 @@
 package com.example.test4;
 
 
+import android.content.Context;
+import android.content.res.AssetManager;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import javax.mail.Authenticator;
@@ -14,18 +19,19 @@ import javax.mail.internet.MimeMessage;
 
 public class emailSender extends javax.mail.Authenticator{
 
-    private String mailSender;
-    private String password;
-    private Session session;
+    Context context;
+    private final String mailSender;
+    private final String password;
+    private final Session session;
 
     // Initialisation des propriétes pour l'envoi d'un mail
-    public emailSender()
-    {
+    public emailSender(Context ctxt) {
         Properties properties=new Properties();
 
         // Mail que nous avons créer uniquement pour envoyer les mots de passes oubliées.
         this.mailSender = "pastoutseul19@gmail.com";
         this.password = "NbthD3y&H{Uhwga7";
+        this.context = ctxt;
 
         properties.put("mail.smtp.starttls.enable","true");
         properties.put("mail.smtp.host","smtp.gmail.com");
@@ -41,15 +47,20 @@ public class emailSender extends javax.mail.Authenticator{
     }
 
     // Envoi d'un mail avec le titre, son contenu et le destinataire.
-    public synchronized void sendMail(String subject, String body, String sender) throws Exception {
+    public synchronized void sendMail(String subject, String content, String sender, String filename) {
         try
         {
+            // Récupère le fichier html sous forme de string
+            String html = fileToString(filename,content);
+
             // Nouveau message
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(mailSender));
             message.setRecipients(Message.RecipientType.TO, new InternetAddress[]{new InternetAddress(sender)});
             message.setSubject(subject);
-            message.setText(body);
+
+            // Conversion de string en html
+            message.setContent(html,"text/html; charset=utf-8");
 
             // Envoi du message dans un thread pour éviter de bloquer l'application
             Thread thread = new Thread(() -> {
@@ -69,4 +80,25 @@ public class emailSender extends javax.mail.Authenticator{
             e.printStackTrace();
         }
     }
+
+    public String fileToString(String filename, String content) throws IOException
+    {
+        // Récupère les assets
+        AssetManager am = context.getAssets();
+
+        // Fichier concerné
+        InputStream is = am.open(filename);
+
+        int size = is.available();
+        byte[] buff = new byte[size];
+
+        is.read(buff);
+
+        is.close();
+
+        // Ajoute le contenu d'une variable dans le html
+        return new String(buff).replace("$content", content);
+    }
+
+
 }
