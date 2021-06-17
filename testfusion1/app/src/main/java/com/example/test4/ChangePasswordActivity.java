@@ -1,13 +1,12 @@
 package com.example.test4;
 
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -15,19 +14,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import java.util.HashMap;
-import java.util.Map;
-
 public class ChangePasswordActivity extends AppCompatActivity
 {
     EditText editPassword1,editPassword2;
     TextView errPassword1, errPassword2;
-    CheckBox chkBoxSendCopy;
     ProgressBar prgb;
 
     @Override
@@ -44,9 +34,6 @@ public class ChangePasswordActivity extends AppCompatActivity
         // Affichage des messages d'erreurs
         this.errPassword1 = findViewById(R.id.txtVErrPass1);
         this.errPassword2 = findViewById(R.id.txtVErrPass2);
-
-        // Checkbox
-        this.chkBoxSendCopy = findViewById(R.id.chkBSendCopy);
 
         // ProgressBar
         this.prgb = findViewById(R.id.prgbChangePassword);
@@ -74,23 +61,16 @@ public class ChangePasswordActivity extends AppCompatActivity
             // Vérification si les mots de passe sont identiques
             if(isSame(password1,password2))
             {
+                Requete requete = new Requete(this);
                 // Changement du mot de passe
-                postChangePassword(getMail(),password1, res ->
+                requete.changePassword(getMail(),password1, res ->
                 {
-                    // Contenu du message (body)
-                    String body;
-                    if(chkBoxSendCopy.isChecked())
-                    {
-                        body = "Votre mot de passe vient d'être modifié. \n Voici votre mot de passe : "+password1;
-                    }
-                    else
-                    {
-                        body = "Votre mot de passe vient d'être modifié.";
-                    }
+                    // Sujet du message
+                    String subject = "PasToutSeul : Votre mot de passe vient d'être modifié.";
 
                     // Envoi d'un mail afin d'informer l'utilisateur du changement de son mot de passe
-                    emailSender email = new emailSender();
-                    email.sendMail("PasToutSeul : Votre mot de passe a été modifié.",body,getMail());
+                    emailSender email = new emailSender(this);
+                    email.sendMail(subject,"",getMail(), "change_password_success.html");
 
                     // Message affiché à l'utilisateur indiquant que son mot de passe a été modifié
                     Toast.makeText(this, "Votre mot de passe a été modifié", Toast.LENGTH_SHORT).show();
@@ -133,10 +113,8 @@ public class ChangePasswordActivity extends AppCompatActivity
         // Liste de caractères bannis
         char [] banArray = {'!','"','#','$','%','&','\'', '(',')','*','+',',','-','.','/',':',';','<','=','>','?','@','[','\\',']','^','_','`','{','|','}','~'};
 
-        for(int i = 0; i < banArray.length; i++)
-        {
-            if(password.contains(Character.toString(banArray[i])))
-            {
+        for (char c : banArray) {
+            if (password.contains(Character.toString(c))) {
                 return false;
             }
         }
@@ -146,29 +124,24 @@ public class ChangePasswordActivity extends AppCompatActivity
     // Détection des mots de passes identiques
     public boolean isSame(String password1, String password2)
     {
-        if(!password1.equals(password2))
-        {
-            return false;
-        }
-        return true;
+        return password1.equals(password2);
     }
 
     // Cache le clavier lorsqu'on clique en dehors des champs de saisie
     public void hideKeyboardOnClick()
     {
         findViewById(R.id.layoutAcitivtyChangePassword).setOnTouchListener((view, event) -> {
-            if(MotionEvent.ACTION_UP == event.getAction()) {
-                hideKeyboard(view);
+            if (MotionEvent.ACTION_UP == event.getAction()) {
+                ChangePasswordActivity.this.hideKeyboard(view);
             }
             return false;
         });
     }
-
     // Cacher le clavier
     public void hideKeyboard(View view)
     {
         if (this.getCurrentFocus() != null) {
-            InputMethodManager imm = (InputMethodManager)getSystemService(getApplicationContext().INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
@@ -187,6 +160,7 @@ public class ChangePasswordActivity extends AppCompatActivity
         this.errPassword2.setText("");
     }
 
+    @SuppressLint("SetTextI18n")
     public void affichageErrorPassword1()
     {
         this.editPassword1.setBackgroundResource(R.drawable.backwithborder_error);
@@ -195,42 +169,13 @@ public class ChangePasswordActivity extends AppCompatActivity
         this.errPassword1.setText("Le mot de passe doit être compris entre 8 et 16 caractères et ne doit pas contenir ces caractères :  !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~");
     }
 
+    @SuppressLint("SetTextI18n")
     public void affichageErrorPassword2()
     {
         this.editPassword2.setBackgroundResource(R.drawable.backwithborder_error);
         this.editPassword2.setTextColor(this.getResources().getColor(R.color.rouge_fonce));
         this.editPassword2.setHintTextColor(this.getResources().getColor(R.color.rouge_clair));
         this.errPassword2.setText("Les mots de passe ne sont pas identiques.");
-    }
-
-    // Requête : POST
-    public void postChangePassword(String mail,String code, MainActivity.VolleyCallBack callback)
-    {
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        // URL du serveur web
-        String URL = "https://db-ezpfla.000webhostapp.com/changePassword.php";
-
-        StringRequest postRequest = new StringRequest(Request.Method.POST, URL, response -> {
-            Log.i("Réponse", response);
-            try {
-                callback.onSuccess(response);
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
-            // Appel d'une fonction à éxecuter si succès de la requête
-        }, error -> Log.e("Réponse", error.toString())) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> logs = new HashMap<>();
-                //Ajout des arguments
-                logs.put("email", mail);
-                logs.put("code", code);
-                return logs;
-            }
-        };
-
-        queue.add(postRequest);
     }
 
     public String getPassword1()
