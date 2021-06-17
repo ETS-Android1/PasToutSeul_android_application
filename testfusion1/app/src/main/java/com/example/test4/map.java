@@ -612,11 +612,11 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
                 LatLng loc = new LatLng(latitude, longitude);
 
-                String nom = s.getCell(0,i).getContents();
+                String nom = s.getCell(0,i).getContents().replaceAll("a"+"\\uFFFD"+"s","aüs").replaceAll("A"+"\\uFFFD"+"S","AÜS").replaceAll("\\uFFFD","é");
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel.equals("")){
+                if (tel == ""){
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_emmaus)));
                 }
                 else {
@@ -657,10 +657,11 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
                 LatLng loc = new LatLng(latitude, longitude);
 
-                String nom = s.getCell(0,i).getContents();
+                String nom = s.getCell(0,i).getContents().replaceAll("H"+"\\uFFFD"+"b","Héb").replaceAll("n"+"\\uFFFD"+"a","nça").replaceAll("a"+"\\uFFFD"+"s","aüs").replaceAll("\\uFFFD","é");;
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
-                if (tel.equals("")) {
+
+                if (tel == "") {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_refuge)));
                 }
                 else {
@@ -729,7 +730,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
             for (int i = 1; i < row; i++) {
 
-                String nom = s.getCell(0, i).getContents();
+                String nom = s.getCell(0, i).getContents().replaceAll("\\uFFFD","é");
 
                 // Tri des données
                 String[] latlong = s.getCell(2, i).getContents().split(",");
@@ -777,11 +778,11 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
                 LatLng loc = new LatLng(latitude, longitude);
 
-                String nom = s.getCell(0,i).getContents();
+                String nom = s.getCell(0,i).getContents().replaceAll("\\uFFFD","é");
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel.equals("")) {
+                if (tel == "") {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_restos_du_coeur_logo)));
                 }
                 else {
@@ -822,11 +823,11 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
                 LatLng loc = new LatLng(latitude, longitude);
 
-                String nom = s.getCell(0,i).getContents();
+                String nom = s.getCell(0,i).getContents().replaceAll("n"+"\\uFFFD"+"a","nça").replaceAll("\\uFFFD","é");
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel.equals("")) {
+                if (tel == "") {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_secours_populaire_logo)));
                 }
                 else {
@@ -867,11 +868,11 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
                 LatLng loc = new LatLng(latitude, longitude);
 
-                String nom = s.getCell(0,i).getContents();
+                String nom = s.getCell(0,i).getContents().replaceAll("\\uFFFD","é");
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel.equals("")) {
+                if (tel == "") {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_catholique)));
                 }
                 else {
@@ -915,7 +916,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel.equals("")) {
+                if (tel == "") {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_islamique)));
                 }
                 else {
@@ -956,11 +957,11 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
                 LatLng loc = new LatLng(latitude, longitude);
 
-                String nom = s.getCell(0,i).getContents();
+                String nom = s.getCell(0,i).getContents().replaceAll("n"+"\\uFFFD"+"a","nça").replaceAll("I"+"\\uFFFD","IÉ").replaceAll("T"+"\\uFFFD","TÉ").replaceAll("\\uFFFD","é");
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel.equals("")) {
+                if (tel == "") {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_vincent)));
                 }
                 else {
@@ -1001,11 +1002,11 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
                 LatLng loc = new LatLng(latitude, longitude);
 
-                String nom = s.getCell(0,i).getContents();
+                String nom = s.getCell(0,i).getContents().replaceAll("\\uFFFD","é");
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel.equals("")) {
+                if (tel == "") {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_captif)));
                 }
                 else {
@@ -1046,11 +1047,11 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
                 LatLng loc = new LatLng(latitude, longitude);
 
-                String nom = s.getCell(0,i).getContents();
+                String nom = s.getCell(0,i).getContents().replaceAll("\\uFFFD","é");
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel.equals("")) {
+                if (tel == "") {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_banquealimentaire)));
                 }
                 else {
@@ -1090,11 +1091,11 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
                 LatLng loc = new LatLng(latitude, longitude);
 
-                String nom = s.getCell(0,i).getContents();
+                String nom = s.getCell(0,i).getContents().replaceAll("n"+"\\uFFFD"+"a","nça").replaceAll(" "+"\\uFFFD"," à").replaceAll("\\uFFFD","é");
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel.equals("")) {
+                if (tel == "") {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_croixrouge)));
                 }
                 else {
@@ -1133,11 +1134,12 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
                 LatLng loc = new LatLng(latitude, longitude);
 
-                String nom = s.getCell(0,i).getContents();
+                String nom = s.getCell(0,i).getContents().replaceAll("\\uFFFD","é");
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
+                Log.d("binks", nom);
 
-                if (tel.equals("")) {
+                if (tel == "") {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_anrs)));
                 }
                 else {
