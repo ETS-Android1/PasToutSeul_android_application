@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -147,6 +148,9 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
         Toast.makeText(this,"Bienvenue, "+utilisateur.username, Toast.LENGTH_LONG).show();
 
+        if (ActivityCompat.checkSelfPermission(map.this,Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_DENIED){
+            ActivityCompat.requestPermissions(map.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},44);
+        }
     }
 
 
@@ -222,6 +226,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
             {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
+            pgrb.setVisibility(View.INVISIBLE);
         }
 
 
