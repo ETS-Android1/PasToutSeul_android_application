@@ -174,6 +174,7 @@ public class ChatActivity extends AppCompatActivity
 
                     // Création du recycler view
                     recyclerMessage.setAdapter(adapter);
+                    recyclerMessage.scrollToPosition(adapter.getItemCount()-1);
                     this.progressBar.setVisibility(View.INVISIBLE);
                 });
     }
