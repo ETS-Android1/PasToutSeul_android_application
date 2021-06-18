@@ -421,6 +421,10 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                     requete.addPin(lat, lng, Long.parseLong(utilisateur.id_user), jour, heure, icone, stringPrenom, stringComment, stringEnvie, res ->
                     {
                         setSDFMarkers();
+
+                        // Recentre vers le pin ajouté
+                        googleMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(lat,lng)), 1000, null);
+
                         pgrb.setVisibility(View.INVISIBLE);
                     });
 
