@@ -1,8 +1,7 @@
-package com.example.test4;
+package pas.tout.seul;
 
 import android.content.Context;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;

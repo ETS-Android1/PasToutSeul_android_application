@@ -1,4 +1,4 @@
-package com.example.test4;
+package pas.tout.seul;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -20,9 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import java.security.SecureRandom;
-import java.util.Base64;
-import java.util.Random;
+import pas.tout.seul.R;
 
 import org.mindrot.jbcrypt.BCrypt;
 

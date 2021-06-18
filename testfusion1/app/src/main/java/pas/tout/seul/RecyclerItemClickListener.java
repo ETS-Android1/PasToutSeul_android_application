@@ -1,6 +1,6 @@
 // Code repris sur : https://stackoverflow.com/questions/24471109/recyclerview-onclick/26196831#26196831
 
-package com.example.test4;
+package pas.tout.seul;
 
 import android.content.Context;
 import android.view.GestureDetector;

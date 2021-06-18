@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
-    tools:context=".map"
+    tools:context="pas.tout.seul.map"
     android:background="@color/orange_light"
     android:paddingBottom="15dp"
     android:paddingTop="5dp">

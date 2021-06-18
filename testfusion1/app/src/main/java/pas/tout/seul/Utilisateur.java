@@ -1,4 +1,4 @@
-package com.example.test4;
+package pas.tout.seul;
 
 public class Utilisateur {
 

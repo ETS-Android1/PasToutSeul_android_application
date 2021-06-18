@@ -1,8 +1,10 @@
-package com.example.test4;
+package pas.tout.seul;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import pas.tout.seul.R;
 
 public class emmausMarker extends AppCompatActivity {
 

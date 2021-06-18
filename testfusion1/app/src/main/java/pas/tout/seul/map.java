@@ -1,4 +1,4 @@
-package com.example.test4;
+package pas.tout.seul;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -15,7 +15,6 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +33,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentActivity;
 
-import com.example.test4.databinding.ActivityMapBinding;
+import pas.tout.seul.R;
+import pas.tout.seul.databinding.ActivityMapBinding;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -50,7 +50,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -98,7 +97,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
         super.onCreate(savedInstanceState);
 
-        com.example.test4.databinding.ActivityMapBinding binding = ActivityMapBinding.inflate(getLayoutInflater());
+        pas.tout.seul.databinding.ActivityMapBinding binding = ActivityMapBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         this.context = this;
@@ -631,7 +630,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 }
 
             } catch (Exception e) {
-                Log.d("binks", e.getMessage());
                 e.printStackTrace();
             }
 
@@ -677,7 +675,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
         } catch (Exception e)
         {
-            Log.d("binks", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -714,7 +711,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
             }
 
         } catch (Exception e) {
-            Log.d("binks", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -754,7 +750,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         }
         catch (Exception e)
         {
-            Log.d("binks", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -798,7 +793,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
         } catch (Exception e)
         {
-            Log.d("binks", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -843,7 +837,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
         } catch (Exception e)
         {
-            Log.d("binks", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -888,7 +881,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
         } catch (Exception e)
         {
-            Log.d("binks", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -932,7 +924,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
         } catch (Exception e)
         {
-            Log.d("binks", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -977,7 +968,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
         } catch (Exception e)
         {
-            Log.d("binks", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -1022,7 +1012,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
         } catch (Exception e)
         {
-            Log.d("binks", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -1067,7 +1056,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
         } catch (Exception e)
         {
-            Log.d("binks", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -1111,7 +1099,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
         } catch (Exception e)
         {
-            Log.d("binks", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -1154,7 +1141,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
         } catch (Exception e)
         {
-            Log.d("binks", e.getMessage());
             e.printStackTrace();
         }
     }

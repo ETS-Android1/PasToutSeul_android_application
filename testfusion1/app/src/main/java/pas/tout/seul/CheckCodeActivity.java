@@ -1,4 +1,4 @@
-package com.example.test4;
+package pas.tout.seul;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -13,6 +13,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import pas.tout.seul.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

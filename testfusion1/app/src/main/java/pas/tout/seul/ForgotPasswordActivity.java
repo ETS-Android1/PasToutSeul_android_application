@@ -1,4 +1,4 @@
-package com.example.test4;
+package pas.tout.seul;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -16,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import pas.tout.seul.R;
 
 public class ForgotPasswordActivity extends AppCompatActivity
 {

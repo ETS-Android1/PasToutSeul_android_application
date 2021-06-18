@@ -1,12 +1,11 @@
-package com.example.test4;
+package pas.tout.seul;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.CheckBox;
+
+import pas.tout.seul.R;
 
 public class filtre extends AppCompatActivity {
 

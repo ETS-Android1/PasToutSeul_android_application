@@ -1,4 +1,4 @@
-package com.example.test4;
+package pas.tout.seul;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+
+import pas.tout.seul.R;
 
 public class sos extends AppCompatActivity {
 

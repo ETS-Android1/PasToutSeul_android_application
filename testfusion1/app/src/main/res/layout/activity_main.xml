@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:background="@color/orangeoff"
     android:theme="@style/Theme.Test4"
-    tools:context=".MainActivity">
+    tools:context="pas.tout.seul.MainActivity">
 
 
         <EditText

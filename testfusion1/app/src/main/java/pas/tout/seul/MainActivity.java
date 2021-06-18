@@ -1,4 +1,4 @@
-package com.example.test4;
+package pas.tout.seul;
 
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,7 +21,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.text.method.PasswordTransformationMethod;
 import android.content.Intent;
-import android.widget.Toast;
+
+import pas.tout.seul.R;
 
 import org.mindrot.jbcrypt.BCrypt;
 
