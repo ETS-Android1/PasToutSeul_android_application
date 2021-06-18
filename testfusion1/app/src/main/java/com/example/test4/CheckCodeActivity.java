@@ -55,8 +55,6 @@ public class CheckCodeActivity extends AppCompatActivity
         // Chargement
         this.prgb.setVisibility(View.VISIBLE);
 
-        // Bloque les click
-        btnCheckCode.setClickable(false);
 
         // Infos nécessaire pour vérifier les informations dans la base de données
         String mail = getMail();
@@ -68,7 +66,11 @@ public class CheckCodeActivity extends AppCompatActivity
         if(code.length() != 0)
         {
             // Requête pour vérifier si le code est correct
-            requete.getCode(mail, res -> {
+            requete.getCode(mail, res ->
+            {
+                // Bloque les click
+                btnCheckCode.setClickable(false);
+
                 if(!res.contains("error"))
                 {
                     // Tri les informations reçues : "(DATE : yyyy-MM-dd) (DATE : HH-mm-ss) (CODE)"

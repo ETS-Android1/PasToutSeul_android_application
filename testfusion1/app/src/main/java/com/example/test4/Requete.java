@@ -2,6 +2,8 @@ package com.example.test4;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -21,6 +23,8 @@ public class Requete
     Context context;
     String URL_DOMAIN;
     RequestQueue queue;
+    Toast toastError;
+
     public Requete(Context ctxt)
     {
         this.context = ctxt;
@@ -50,7 +54,8 @@ public class Requete
             {
                 exception.printStackTrace();
             }
-        }, error -> Log.e("Réponse", error.toString()))
+        }, error ->
+                Toast.makeText(context,"Veuillez verifier votre connexion internet.",Toast.LENGTH_SHORT).show())
         {
             @Override
             protected Map<String,String> getParams()
@@ -63,9 +68,6 @@ public class Requete
                 return logs;
             }
         };
-
-        //Gérer les timeout
-        postRequest.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         //Lance la requête
         queue.add(postRequest);
@@ -94,17 +96,17 @@ public class Requete
 
         String URL = URL_DOMAIN+"addPin.php?id="+id_user+"&long="+longitude+"&lat="+latitude+"&date="+date+"&icone="+icone+"&prenom="+prenom+"&commentaire="+comment+"&envie="+envie;
 
-        StringRequest postRequest = new StringRequest(Request.Method.GET, URL, response -> {
+        StringRequest getRequest = new StringRequest(Request.Method.GET, URL, response -> {
             Log.i("Réponse", response);
             try {
                 callBack.onSuccess(null);
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
-        }, error -> Log.e("Réponse", error.toString()));
+        }, error -> Toast.makeText(context,"Veuillez verifier votre connexion internet.",Toast.LENGTH_SHORT).show());
 
         // Ajoute la requête dans la file
-        queue.add(postRequest);
+        queue.add(getRequest);
     }
 
     // Déclaration et envoi d'une requête pour récupérer des données sur les marqueurs dans la BDD.
@@ -120,7 +122,7 @@ public class Requete
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
-        }, error -> Log.e("Réponse", error.toString()));
+        }, error -> Toast.makeText(context,"Veuillez verifier votre connexion internet.",Toast.LENGTH_SHORT).show());
 
         // Ajout de la requête dans la file
         queue.add(getRequest);
@@ -139,7 +141,7 @@ public class Requete
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
-        }, error -> Log.e("Réponse", error.toString()));
+        }, error -> Toast.makeText(context,"Veuillez verifier votre connexion internet.",Toast.LENGTH_SHORT).show());
 
         // Ajout de la requête dans la file
         queue.add(postRequest);
@@ -157,7 +159,7 @@ public class Requete
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
-        }, error -> Log.e("Réponse", error.toString()));
+        }, error -> Toast.makeText(context,"Veuillez verifier votre connexion internet.",Toast.LENGTH_SHORT).show());
 
         // Ajout de la requête dans la file
         queue.add(getRequest);
@@ -190,7 +192,7 @@ public class Requete
                 exception.printStackTrace();
             }
             // Appel d'une fonction à éxecuter si succès de la requête
-        }, error -> Log.e("Réponse", error.toString())) {
+        }, error -> Toast.makeText(context,"Veuillez verifier votre connexion internet.",Toast.LENGTH_SHORT).show()) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> logs = new HashMap<>();
@@ -212,7 +214,8 @@ public class Requete
         // Types de requête
         StringRequest postRequest = new StringRequest(Request.Method.POST, URL, response ->
                 Log.i("Réponse", response),
-                error -> Log.e("Réponse", error.toString())){
+                error -> Toast.makeText(context,"Veuillez verifier votre connexion internet.",Toast.LENGTH_SHORT).show())
+        {
             @Override
             protected Map<String,String> getParams()
             {
@@ -247,7 +250,7 @@ public class Requete
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
-        }, error -> Log.e("Réponse", error.toString()));
+        }, error -> Toast.makeText(context,"Veuillez verifier votre connexion internet.",Toast.LENGTH_SHORT).show());
 
         queue.add(getRequest);
     }
@@ -264,7 +267,7 @@ public class Requete
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
-        }, error -> Log.e("Réponse", error.toString()));
+        }, error -> Toast.makeText(context,"Veuillez verifier votre connexion internet.",Toast.LENGTH_SHORT).show());
 
         queue.add(getRequest);
     }
@@ -281,7 +284,7 @@ public class Requete
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
-        }, error -> Log.e("Réponse", error.toString()));
+        }, error -> Toast.makeText(context,"Veuillez verifier votre connexion internet.",Toast.LENGTH_SHORT).show());
 
         queue.add(getRequest);
     }
@@ -298,7 +301,7 @@ public class Requete
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
-        }, error -> Log.e("Réponse", error.toString())){
+        }, error -> Toast.makeText(context,"Veuillez verifier votre connexion internet.",Toast.LENGTH_SHORT).show()){
             @Override
             protected Map<String,String> getParams()
             {
@@ -331,7 +334,7 @@ public class Requete
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
-        }, error -> Log.e("Réponse", error.toString())){
+        }, error -> Toast.makeText(context,"Veuillez verifier votre connexion internet.",Toast.LENGTH_SHORT).show()){
             @Override
             protected Map<String,String> getParams()
             {
@@ -366,7 +369,7 @@ public class Requete
                 exception.printStackTrace();
             }
             // Appel d'une fonction à éxecuter si succès de la requête
-        }, error -> Log.e("Réponse", error.toString())) {
+        }, error -> Toast.makeText(context,"Veuillez verifier votre connexion internet.",Toast.LENGTH_SHORT).show()) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> logs = new HashMap<>();
@@ -392,7 +395,7 @@ public class Requete
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
-        }, error -> Log.e("Réponse", error.toString()));
+        }, error -> Toast.makeText(context,"Veuillez verifier votre connexion internet.",Toast.LENGTH_SHORT).show());
 
         // Ajoute la requête dans la file
         queue.add(postRequest);
@@ -413,7 +416,7 @@ public class Requete
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
-        }, error -> Log.e("Réponse", error.toString()));
+        }, error -> Toast.makeText(context,"Veuillez verifier votre connexion internet.",Toast.LENGTH_SHORT).show());
 
         // Ajoute la requête dans la file
         queue.add(postRequest);
@@ -441,7 +444,7 @@ public class Requete
                 exception.printStackTrace();
             }
             // Appel d'une fonction à éxecuter si succès de la requête
-        }, error -> Log.e("Réponse", error.toString())) {
+        }, error -> Toast.makeText(context,"Veuillez verifier votre connexion internet.",Toast.LENGTH_SHORT).show()) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> logs = new HashMap<>();
@@ -472,7 +475,7 @@ public class Requete
             {
                 exception.printStackTrace();
             }
-        }, error -> Log.e("Réponse", error.toString()))
+        }, error -> Toast.makeText(context,"Veuillez verifier votre connexion internet.",Toast.LENGTH_SHORT).show())
         {
             @Override
             protected Map<String,String> getParams()
@@ -489,4 +492,5 @@ public class Requete
 
         queue.add(postRequest);
     }
+
 }

@@ -49,14 +49,19 @@ public class ForgotPasswordActivity extends AppCompatActivity
     @SuppressLint("SetTextI18n")
     public void sendCode(View view)
     {
-        btnSendMail.setClickable(false);
         String email = getMail();
-        prgb.setVisibility(View.VISIBLE);
+
         hideKeyboard(view);
+
+        prgb.setVisibility(View.VISIBLE);
 
         if(!hasError(email))
         {
-            requete.forgotPassword(email, res -> {
+            requete.forgotPassword(email, res ->
+            {
+                // Bloque le bouton pour éviter d'envoyer d'autre requête tant que la requête n'est pas fini
+                btnSendMail.setClickable(false);
+
                 if(!res.equals("error"))
                 {
                     emailSender mail = new emailSender(this);
@@ -66,31 +71,32 @@ public class ForgotPasswordActivity extends AppCompatActivity
                     {
                         mail.sendMail("PasToutSeul : Mot de passe oublié",res, email, "code_6digit.html");
                         Toast.makeText(this, "Un code vient d'être envoyé sur cette adresse suivante : "+email, Toast.LENGTH_LONG).show();
-
+                        btnSendMail.setClickable(true);
                         // Lancement de l'activity pour vérifier le code reçu par mail
                         launchCheckCode(email);
                     }
                     catch (Exception e)
                     {
+                        btnSendMail.setClickable(true);
                         e.printStackTrace();
                     }
-
                 }
                 else
                 {
                     editTextEmail.setTextColor(this.getResources().getColor(R.color.rouge_fonce));
                     editTextEmail.setHintTextColor(this.getResources().getColor(R.color.rouge_clair));
                     txtVMailErrorForgotPassword.setText("L'email rensigné n'existe pas.");
+                    btnSendMail.setClickable(true);
                 }
                 prgb.setVisibility(View.INVISIBLE);
-                btnSendMail.setClickable(true);
             });
         }
         else
         {
-            prgb.setVisibility(View.INVISIBLE);
             btnSendMail.setClickable(true);
+            prgb.setVisibility(View.INVISIBLE);
         }
+
     }
 
     @SuppressLint("SetTextI18n")

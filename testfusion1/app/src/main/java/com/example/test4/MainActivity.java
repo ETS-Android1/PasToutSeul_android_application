@@ -21,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.text.method.PasswordTransformationMethod;
 import android.content.Intent;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // Lancement de l'activity de la carte
     public void mapActivity(String user_info)
     {
         Intent intent = new Intent(this, map.class);
@@ -99,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
+
     /*
      * Méthode : Initialisation des attributs
      */
@@ -135,17 +138,18 @@ public class MainActivity extends AppCompatActivity {
         return pwd.getText().toString();
     }
 
-
+    // Button listener pour le bouton connexion
+    // Envoye une requête pour vérifier si le compte existe, si oui connexion
+    // Sinon message d'erreur
     public void connexion(View view)
     {
+        // Afficher la barre de progression
+        pgrb.setVisibility(View.VISIBLE);
 
         // Vérification des erreurs
         if(!checkError())
         {
             hideKeyboard(view);
-
-            // Afficher la barre de progression
-            pgrb.setVisibility(View.VISIBLE);
 
             // Création d'un thread afin d'effectuer une requête vers le serveur web sans bloquer l'application.
             Thread thread = new Thread()
@@ -156,32 +160,36 @@ public class MainActivity extends AppCompatActivity {
                     try
                     {
                         // Requête de type POST ( - rapide que la requête GET / + sécure que la requête GET)
-                        requete.login(getMail(), getPwd(), res -> {
+                        requete.login(getMail(), getPwd(), res ->
+                        {
                             if(res.equals("1")) // Erreur(s) concernant le compte de l'utilisateur
                             {
                                 errMail.setText("Ce compte n'existe pas");
                                 mail.setBackgroundResource(R.drawable.backwithborder_noerror);
-                                pgrb.setVisibility(View.GONE);
                             }
                             else if(res.equals("2")) // Erreur(s) concernant le mot de passe
                             {
                                 errPwd.setText("Mot de passe incorrect");
                                 pwd.setBackgroundResource(R.drawable.backwithborder_error);
-                                pgrb.setVisibility(View.GONE);
                             }
-                            else // Aucunes erreurs
+                            else // Aucune erreurs
                             {
                                 mapActivity(res);
-                                pgrb.setVisibility(View.GONE);
+                                pgrb.setVisibility(View.INVISIBLE);
                                 cmode = true;
                             }
+
+                            // Fin du thread
+                            pgrb.setVisibility(View.INVISIBLE);
                         });
                     }
                     catch (Exception e) // Si erreur(s) de la requête
                     {
                         e.printStackTrace();
                         System.out.println(e.getMessage());
-                        pgrb.setVisibility(View.GONE);
+
+                        // Fin du thread
+                        pgrb.setVisibility(View.INVISIBLE);
                     }
                 }
             };
@@ -252,6 +260,7 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
+    // Lancement de l'activity pour le mot de passe oublié
     public void launchForgotPwd(View view)
     {
         Intent intent = new Intent(this, ForgotPasswordActivity.class);
@@ -294,6 +303,8 @@ public class MainActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         startActivity(intent);
+
+        // Animation
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
@@ -308,7 +319,10 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("USER_ID", "1");
         intent.putExtra("USER_MAIL", "INVITE@INVITE.com");
         intent.putExtra("USER_PASSWORD", "INVITE");
+
         startActivity(intent);
+
+        // Animation
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 

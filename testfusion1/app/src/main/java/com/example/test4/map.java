@@ -1174,7 +1174,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     // Ajout d'un marqueur pour chaque coordonnées GPS que l'on reçoit via une requête si il n'a pas été ajouté auparavant.
     public void setSDFMarkers()
     {
-
+        pgrb.setVisibility(View.INVISIBLE);
         requete.getSDFMarkers(mMap.getCameraPosition().target.latitude,mMap.getCameraPosition().target.longitude,res ->
         {
             if(res.length() != 0)
