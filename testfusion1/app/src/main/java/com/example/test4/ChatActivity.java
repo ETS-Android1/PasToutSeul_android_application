@@ -43,6 +43,8 @@ public class ChatActivity extends AppCompatActivity
     Adapter adapter;
     RecyclerView recyclerMessage, recyclerParticipants;
 
+    Date lastUpdate;
+
     // Liste des messages avec leurs informations
     ArrayList<String> nom = new ArrayList<>();
     ArrayList<String> message = new ArrayList<>();
@@ -66,19 +68,33 @@ public class ChatActivity extends AppCompatActivity
         this.context = this;
         this.requete = new Requete(context);
 
+        // Initialisation des variables pour la fenêtre popup
         initPopupDialog();
 
+        // Initialisation des variables transmis par le père
         initIntentString();
 
+        // Initialisation des identifiants des textView, EditText, etc...
         initViewID();
 
+        // Initialisation de la recyclerView permettant d'afficher les messages du chat
         initRecyclerViewChat();
 
         progressBar.setVisibility(View.INVISIBLE);
 
+        // Configuration et initialisation du service s'éxecutant tous les x secondes
+        initScheduledService();
+    }
+
+    // Configuration et initialisation du service s'éxecutant tous les x secondes
+    public void initScheduledService()
+    {
+        // Date de la dernière mise à jour
+        this.lastUpdate = new Date();
+
         // Mise à jour des messages toutes les 5 secondes
         this.update = Executors.newScheduledThreadPool(1);
-        update.scheduleAtFixedRate(this::updateMessages, 5, 5, TimeUnit.SECONDS);
+        this.update.scheduleAtFixedRate(this::updateMessages, 5, 5, TimeUnit.SECONDS);
     }
 
     // Initialisation des identifiants des textView, EditText, etc...
@@ -177,7 +193,11 @@ public class ChatActivity extends AppCompatActivity
             // Ajout du message dans la recyclerView
             this.adapter.addItem(this.username,inputMessage,dateFormatUS.format(date));
 
+            // Scroll vers le dernier message
+            this.recyclerMessage.scrollToPosition(adapter.getItemCount()-1);
+
             // Envoi du message
+            System.out.println("ID USER "+id_user);
             requete.sendMessage(id_group,id_user,inputMessage,dateFormatUS.format(date));
 
             editTextMessage.setText("");
@@ -188,13 +208,15 @@ public class ChatActivity extends AppCompatActivity
     public void updateMessages()
     {
         // Récupération de la date pour récupérer seulement les nouveaux messages
-        Date date = new Date();
         SimpleDateFormat dateFormatUS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
 
         // Récupère les nouveaux messages
-        requete.getNewMessages(id_group,username,dateFormatUS.format(date),res -> {
+        requete.getNewMessages(id_group,id_user,dateFormatUS.format(lastUpdate),res -> {
             if(res.trim().length() != 0)
             {
+                // Date de la dernière mise à jour
+                lastUpdate = new Date();
+
                 // Tri des informations reçues de type :
                 // (NOM D'UTILISATEUR)!§!(IDENTIFIANT UTILISATEUR)!§!(DATE : yyyy-MM-dd HH-mm-ss)!§!(IDENTIFIANT GROUPE)!§!(MESSAGE)<!§!>
                 // 0 : NOM D'UTILISATEUR
@@ -211,9 +233,13 @@ public class ChatActivity extends AppCompatActivity
                     message.add(element[4]);
                     temps.add(element[2]);
 
-                    // Ajout du message dans la recyclerView + mise à jour
-                    this.adapter.addItem(element[0], element[4], element[2]);
+
+                    // Mise à jour de la recyclerView
+                    this.adapter.update();
+
+                    this.recyclerMessage.scrollToPosition(adapter.getItemCount()-1);
                 }
+
             }
         });
     }

@@ -253,9 +253,9 @@ public class Requete
     }
 
     // Récupère les nouveaux messages côté serveur
-    public void getNewMessages(String id_group, String username, String timeLastUpdate, final VolleyCallBack callback)
+    public void getNewMessages(String id_group, String id_user, String timeLastUpdate, final VolleyCallBack callback)
     {
-        String URL = URL_DOMAIN+"getNewMessages.php?id_grp="+id_group+"&id_usr="+username+"&time="+timeLastUpdate;
+        String URL = URL_DOMAIN+"getNewMessages.php?id_grp="+id_group+"&id_usr="+id_user+"&time="+timeLastUpdate;
 
         StringRequest getRequest = new StringRequest(Request.Method.GET, URL, response -> {
             Log.i("Réponse", response);

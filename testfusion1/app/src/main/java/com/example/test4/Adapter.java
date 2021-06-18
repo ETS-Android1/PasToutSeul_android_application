@@ -151,6 +151,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>
         notifyDataSetChanged();
     }
 
+    public void update()
+    {
+        notifyDataSetChanged();
+    }
+
     // Converti une date yyyy-dd-mm en dd-mm-yyyy
     public String yyyy_mm_ddTodd_mm_yyyy(String d)
     {

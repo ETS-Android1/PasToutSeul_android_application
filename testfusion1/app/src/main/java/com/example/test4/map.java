@@ -309,7 +309,8 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                         ((ViewGroup)customAddMarkerLayout.getParent()).removeView(customAddMarkerLayout);
 
                         // Si on reçoit un certain nombre de signalement, on reçoit le message "delete", alors on le supprime
-                        requete.reportPin(getUsername(),id_pin, res -> {
+                        requete.reportPin(getUsername(),id_pin, res ->
+                        {
                             if(res.contains("delete"))
                             {
                                 marker.remove();
@@ -609,7 +610,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel == ""){
+                if (tel.equals("")){
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_emmaus)));
                 }
                 else {
@@ -650,11 +651,11 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
                 LatLng loc = new LatLng(latitude, longitude);
 
-                String nom = s.getCell(0,i).getContents().replaceAll("H"+"\\uFFFD"+"b","Héb").replaceAll("n"+"\\uFFFD"+"a","nça").replaceAll("a"+"\\uFFFD"+"s","aüs").replaceAll("\\uFFFD","é");;
+                String nom = s.getCell(0,i).getContents().replaceAll("H"+"\\uFFFD"+"b","Héb").replaceAll("n"+"\\uFFFD"+"a","nça").replaceAll("a"+"\\uFFFD"+"s","aüs").replaceAll("\\uFFFD","é");
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel == "") {
+                if (tel.equals("")) {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_refuge)));
                 }
                 else {
@@ -775,7 +776,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel == "") {
+                if (tel.equals("")) {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_restos_du_coeur_logo)));
                 }
                 else {
@@ -820,7 +821,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel == "") {
+                if (tel.equals("")) {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_secours_populaire_logo)));
                 }
                 else {
@@ -865,7 +866,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel == "") {
+                if (tel.equals("")) {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_catholique)));
                 }
                 else {
@@ -909,7 +910,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel == "") {
+                if (tel.equals("")) {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_islamique)));
                 }
                 else {
@@ -954,7 +955,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel == "") {
+                if (tel.equals("")) {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_vincent)));
                 }
                 else {
@@ -999,7 +1000,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel == "") {
+                if (tel.equals("")) {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_captif)));
                 }
                 else {
@@ -1044,7 +1045,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel == "") {
+                if (tel.equals("")) {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_banquealimentaire)));
                 }
                 else {
@@ -1088,7 +1089,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
 
-                if (tel == "") {
+                if (tel.equals("")) {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_croixrouge)));
                 }
                 else {
@@ -1132,7 +1133,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 String tel = s.getCell(4,i).getContents();
                 Log.d("binks", nom);
 
-                if (tel == "") {
+                if (tel.equals("")) {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_anrs)));
                 }
                 else {
@@ -1203,7 +1204,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                     id_pin = string[0];
                     longitude = Double.parseDouble(string[1]);
                     latitude = Double.parseDouble(string[2]);
-                    signalements = Integer.valueOf(string[3]);
+                    signalements = Integer.parseInt(string[3]);
                     date = string[4];
                     heure = string[5];
                     nom_user = string[6];
@@ -1214,13 +1215,11 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                     // Les pins déja ajoutés sont stockés et triés de manière croissante.
                     // On va donc merge les array sans ajouter les doublons car les id sont uniques
                     // D'où pourquoi on reprend l'index pour reprendre l'itération là où on s'était arrêter.
-                    if(!pinIfExist(idList,Integer.valueOf(id_pin),index))
+                    if(!pinIfExist(idList,Integer.parseInt(id_pin),index))
                     {
                         // Si il n'a pas été signaler plus de 1 fois et qu'il n'existe pas
                         if (signalements < 2)
                         {
-                            markerList.toString();
-                            System.out.println("Je suis en vie : "+ id_pin);
                             switch (icone) {
                                 case "1":
                                     // Ajout d'un pin
@@ -1254,7 +1253,7 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                             idList.remove(index);
                             markerList.get(index).remove();
                         }
-                        // Si le pin existe  mais qu'il n'a pas été signaler plus de 1 fois
+                        // Si le pin existe mais qu'il n'a pas été signaler moins de 2 fois
                         else
                         {
                             // On ajoute pas mais on vérifie pour le suivant
