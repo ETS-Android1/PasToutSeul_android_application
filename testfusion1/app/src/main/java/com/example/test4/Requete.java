@@ -39,7 +39,7 @@ public class Requete
     /*
      * Procédure : Envoi d'une requête de type POST pour se connecter
      * */
-    public void login(String mail, String password,final VolleyCallBack callback)
+    public void login(String mail,final VolleyCallBack callback)
     {
         // URL du serveur web
         String URL = URL_DOMAIN+"login.php";
@@ -63,7 +63,6 @@ public class Requete
                 Map<String,String> logs = new HashMap<>();
                 //Ajout des arguments
                 logs.put("mail",mail);
-                logs.put("password",password);
 
                 return logs;
             }
@@ -459,7 +458,7 @@ public class Requete
         queue.add(postRequest);
     }
 
-    public void createAccount(String username, String mail, String password,final VolleyCallBack callback)
+    public void createAccount(String username, String mail, String password, final VolleyCallBack callback)
     {
         RequestQueue queue = Volley.newRequestQueue(context);
         String URL = URL_DOMAIN+"createAccount.php";

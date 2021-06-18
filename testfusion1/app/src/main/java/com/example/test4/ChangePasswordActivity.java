@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 public class ChangePasswordActivity extends AppCompatActivity
 {
     EditText editPassword1,editPassword2;
@@ -62,8 +64,13 @@ public class ChangePasswordActivity extends AppCompatActivity
             if(isSame(password1,password2))
             {
                 Requete requete = new Requete(this);
+
+                // Hachage du mot de passe
+                String salt = BCrypt.gensalt();
+                String hashPass = BCrypt.hashpw(password1,salt);
+
                 // Changement du mot de passe
-                requete.changePassword(getMail(),password1, res ->
+                requete.changePassword(getMail(),hashPass, res ->
                 {
                     // Sujet du message
                     String subject = "PasToutSeul : Votre mot de passe vient d'être modifié.";

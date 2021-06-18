@@ -3,12 +3,13 @@ package com.example.test4;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,13 +19,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.security.SecureRandom;
+import java.util.Base64;
+import java.util.Random;
+
+import org.mindrot.jbcrypt.BCrypt;
 
 public class inscription extends AppCompatActivity {
 
@@ -37,6 +37,7 @@ public class inscription extends AppCompatActivity {
 
     ProgressBar pgrb;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -298,11 +299,17 @@ public class inscription extends AppCompatActivity {
             hideKeyboard(view);
             Thread thread = new Thread()
             {
+                @RequiresApi(api = Build.VERSION_CODES.O)
                 @SuppressLint("SetTextI18n")
                 public void run()
                 {
                     try{
-                        requete.createAccount(getUsername(), getMail(), getPwd(), res -> {
+
+                        // Chiffrement du mot de passe
+                        String salt = BCrypt.gensalt();
+                        String hashPass = BCrypt.hashpw(getPwd(),salt);
+
+                           requete.createAccount(getUsername(), getMail(), hashPass, res -> {
                             if(res.equals("user_error"))
                             {
                                 errUsername.setText("Ce nom d'utilisateur est déja pris");

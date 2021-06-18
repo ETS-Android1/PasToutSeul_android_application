@@ -23,6 +23,8 @@ import android.text.method.PasswordTransformationMethod;
 import android.content.Intent;
 import android.widget.Toast;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 public class MainActivity extends AppCompatActivity {
 
     Context context;
@@ -86,15 +88,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Lancement de l'activity de la carte
-    public void mapActivity(String user_info)
+    public void mapActivity(String username, String user_id)
     {
         Intent intent = new Intent(this, map.class);
 
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        String []USER_INFO = user_info.split("-");
 
-        intent.putExtra("USER_NAME", USER_INFO[0]);
-        intent.putExtra("USER_ID", USER_INFO[1]);
+        System.out.println("ID USER = "+user_id+" username : "+username);
+
+        intent.putExtra("USER_NAME", username);
+        intent.putExtra("USER_ID", user_id);
         intent.putExtra("USER_MAIL", getMail());
         intent.putExtra("USER_PASSWORD",getPwd());
 
@@ -160,27 +163,44 @@ public class MainActivity extends AppCompatActivity {
                     try
                     {
                         // Requête de type POST ( - rapide que la requête GET / + sécure que la requête GET)
-                        requete.login(getMail(), getPwd(), res ->
+                        requete.login(getMail(), res ->
                         {
+                            System.out.println(res);
                             if(res.equals("1")) // Erreur(s) concernant le compte de l'utilisateur
                             {
                                 errMail.setText("Ce compte n'existe pas");
                                 mail.setBackgroundResource(R.drawable.backwithborder_noerror);
                             }
-                            else if(res.equals("2")) // Erreur(s) concernant le mot de passe
-                            {
-                                errPwd.setText("Mot de passe incorrect");
-                                pwd.setBackgroundResource(R.drawable.backwithborder_error);
-                            }
                             else // Aucune erreurs
                             {
-                                mapActivity(res);
-                                pgrb.setVisibility(View.INVISIBLE);
-                                cmode = true;
-                            }
+                                String []USER_INFO = res.split("\\s+");
+                                String hashPass = USER_INFO[2];
+                                try
+                                {
+                                    if(BCrypt.checkpw(getPwd(),hashPass))
+                                    {
+                                        mapActivity(USER_INFO[0],USER_INFO[1]);
+                                        pgrb.setVisibility(View.INVISIBLE);
+                                        cmode = true;
+                                    }
+                                    else
+                                    {
+                                        errPwd.setText("Mot de passe incorrect");
+                                        pwd.setBackgroundResource(R.drawable.backwithborder_error);
+                                    }
 
-                            // Fin du thread
-                            pgrb.setVisibility(View.INVISIBLE);
+                                    // Fin du thread
+                                    pgrb.setVisibility(View.INVISIBLE);
+                                }
+                                catch(Exception e)
+                                {
+                                    errPwd.setText("Mot de passe incorrect");
+                                    pwd.setBackgroundResource(R.drawable.backwithborder_error);
+
+                                    // Fin du thread
+                                    pgrb.setVisibility(View.INVISIBLE);
+                                }
+                            }
                         });
                     }
                     catch (Exception e) // Si erreur(s) de la requête
