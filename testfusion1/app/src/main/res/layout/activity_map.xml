@@ -50,17 +50,17 @@
 
         <ImageButton
             android:id="@+id/param"
-            android:layout_width="76dp"
-            android:layout_height="45dp"
-            android:background="@drawable/logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/ic_parametres"
             android:contentDescription="@string/parametre"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.97"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.013"
-            android:visibility="invisible"/>
+            app:layout_constraintTop_toBottomOf="@+id/imageButton4"
+            android:onClick="param"
+            android:visibility="gone"/>
 
         <ImageButton
             android:id="@+id/locatezoom"

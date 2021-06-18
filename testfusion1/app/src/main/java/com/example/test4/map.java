@@ -135,6 +135,9 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
         this.rb2 = this.view_popup.findViewById(R.id.radioButton2);
         this.rb3 = this.view_popup.findViewById(R.id.radioButton3);
         this.icone = 0;
+
+
+
         //change de place la toolbar google maps
         View locationButton = ((View) mapFragment.getView().findViewById(Integer.parseInt("1")).
                 getParent()).findViewById(Integer.parseInt("4"));
@@ -549,15 +552,21 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
     // Lance la page contenant la liste des conversations
     public void conversation(View v) {
 
-        Intent conv = new Intent(this,ConversationActivity.class);
+        if (!utilisateur.username.equals("INVITE")) {
 
-        conv.putExtra("USER_NAME", utilisateur.username);
-        conv.putExtra("USER_ID", utilisateur.id_user);
-        conv.putExtra("USER_MAIL", utilisateur.email);
-        conv.putExtra("USER_PASSWORD",utilisateur.password);
-        startActivity(conv);
+            Intent conv = new Intent(this, ConversationActivity.class);
 
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            conv.putExtra("USER_NAME", utilisateur.username);
+            conv.putExtra("USER_ID", utilisateur.id_user);
+            conv.putExtra("USER_MAIL", utilisateur.email);
+            conv.putExtra("USER_PASSWORD", utilisateur.password);
+            startActivity(conv);
+
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        }
+        else{
+            Toast.makeText(getApplicationContext(),"vous ne pouvez pas accéder au chat en étant invité",Toast.LENGTH_SHORT).show();
+        }
     }
 
     private BitmapDescriptor BitmapFromVector(Context context, int vectorResId) {
@@ -584,44 +593,43 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
     public void EmmausMarker() {
 
-        try {
-            AssetManager am = getAssets();
+            try {
+                AssetManager am = getAssets();
 
-            InputStream is = am.open("emmaus.xls");
+                InputStream is = am.open("emmaus.xls");
 
-            Workbook wb = Workbook.getWorkbook(is);
+                Workbook wb = Workbook.getWorkbook(is);
 
-            Sheet s = wb.getSheet(0);
+                Sheet s = wb.getSheet(0);
 
-            int row = s.getRows();
+                int row = s.getRows();
 
-            for (int i=1; i<row;i++){
-                Cell c = s.getCell(2,i);
+                for (int i = 1; i < row; i++) {
+                    Cell c = s.getCell(2, i);
 
-                // Tri des données
-                String[] latlong = c.getContents().split(",");
+                    // Tri des données
+                    String[] latlong = c.getContents().split(",");
 
-                double latitude = Double.parseDouble(latlong[0]);
-                double longitude = Double.parseDouble(latlong[1]);
+                    double latitude = Double.parseDouble(latlong[0]);
+                    double longitude = Double.parseDouble(latlong[1]);
 
-                LatLng loc = new LatLng(latitude, longitude);
+                    LatLng loc = new LatLng(latitude, longitude);
 
-                String nom = s.getCell(0,i).getContents().replaceAll("a"+"\\uFFFD"+"s","aüs").replaceAll("A"+"\\uFFFD"+"S","AÜS").replaceAll("\\uFFFD","é");
-                String site = s.getCell(3,i).getContents();
-                String tel = s.getCell(4,i).getContents();
+                    String nom = s.getCell(0, i).getContents().replaceAll("a" + "\\uFFFD" + "s", "aüs").replaceAll("A" + "\\uFFFD" + "S", "AÜS").replaceAll("\\uFFFD", "é");
+                    String site = s.getCell(3, i).getContents();
+                    String tel = s.getCell(4, i).getContents();
 
-                if (tel.equals("")){
-                    mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_emmaus)));
+                    if (tel.equals("")) {
+                        mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_emmaus)));
+                    } else {
+                        mMap.addMarker(new MarkerOptions().snippet(tel).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_emmaus)));
+                    }
                 }
-                else {
-                    mMap.addMarker(new MarkerOptions().snippet(tel).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_emmaus)));
-                }
+
+            } catch (Exception e) {
+                Log.d("binks", e.getMessage());
+                e.printStackTrace();
             }
-
-        } catch (Exception e) {
-            Log.d("binks", e.getMessage());
-            e.printStackTrace();
-        }
 
     }
 
@@ -1131,7 +1139,6 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                 String nom = s.getCell(0,i).getContents().replaceAll("\\uFFFD","é");
                 String site = s.getCell(3,i).getContents();
                 String tel = s.getCell(4,i).getContents();
-                Log.d("binks", nom);
 
                 if (tel.equals("")) {
                     mMap.addMarker(new MarkerOptions().snippet(site).position(loc).title(nom).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_anrs)));
@@ -1328,6 +1335,13 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
     public void don(View v){
         Intent i = new Intent(this, donate.class);
+        startActivity(i);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+    //affiche les parametre de filtrage
+    public void param(View v){
+        Intent i = new Intent(this, filtre.class);
         startActivity(i);
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
