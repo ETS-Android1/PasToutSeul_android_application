@@ -1223,15 +1223,15 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
                             switch (icone) {
                                 case "1":
                                     // Ajout d'un pin
-                                    marker = mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par " + nom_user + " le " + yyyy_mm_ddTodd_mm_yyyy(date) + " à " + heure).position(new LatLng(latitude, longitude)).title("Sans abri " + id_pin).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_1)));
+                                    marker = mMap.addMarker(new MarkerOptions().snippet("Ajouté par " + nom_user + " le " + yyyy_mm_ddTodd_mm_yyyy(date) + " à " + heure).position(new LatLng(latitude, longitude)).title("Sans abri " + id_pin).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_1)));
                                     break;
                                 case "2":
                                     // Ajout d'un pin
-                                    marker = mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par " + nom_user + " le " + yyyy_mm_ddTodd_mm_yyyy(date) + " à " + heure).position(new LatLng(latitude, longitude)).title("Sans abri " + id_pin).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_2)));
+                                    marker = mMap.addMarker(new MarkerOptions().snippet("Ajouté par " + nom_user + " le " + yyyy_mm_ddTodd_mm_yyyy(date) + " à " + heure).position(new LatLng(latitude, longitude)).title("Sans abri " + id_pin).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_2)));
                                     break;
                                 default:
                                     // Ajout d'un pin
-                                    marker = mMap.addMarker(new MarkerOptions().snippet("Vu la dernière fois par " + nom_user + " le " + yyyy_mm_ddTodd_mm_yyyy(date) + " à " + heure).position(new LatLng(latitude, longitude)).title("Sans abri " + id_pin).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_0)));
+                                    marker = mMap.addMarker(new MarkerOptions().snippet("Ajouté par " + nom_user + " le " + yyyy_mm_ddTodd_mm_yyyy(date) + " à " + heure).position(new LatLng(latitude, longitude)).title("Sans abri " + id_pin).icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_personne_0)));
                                     break;
                             }
                             markerList.add(index, marker);
