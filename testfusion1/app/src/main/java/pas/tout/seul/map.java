@@ -54,6 +54,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 import jxl.Cell;
 import jxl.Sheet;
@@ -338,6 +339,9 @@ public class map extends FragmentActivity implements OnMapReadyCallback, GoogleM
 
                     pgrb.setVisibility(View.INVISIBLE);
                 });
+            }
+            else if (Objects.equals(marker.getSnippet(), "")) {
+
             }
             else if (marker.getSnippet().charAt(0) == '3' || marker.getSnippet().charAt(0) == '0'){
                 String tel = "tel:"+ marker.getSnippet();
