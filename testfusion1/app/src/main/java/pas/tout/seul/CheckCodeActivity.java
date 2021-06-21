@@ -11,8 +11,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import org.mindrot.jbcrypt.BCrypt;
 
 import pas.tout.seul.R;
 
@@ -30,6 +33,8 @@ public class CheckCodeActivity extends AppCompatActivity
     TextView txtVErrCode;
     ProgressBar prgb;
 
+    int nRetry;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -44,6 +49,8 @@ public class CheckCodeActivity extends AppCompatActivity
         this.btnCheckCode = findViewById(R.id.btnCheckCode);
         this.txtVErrCode = findViewById(R.id.txtVErrCode);
         this.prgb = findViewById(R.id.progressBarCheckCode);
+
+        this.nRetry = 0;
 
         // Affiche le code
         editTextCheckCode.setTransformationMethod(null);
@@ -78,7 +85,7 @@ public class CheckCodeActivity extends AppCompatActivity
                     // Tri les informations reçues : "(DATE : yyyy-MM-dd) (DATE : HH-mm-ss) (CODE)"
                     String[] string = res.split(" ");
 
-                    String string_code = string[2];
+                    String hashPass = string[2];
 
                     // Seule l'heure, les minutes et les secondes sont nécessaires pour vérifier si le code est expiré (5min et après le code est expiré)
                     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.FRANCE);
@@ -102,14 +109,23 @@ public class CheckCodeActivity extends AppCompatActivity
                         // Réactive les clicks
                         btnCheckCode.setClickable(true);
 
-                        if(code.equals(string_code))
+                        if(BCrypt.checkpw(code,hashPass))
                         {
                             // Si le code est bon, alors on peut changer le mot de passe
                             launchChangePassword();
+                            this.nRetry = 0;
                         }
                         else
                         {
+                            this.nRetry = this.nRetry + 1;
                             affichageCodeIncorrect();
+
+                            if(this.nRetry == 3)
+                            {
+                                Toast.makeText(context,"Trop de tentatives infructueuses.\nVeuillez revalider votre e-mail.",Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+
                         }
                     }
                     else // Expiré

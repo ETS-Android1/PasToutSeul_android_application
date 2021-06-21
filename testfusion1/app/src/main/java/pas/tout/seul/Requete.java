@@ -10,6 +10,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -420,16 +422,12 @@ public class Requete
         queue.add(postRequest);
     }
 
-    public void forgotPassword(String mail, VolleyCallBack callback)
+    public void forgotPassword(String mail, String hashPass, VolleyCallBack callback)
     {
         // Récupère une date
         Date date = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
         String string_date = dateFormat.format(date);
-
-        // Génération d'un code au hasard à envoyer sur le mail de l'utilisateur
-        int code = new Random().nextInt(999999-100000) + 100000;
-        String string_code = String.valueOf(code);
 
         // URL du serveur web
         String URL = URL_DOMAIN+"forgotPassword.php";
@@ -448,7 +446,7 @@ public class Requete
                 Map<String, String> logs = new HashMap<>();
                 //Ajout des arguments
                 logs.put("email", mail);
-                logs.put("code", string_code);
+                logs.put("code", hashPass);
                 logs.put("date", string_date);
                 return logs;
             }

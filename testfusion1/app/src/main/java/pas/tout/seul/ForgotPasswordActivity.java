@@ -17,6 +17,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.mindrot.jbcrypt.BCrypt;
+
+import java.util.Random;
+
 import pas.tout.seul.R;
 
 public class ForgotPasswordActivity extends AppCompatActivity
@@ -57,9 +61,16 @@ public class ForgotPasswordActivity extends AppCompatActivity
 
         prgb.setVisibility(View.VISIBLE);
 
+        // Génération d'un code au hasard à envoyer sur le mail de l'utilisateur
+        String string_code = generateRandomCode();
+
+        // Code temporaire haché à mettre dans la bdd
+        String salt = BCrypt.gensalt();
+        String hashPass = BCrypt.hashpw(string_code,salt);
+
         if(!hasError(email))
         {
-            requete.forgotPassword(email, res ->
+            requete.forgotPassword(email,hashPass, res ->
             {
                 // Bloque le bouton pour éviter d'envoyer d'autre requête tant que la requête n'est pas fini
                 btnSendMail.setClickable(false);
@@ -71,7 +82,7 @@ public class ForgotPasswordActivity extends AppCompatActivity
                     // Aucune erreur => Envoi d'un mail
                     try
                     {
-                        mail.sendMail("PasToutSeul : Mot de passe oublié",res, email, "code_6digit.html");
+                        mail.sendMail("PasToutSeul : Mot de passe oublié",string_code, email, "code_6digit.html");
                         Toast.makeText(this, "Un code vient d'être envoyé sur cette adresse suivante : "+email, Toast.LENGTH_LONG).show();
                         btnSendMail.setClickable(true);
                         // Lancement de l'activity pour vérifier le code reçu par mail
@@ -99,6 +110,13 @@ public class ForgotPasswordActivity extends AppCompatActivity
             prgb.setVisibility(View.INVISIBLE);
         }
 
+    }
+
+    // Génération d'un code au hasard
+    public String generateRandomCode()
+    {
+        int code = new Random().nextInt(999999-100000) + 100000;
+        return String.valueOf(code);
     }
 
     @SuppressLint("SetTextI18n")
