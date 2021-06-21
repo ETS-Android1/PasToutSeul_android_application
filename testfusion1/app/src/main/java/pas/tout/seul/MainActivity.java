@@ -9,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.MotionEvent;
@@ -21,6 +22,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.text.method.PasswordTransformationMethod;
 import android.content.Intent;
+import android.widget.Toast;
 
 import pas.tout.seul.R;
 
@@ -39,6 +41,15 @@ public class MainActivity extends AppCompatActivity {
     TextView errPwd;
     ImageButton btnShowHide;
     ProgressBar pgrb;
+
+    // Nombre d'essai
+    int nRetry;
+
+    // Nombre de secondes écoulées dans le timer
+    int secondes;
+
+    // Timer pour le temps d'attente lorsqu'il y a trop de tentative de connexion
+    CountDownTimer cdTimer = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -121,6 +132,8 @@ public class MainActivity extends AppCompatActivity {
         this.hide = true;
         this.pgrb = findViewById(R.id.prgbLogin);
         this.pgrb.setVisibility(View.INVISIBLE);
+        this.nRetry = 0;
+        this.secondes = 0;
         cmode = true;
     }
 
@@ -149,75 +162,117 @@ public class MainActivity extends AppCompatActivity {
     {
         // Afficher la barre de progression
         pgrb.setVisibility(View.VISIBLE);
-
-        // Vérification des erreurs
-        if(!checkError())
+        System.out.println(nRetry);
+        // Trop de tentatives de connexion => Bloque pendant 15 secondes
+        if(nRetry == 5)
         {
-            hideKeyboard(view);
+            Toast.makeText(context, "Trop de tentatives de connexion.\nVeuillez réessayer dans "+this.secondes+" secondes.",Toast.LENGTH_SHORT).show();
 
-            // Création d'un thread afin d'effectuer une requête vers le serveur web sans bloquer l'application.
-            Thread thread = new Thread()
+            // Fin chargement
+            pgrb.setVisibility(View.INVISIBLE);
+        }
+        // Si on a pas dépasser le nombre de tentatives de connexions maximales
+        else
+        {
+            // Vérification des erreurs
+            if(!checkError())
             {
-                @SuppressLint("SetTextI18n") // Ignore le warning
-                public void run()
+                hideKeyboard(view);
+
+                // Création d'un thread afin d'effectuer une requête vers le serveur web sans bloquer l'application.
+                Thread thread = new Thread()
                 {
-                    try
+                    @SuppressLint("SetTextI18n") // Ignore le warning
+                    public void run()
                     {
-                        // Requête de type POST ( - rapide que la requête GET / + sécure que la requête GET)
-                        requete.login(getMail(), res ->
+                        try
                         {
-                            System.out.println(res);
-                            if(res.equals("1")) // Erreur(s) concernant le compte de l'utilisateur
+                            // Requête de type POST ( - rapide que la requête GET / + sécure que la requête GET)
+                            requete.login(getMail(), res ->
                             {
-                                errMail.setText("Ce compte n'existe pas");
-                                mail.setBackgroundResource(R.drawable.backwithborder_noerror);
-                            }
-                            else // Aucune erreurs
-                            {
-                                String []USER_INFO = res.split("\\s+");
-                                String hashPass = USER_INFO[2];
-                                try
+                                System.out.println(res);
+                                if(res.equals("1")) // Erreur(s) concernant le compte de l'utilisateur
                                 {
-                                    if(BCrypt.checkpw(getPwd(),hashPass))
+                                    errMail.setText("Ce compte n'existe pas");
+                                    mail.setBackgroundResource(R.drawable.backwithborder_noerror);
+                                }
+                                else // Aucune erreurs
+                                {
+                                    String []USER_INFO = res.split("\\s+");
+                                    String hashPass = USER_INFO[2];
+                                    try
                                     {
-                                        mapActivity(USER_INFO[0],USER_INFO[1]);
+                                        if(BCrypt.checkpw(getPwd(),hashPass))
+                                        {
+                                            mapActivity(USER_INFO[0],USER_INFO[1]);
+                                            pgrb.setVisibility(View.INVISIBLE);
+                                            cmode = true;
+                                        }
+                                        else
+                                        {
+                                            errPwd.setText("Mot de passe incorrect");
+                                            pwd.setBackgroundResource(R.drawable.backwithborder_error);
+
+                                            // Tentative de connexion
+                                            nRetry = nRetry + 1;
+
+                                            // Bloque les tentatives de connexion pendant x secondes
+                                            if(nRetry == 5)
+                                            {
+                                                startTimer(15);
+                                            }
+                                        }
+
+                                        // Fin du thread
                                         pgrb.setVisibility(View.INVISIBLE);
-                                        cmode = true;
                                     }
-                                    else
+                                    catch(Exception e)
                                     {
                                         errPwd.setText("Mot de passe incorrect");
                                         pwd.setBackgroundResource(R.drawable.backwithborder_error);
+
+                                        // Fin du thread
+                                        pgrb.setVisibility(View.INVISIBLE);
                                     }
-
-                                    // Fin du thread
-                                    pgrb.setVisibility(View.INVISIBLE);
                                 }
-                                catch(Exception e)
-                                {
-                                    errPwd.setText("Mot de passe incorrect");
-                                    pwd.setBackgroundResource(R.drawable.backwithborder_error);
+                            });
+                        }
+                        catch (Exception e) // Si erreur(s) de la requête
+                        {
+                            e.printStackTrace();
+                            System.out.println(e.getMessage());
 
-                                    // Fin du thread
-                                    pgrb.setVisibility(View.INVISIBLE);
-                                }
-                            }
-                        });
+                            // Fin du thread
+                            pgrb.setVisibility(View.INVISIBLE);
+                        }
                     }
-                    catch (Exception e) // Si erreur(s) de la requête
-                    {
-                        e.printStackTrace();
-                        System.out.println(e.getMessage());
+                };
 
-                        // Fin du thread
-                        pgrb.setVisibility(View.INVISIBLE);
-                    }
-                }
-            };
-
-            //Lancement du thread
-            thread.start();
+                //Lancement du thread
+                thread.start();
+            }
         }
+
+    }
+
+    // Lance un timer de x secondes
+    // Lorsque le timer est fini, on autorise de nouveau les tentatives de connexions
+    public void startTimer(int sec)
+    {
+        System.out.println(nRetry);
+        this.cdTimer = new CountDownTimer(sec*1000, 1000) {
+            public void onTick(long msRemaining)
+            {
+                secondes = (int) (msRemaining / 1000);
+            }
+            public void onFinish()
+            {
+                nRetry = 0;
+                secondes = 0;
+                cdTimer.cancel();
+            }
+        };
+        cdTimer.start();
     }
 
     /*
@@ -225,7 +280,6 @@ public class MainActivity extends AppCompatActivity {
      * Return : false si aucune erreur
      *          true sinon
      */
-    @SuppressLint("SetTextI18n")
     public boolean checkError()
     {
         boolean hasError = false;
